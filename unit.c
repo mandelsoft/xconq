@@ -235,6 +235,11 @@ int x, y;
     unit->x = x;  unit->y = y;
     cover_area(unit, x, y, 1);
     for_all_occupants(unit, occ) occupy_hex_aux(occ, x, y);
+/*** (UK) insert -> ***/
+    if (!humanside(unit->side) && unit->area == -1) {
+       unit-> area = area_index(x,y);
+    }
+/*** <- insert ***/
 }
 
 /* Decide whether transport has the capability to house the given unit. */
@@ -1104,7 +1109,7 @@ int reason;
 		unit->prevy)].units_lost += unit_strength(u);
     }
 /*** (UK) insert -> ***/
-    if (unit==unit->side->movunit) {
+    if (unit->side && unit==unit->side->movunit) {
       if (!(unit->side->movunit=next_unit_to_move(unit->side))) {
 	update_sides(unit->side);
       }
@@ -1409,6 +1414,8 @@ StandingOrderEntry **oetab;
   exit_procedure();
   return SCANCELED;
 }
+
+static show_order_group();
 
 static show_order_class(side,oetab,name)
 Side *side;

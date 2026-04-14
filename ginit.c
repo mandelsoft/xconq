@@ -422,9 +422,8 @@ int mw, mh;
 /*** (UK) change -> ***/
     int arh;
 
-/*
     printf("resize %d x %d\n",mw,mh);
-*/
+
     side->mwe=mw;
     side->mhe=mh;
     side->sw = sides_width();

@@ -16,7 +16,7 @@
 /* This is where predefined maps/scenarios/periods/fonts can be found. */
 
 #ifndef XCONQLIB
-#define XCONQLIB "/home3/i30fs1/wolf/lib/xconq"
+#define XCONQLIB "lib"
 #endif  XCONQLIB
 
 
@@ -138,7 +138,7 @@
 /* All names, phrases, and messages must be able to fit in statically */
 /* allocated buffers of this size. */
 
-#define BUFSIZE 120
+#define BUFSIZE 300
 #define NOTIFY_SPACE  MAXNOTES * 60 * MAXSIDES + BUFSIZE
 
 /* If defined, a statistics file is written at the end of the game. */

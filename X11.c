@@ -32,6 +32,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+extern void abort (void) __THROW __attribute__ ((__noreturn__));
+
 static int sock=-1; /* server socket */
 /*** <- insert ***/ 
 #endif /* UNIX */
@@ -354,7 +356,7 @@ char *addr;
     already_been_here = TRUE;
     write_savefile("emergency.save.xconq");
     if (sig != 2)
-      abort(1);
+      abort();
     else exit(1);
   }
 }
@@ -1311,18 +1313,6 @@ Side *side;
 #define CLOSE_ENOUGH(X,Y) (abs(((int) X) - ((int) Y)) < 2000)
 
 long
-request_color(side, name, class, fallback)
-Side *side;
-char *name, *class, *fallback;
-/*** (HW) insert -> ***/
-{
-  XColor xcol;
-
-  request_xcolor(side, name, class, fallback, &xcol);
-  return xcol.pixel;
-}
-
-long
 request_xcolor(side, name, class, fallback, xcol)
 Side *side;
 char *name, *class, *fallback;
@@ -1371,6 +1361,18 @@ XColor *xcol;
     *xcol = avail;
 /*** <- insert ***/
     return avail.pixel;
+}
+
+long
+request_color(side, name, class, fallback)
+Side *side;
+char *name, *class, *fallback;
+/*** (HW) insert -> ***/
+{
+  XColor xcol;
+
+  request_xcolor(side, name, class, fallback, &xcol);
+  return xcol.pixel;
 }
 
 /*** (HW) insert -> ***/

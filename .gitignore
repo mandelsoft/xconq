@@ -10,6 +10,7 @@
 /lib/standard.c
 /fonts.dir
 /*.pcf
+/*.pcf.gz
 /*.pcf.Z
 /*.CKP
 /*.ln

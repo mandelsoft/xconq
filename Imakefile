@@ -18,7 +18,7 @@
 ## name (without the ".per").  That file will be linked into the source
 ## directory as "standard.c".
 
-PERIOD=standard
+PERIOD=Uwe
 
 
 ## Games usually have their manuals put in section 6 of the
@@ -172,7 +172,7 @@ SingleProgramTarget(per2c, $(POBJS),,)
 
 .per.c:
 	$(RM) $@
-	per2c < $< > $@
+	./per2c < $< > $@
 
 standard.c: per2c lib/$(PERIOD).c
 	$(RM) $@
@@ -205,7 +205,7 @@ install:: ./lib
 ## just a dialog box(tm)) that is built into MacX(tm).
 
 
-OBJS=xconq.pcf standard.pcf
+OBJS=xconq.pcf.gz standard.pcf.gz
 FONTDIR=$(HOME)/xfonts
 
 FontTarget(xconq)

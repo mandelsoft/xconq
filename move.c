@@ -151,7 +151,7 @@ Unit *unit;
   return NULL;
 }
 
-Unit *next_unit_to_move2();
+static Unit *next_unit_to_move2();
 /*** <- insert ***/
 
 /* Find the next unit that the side can move this turn. */
