@@ -1,0 +1,4 @@
+for i
+do echo "************ $i ************"
+   diff $i /home3/i30fs1/wolf/utils/xconq5.5.3/$i
+done

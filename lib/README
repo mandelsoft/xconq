@@ -1,0 +1,25 @@
+This is the library directory for XCONQ.  It includes all support files
+for day-to-day usage.  It also includes some incomplete and/or marginal
+files that are not really suitable for regular use, as well as some test
+maps useful only for debugging.
+
+The file "mapfiles" contains the names and descriptions of "official"
+mapfiles; those well enough tested to be released on gullible gamesters.
+
+"xconq.news" is the news file (surprise).
+
+Mapfile naming follows some general rules (which are enforced by some
+command line options, see the man page):
+
+*.map files are terrain data or terrain + units at detail level 1.
+
+*.per files are period descriptions alone.
+
+*.scn files are scenarios.
+
+*.b files are bitmaps.
+
+*.onx files are X10 fonts.
+
+*.bdf and *.snf files are ASCII and compiled X11 fonts, respectively.
+

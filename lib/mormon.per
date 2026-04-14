@@ -1,0 +1,96 @@
+Xconq 0 -+---- the heroic age of the mormon pioneers (needs work)
+Period 0
+
+"1847" period-name
+
+"m" "mormon" "" utype
+"A" "avenging angel" "" utype
+"P" "prophet" "" utype
+"a" "army" "" utype
+"u" "Ute" "" utype
+"/" "fort" "where the army hangs out" utype
+"*" "settlement" "" utype
+"@" "temple" "" utype
+
+"w" "water" "very scarce in Utah" rtype
+
+"." "lake" "sky blue" ttype
+"," "river" "cyan" ttype
+"+" "valley" "green" ttype
+"%" "forest" "forest green" ttype
+"~" "desert" "yellow" ttype
+"^" "mountains" "sienna" ttype
+"_" "salt flat" "white" ttype
+":" "not-Utah" "black" ttype
+
+true [ not-Utah ] dark
+
+;[   0  70  70  70  70  70  90  95  99   0 ] t* min-alt
+;[  70  70  72  95  95  95  95  99 100   0 ] t* max-alt
+;[   0   0  50  20  80   0   0   0   0   0 ] t* min-wet
+;[ 100 100 100  80 100  20  20 100 100   0 ] t* max-wet
+
+; not-Utah edge-terrain
+
+"man" m icon-name
+"trooper" A icon-name
+"man" P icon-name
+"cavalry" a icon-name
+"archer" u icon-name
+"walltown" / icon-name
+"walltown" * icon-name
+"city18" @ icon-name
+
+; no random init, since sides asymmetrical
+
+5000 a siege
+
+10 m m make
+2 m P make
+1 [ m P ] maker
+; 20 * m make
+20 / a make
+
+1 water [ m A a ] produce
+10 water [ / * @ ] produce
+100 valley u* productivity
+100 mountains a productivity
+10 water [ m A a ] storage
+100 water [ / * @ ] storage
+1 water [ m A a ] consume
+
+"dies of thirst" [ m A a ] starve-message
+
+;;; scale should be 15 km?
+
+[ 2 4 4 4 6 ] [ m A a u P ] speed
+
+0 t* u* moves
+-1 [ lake not-Utah ] u* moves
+
+5 m [ m P ] capacity
+6 a / capacity
+10 [ m A P ] * capacity
+10 [ A P ] @ capacity
+
+95 m [ a u ] hit  ; the army misses sometimes
+; 50 P [ a u ] hit  ; prophet is wily
+50 a A hit  ; avenging angels are only way to hit back
+30 A a hit  ; retaliation is harder
+
+1 u* u* damage
+
+"kills" [ m A a ] destroy-message
+
+10 / territory
+1 * territory
+5 @ territory
+
+begin{notes}
+Can the US army kill all the Mormons before they overpopulate Utah?
+
+(This is all a joke of course.)
+end{notes}
+
+end
+

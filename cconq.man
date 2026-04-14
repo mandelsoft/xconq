@@ -1,0 +1,137 @@
+.TH CCONQ 6 Utah
+.SH NAME
+cconq - curses-based strategy game
+.SH SYNOPSIS
+.B
+cconq
+[ options ] ...
+.SH DESCRIPTION
+\fICconq\fP is a multi-player strategic wargame.
+Your goal is to save the world from the evil empires attempting to
+take over.  You get cities, armies, airplanes, and ships with which to
+accomplish your task.  Success is achieved by the neutralization or
+defeat of the other sides, by any means available; but you have to
+find them first!
+.PP
+Although the game can get complicated, to start you need only
+know about the help command '?', which is valid at any time.
+You start with only one city, which makes things even simpler.
+The city will automatically produce a military unit, which you
+will be prompted to move around.  Eventually, you will get more and
+can attempt to take over other cities.
+The game keeps going
+until only one side is left in action, this player is then declared the winner.
+.PP
+By default, \fIcconq\fP
+starts up with one human and one
+machine, playing on a randomly generated 60x30 world.
+Options are
+available to set the number of machine players, as well as the
+kind of map used.  In addition, \fIcconq\fP has extensive and
+elaborate facilities for building maps, scenarios, and historical
+periods for a wide variety of games.  Unlike \fIxconq(6)\fP,
+\fIcconq\fP allows only one human player in a game.
+.SH OPTIONS
+.TP 5
+.B \-A\ curses
+attaches a machine player to the screen.  Ideal for those who like
+to watch.
+.TP 5
+.B \-e \fInumber\fP
+sets the number of machine players not attached to displays.
+Non-displayed machine players are always allied with each other.
+.TP 5
+.B \-m \fIname\fP
+reads the map named \fIname\fP and starts up a game on it.
+.TP 5
+.B \-M \fIwidth height\fP
+generates a random map of the given size.  The size must be at least 5x5,
+although some periods will impose additional constraints on the lower bound.
+In theory, there is no upper bound (but 200x200 is huge).
+.TP 5
+.B \-p \fIname\fP
+reads the historical period specified by \fIname\fP, and sets everything
+up for that period.
+.TP 5
+.B \-r
+resets the list of players on the command line.  It is most useful when
+placed before other player specifications, to clear out the default
+player.
+.TP 5
+.B \-s \fIname\fP
+reads a scenario with the name \fIname\fP.  A scenario sets up a particular
+situation; it has a fixed number of sides that can participate.
+.TP 5
+.B \-v
+make the entire world seen by all players at the outset.
+This is useful if exploration
+is deemed to be time-consuming, or if the map is already known to everybody.
+Some maps have this permanently enabled.
+.TP 5
+.B \-x
+allows scenarios, maps, periods, and players to be set up interactively
+via menus.  The menus should be self-explanatory.
+.LP
+In addition, \fB-B\fP and \fB-D\fP are recognized;
+see the the customization document for more details.
+.SH EXAMPLES
+.TP 8
+.B
+cconq
+One human on local display, one machine, 60x30 random map
+.TP 8
+.B
+cconq -m crater
+One human vs one machine, on the "crater lake" map
+.TP 8
+.B
+cconq -e 2 -M 35 35
+One human, three machines, 35x35 random map
+.TP 8
+.B
+cconq -e 6 -m 1987
+Seven players (6 machine, 1 human), all playing
+on a 360x122 map of the earth with present-day cities.  Major!
+.SH AUTHOR
+Stan Shebs (shebs@cs.utah.edu)
+.SH FILES
+\fIsave.xconq\fP	saved game
+.br
+\fIstats.xconq\fP	performance statistics for a game
+.br
+\fIcmds.xconq\fP	listing of commands
+.br
+\fIparms.xconq\fP	listing of units and their characteristics
+.br
+\fIview.xconq\fP	printable version of the map display
+.br
+\fI/usr/games/lib/xconq/*.map\fP	predefined maps
+.br
+\fI/usr/games/lib/xconq/*.scn\fP	predefined scenarios
+.br
+\fI/usr/games/lib/xconq/*.per\fP	predefined historical periods
+.br
+\fI/usr/games/lib/xconq/xconq.news\fP	news about features/additions
+.SH "SEE ALSO"
+.br
+.IR xconq(6)
+.br
+.IR "Liberating the World (Made Simple)"
+.br
+.IR "Customizing Xconq (Made Somewhat Simple)"
+.SH DIAGNOSTICS
+.PP
+If the map is too small for the desired number of players, \fIcconq\fP will
+complain about not being able to place units.
+.PP
+Incorrect combinations of periods, maps, and scenarios
+can generate a host of different error messages.
+.SH BUGS
+Since some periods/maps/scenarios are interdependent, they must be specified
+in a particular order on the command line (period is first usually).
+.PP
+Does not cope gracefully with insufficient memory.
+.PP
+Using \fB-D\fP for debugging results in spectacular but useless displays.
+.PP
+Some annoying behaviors are actually features.

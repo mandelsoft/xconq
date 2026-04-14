@@ -1,0 +1,3 @@
+setenv XCONQSAVEDIR .
+xset +fp ~/xfonts/xconq
+

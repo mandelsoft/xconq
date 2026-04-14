@@ -1,0 +1,235 @@
+# Copyright (c) 1986, 1991  Stanley T. Shebs.
+# This program may be used, copied, modified, and redistributed freely
+# for noncommercial purposes, so long as this notice remains intact.
+#
+# This is the old, pre-5.5 Makefile.  If you have Imake, you are highly
+# advised to use the Imakefile instaed.
+
+# RCS $Header: Makefile,v 1.2 88/07/18 22:06:05 shebs Exp $
+
+# A Sequent-specific gizmo to do compilation in parallel.
+
+P = # &
+
+# Set this for where the executables should live.
+
+DESTDIR = /local/X11
+
+# Set this for wherever the library directory (periods, scenarios and
+# bitmaps) should be.
+# This can be overridden by the envariable XCONQLIB.
+
+LIBDIR = /local/lib/x11r4/xconq
+
+# Set this for wherever the man page should live.
+
+MANDIR = /local/man
+
+# Set this for wherever the X fonts should live.
+# (Note that they need not be in a "system place", but then your
+# env var XFONTPATH should include this XFONTDIR.)
+
+XFONTDIR = /local/lib/x11r4/fonts/misc
+
+# this is the directory where all the X application defaults files
+# are kept
+
+XAPPLRESDIR = /local/lib/x11r4/app-defaults
+
+# Set this to be whatever versions you want built by default.
+
+VERSIONS = xconq cconq
+
+# Everbody loves to name their libraries differently - alter as necessary.
+
+CURSESLIB = -lcurses -ltermlib
+
+X11LIB = -lX11 # /local/lib/libX11.a
+
+# Set your compiler and its options here.  Both cc and gcc should work.
+
+#CC = gcc
+
+CDEBUGFLAGS = -O
+CFLAGS = ${CDEBUGFLAGS} -DXCONQLIB=\"$(LIBDIR)\" -DXAPPLRESDIR=\"$(XAPPLRESDIR)\" -DUSECRMODE ${SYSFLAGS} # -fpa
+
+#LDFLAGS = -Bstatic
+
+# This name sets the default period for xconq.  The standard period is based
+# on WWII and thus most familiar, although it lacks some realism.
+# The library includes many other periods, some variations on the standard
+# period, and others that are for completely different games.
+
+PERIOD	= standard
+
+# Complete lists of files.
+
+MAINSRC = xconq.c init.c command.c mplay.c mutil.c mproduce.c minit.c mvars.c\
+	move.c attack.c phases.c map.c \
+	side.c unit.c order.c util.c input.c help.c period.c \
+	ginit.c draw.c output.c mkmap.c \
+	sergeant.c
+
+AUXSRC = per2c.c $(PERIOD).c X11.c curses.c
+
+INCLUDE = config.h misc.h side.h unit.h map.h dir.h period.h global.h \
+ 	version.h mplay.h
+
+# Non-interface-specific object files.
+
+OBJ =	xconq.o init.o command.o mplay.o mutil.o mproduce.o mvars.o \
+	sergeant.o \
+	move.o minit.o attack.o phases.o map.o mkmap.o \
+	side.o unit.o order.o util.o input.o help.o period.o \
+	ginit.o draw.o output.o $(PERIOD).o # bsd.o
+
+# Do it all.
+
+all:	$(VERSIONS) xconq.doc custom.doc
+
+# X11 xconq.
+
+xconq: $(P) $(OBJ) X11.o
+	rm -f xconq
+	$(CC) -o xconq $(LDFLAGS) $(CFLAGS) $(OBJ) X11.o $(X11LIB)
+
+# A curses-based version.
+
+cconq: $(P) $(OBJ) curses.o
+	rm -f cconq
+	$(CC) -o cconq $(CFLAGS) $(OBJ) curses.o $(CURSESLIB)
+
+# uncomment for some HPUXs
+# these are necessary for X11.o because HPUX's compiler sux.
+# X11.o: X11.c
+#	${CC} -Wc,-Nd4000,-Ns3300,-Ne700,-Np200 ${CFLAGS} -c X11.c
+
+# There is always a default period compiled into the code.
+
+$(PERIOD).c:	$(LIBDIR)/$(PERIOD).per per2c
+	./per2c <$(LIBDIR)/$(PERIOD).per >$(PERIOD).c
+
+# Support things.
+
+per2c:	per2c.o period.o
+	$(CC) -o per2c $(CFLAGS) per2c.o period.o
+
+xconq.doc:	xconq.ms xconq2.ms
+	nroff -ms xconq.ms >xconq.doc
+
+custom.doc:	custom.ms period.ms
+	nroff -ms custom.ms >custom.doc
+
+# Installation requires programs in $(DESTDIR) and a library directory.
+# Also, fonts might have to go in system's font directory.
+# No standard place for formatted docs, you're on your own...
+
+install:
+	cp $(VERSIONS) $(DESTDIR)
+	mkdir $(LIBDIR)
+	cp lib/* $(LIBDIR)
+	cp *.6 $(MANDIR)/man6
+#	cp lib/*.snf $(XFONTPATH)
+#	cp *.doc xxx
+
+# Usual cleaning, and flushing of anything junk-like.
+
+clean:
+	rm -f per2c *.o lint.out core
+
+spotless:	clean
+	rm -f *conq *.doc $(PERIOD).c save.xconq* xconq.save *~
+
+# Pretty output for your favorite fancy printer.
+
+TROFFER = psroff
+PRINTER = postscript
+
+paper:
+	$(TROFFER) -man -P$(PRINTER) *.6
+	$(TROFFER) -ms  -P$(PRINTER) xconq.ms
+	$(TROFFER) -ms  -P$(PRINTER) custom.ms
+
+# Local hack to put all the stuff onto a machine that does rdist via crontab.
+# This is very useful in a workstation environment.
+# (This version assumes NFS - hack as appropriate.)
+
+DISTER = /n/jaguar
+
+rinstall:
+	cp -p $(VERSIONS) $(DISTER)$(DESTDIR)
+	cp -p lib/* $(DISTER)$(LIBDIR)
+#	cp -p *.6 $(DISTER)$(MANDIR)
+#	cp -p lib/*.onx $(DISTER)$(XFONTPATH)
+#	cp -p lib/*.snf $(DISTER)$(XFONTPATH)
+#	cp -p *.doc $(DISTER)xxx
+
+# This setup is usually satisfactory.
+
+X11fonts:
+	bdftosnf $(LIBDIR)/xconq.bdf >$(XFONTDIR)/xconq.snf
+	bdftosnf $(LIBDIR)/standard.bdf >$(XFONTDIR)/standard.snf
+	mkfontdir $(XFONTDIR)
+	@echo
+	@echo 'If you add $(XFONTDIR) to your X font path you should be able'
+	@echo 'to play the game now.  You should ask your sysadmin'
+	@echo 'to install the fonts in the usual place eventually.'
+	@CWD=`pwd`; XFONTDIR=`echo $(XFONTDIR) | sed -e "s-^./-$$CWD/-"`;\
+		echo "     % xset fp+ $$XFONTDIR"
+	@echo ' should be the command to add the font to the X fontpath.'
+	@echo 'This assumes that the directory is available to the machine'
+	@echo 'running the X server...'
+
+# How the shar files were made.
+
+kit:
+	(cd lib;  rm -f *.snf fonts.dir)
+	makekit README CHANGES TODO Makefile Xdefaults *.6 *.ms *.h *.c lib/*
+
+# Tarify for sites that can FTP.  Be sure to omit anything that is not the
+# real source.
+
+tar:	spotless
+	(cd lib;  rm -f *.snf fonts.dir)
+	(cd ..;  tar cvf xconq.tar xc5.5b4)
+
+# Lint needs option to increase working space.
+LINTFLAGS=-ahqv
+LINTFLAGS=-ahv
+
+lint:
+	lint -n $(LINTFLAGS) $(MAINSRC) $(PERIOD).c X11.c >lint.out
+
+# Billyuns and billyuns of .h dependencies.
+
+xconq.o:  config.h misc.h period.h side.h unit.h global.h map.h version.h
+init.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h
+command.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h
+mplay.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h mplay.h
+mutil.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h mplay.h
+mproduce.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h mplay.h
+minit.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h mplay.h 
+mvars.o:  config.h misc.h dir.h 
+sergeant.o: config.h misc.h dir.h period.h side.h unit.h map.h
+move.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h
+attack.o:  config.h misc.h period.h side.h unit.h map.h global.h
+phases.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h
+map.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h
+side.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h
+unit.o:  config.h misc.h period.h side.h unit.h map.h global.h
+order.o:  config.h misc.h dir.h period.h side.h unit.h
+util.o:  config.h misc.h dir.h map.h
+input.o:  config.h misc.h dir.h period.h side.h unit.h global.h
+help.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h
+period.o:  config.h misc.h period.h unit.h
+ginit.o:  config.h misc.h dir.h period.h side.h unit.h map.h global.h
+draw.o:  config.h misc.h period.h side.h unit.h map.h
+output.o:  config.h misc.h period.h side.h unit.h map.h global.h
+mkmap.o:  config.h misc.h dir.h period.h map.h
+
+per2c.o:  config.h misc.h period.h
+
+X11.o:  config.h misc.h period.h side.h unit.h map.h
+curses.o:  config.h misc.h period.h side.h map.h global.h
+
+$(PERIOD).o:  config.h period.h

@@ -1,0 +1,1782 @@
+
+
+
+
+
+
+
+
+
+          CUSTOMIZING XCONQ (Made Somewhat Simple)
+
+
+                         Stan Shebs
+
+               Department of Computer Science
+                     University of Utah
+
+
+                          _A_B_S_T_R_A_C_T
+
+          For advanced players  who  desire  new  chal-
+     lenges,   _x_c_o_n_q   provides  several  customization
+     mechanisms.  It is possible  to  build  new  maps,
+     scenarios,  and historical periods.  This document
+     describes the customization process in  excruciat-
+     ing  detail.  The reader is assumed to be familiar
+     with _x_c_o_n_q and its basic documentation.
+
+
+
+_I_N_T_R_O_D_U_C_T_I_O_N
+
+_X_c_o_n_q has been designed to facilitate  the  construction  of
+new  maps,  scenarios,  and  historical  periods.  All these
+additions happen through a single  mechanism,  the  _m_a_p_f_i_l_e,
+which  comes  in several parts, and may also load other map-
+files.   Saved  games  are  very  detailed  mapfiles;   less
+detailed  mapfiles are more suitable as scenarios.  Maps and
+period descriptions are mapfiles with most sections missing.
+
+Mapfiles are created either by text editing, by _x_c_o_n_q, or by
+a  combination of both. Since they are mostly read by varia-
+tions on C's _s_c_a_n_f function, the  format  is  rather  rigid;
+numbers  may not be omitted, no blank lines are allowed (but
+whitespace between numbers on a line is  OK),  and  mistakes
+will not always be recognized.  The one general exception is
+the period description, which is read by a lexical analyzer,
+which  allows free-format input.  Other more specific excep-
+tions will be noted below.
+
+_M_A_P_F_I_L_E_S
+
+A mapfile is a normal ASCII text file.   It  begins  with  a
+header line of the form
+
+     Xconq _n [+-][+-][+-][+-][+-][+-] _d_e_s_c_r_i_p_t_i_o_n[;]
+
+where _n is the number of additional mapfiles  to  be  loaded
+(up  to 16 or so in all), each + or - indicates the presence
+or absence of a particular section, and the  _d_e_s_c_r_i_p_t_i_o_n  is
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 2 -
+
+
+free-form  text  (remainder of the line) describing the map-
+file.  Note that that all reading/writing in the mapfile  is
+case-sensitive,  including  the  header words.  The sections
+are for version, period, map, globals, sides, and units,  in
+that  order.  Most sections vary in size, and some vary also
+in the detail of the information they contain.  Most include
+extension  flags, which are reserved for future expansion of
+mapfiles.
+
+Additional notes may be included by terminating the _d_e_s_c_r_i_p_-
+_t_i_o_n  with  a  semicolon (with NO whitespace following).  In
+such a case, the following  text  lines  will  skipped  over
+until a period "." is seen by itself on a line.
+
+Following the header are the names of the _n mapfiles, one to
+a  line.   Each will be loaded into _x_c_o_n_q before the rest of
+the current mapfile.  This process is recursive (at least in
+theory).   Any conflicts are resolved by simple overwriting.
+Note that this presents the possibility of catastrophic con-
+flicts  if  the designer is not careful to, say, match units
+and periods.  A file with a given name will be  loaded  only
+once; a second attempt will result in a warning message, and
+the program will continue on.
+
+The version section is quite simple, since it is  one  line;
+exactly  the  version string displayed when _x_c_o_n_q starts up.
+This is typically only needed for saved games, but might  be
+convenient  while  _x_c_o_n_q versions are changing incompatibly.
+When this section is loaded, the version is merely  compared
+with the internal version number, and _x_c_o_n_q fails if they do
+not match.
+
+The  period  section  is  a  program  in  a  simple  postfix
+language,  which  when executed fills in the period descrip-
+tion.
+
+The map section includes the world dimensions  and  terrain.
+It  may  also  include  information  about countries at some
+future date.
+
+The globals section includes any global values, such as  the
+current  turn,  and  also  the  win/lose  conditions  for  a
+scenario.
+
+The sides section defines the sides  in  a  game.   Required
+info  is  little  more  than  the  name  of  the side, but a
+detailed section may also include the area of the  map  seen
+by that side, and other data.
+
+Finally, the units sections lists a number of units  in  the
+game.  Again, detail can range from type, name, and position
+to complete details on its orders.
+
+Each of these sections is  entirely  optional  -  _x_c_o_n_q  can
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 3 -
+
+
+synthesize  its  own replacements for each.  For instance, a
+mapfile could specify a map and two sides, or a  period,  or
+an  entire game, by including the appropriate sections.  The
+sections do interact somewhat, with dependencies as follows:
+
+     Maps, win/lose conditions in globals,  detailed  sides,
+     and units depend on period.
+
+     Detailed and/or non-neutral units depend on sides.
+
+The following sections discuss each part  of  a  mapfile  in
+more  detail.   The  version secton has already been covered
+sufficiently.  Since the period defines what may  appear  in
+all the other sections, I shall begin with it.
+
+_P_E_R_I_O_D_S
+
+Historical periods are the most complicated way to customize
+xconq,  and  can  be difficult to get right.  There are many
+hundreds of numbers, each of which must be in  balance  with
+every  other.   At  best,  a mistake will result in a period
+whose winning strategies are quite simple;  at worst,  _x_c_o_n_q
+will  hang  or  core dump.  (_x_c_o_n_q will make some efforts to
+check the numbers.) Although  most  historical  periods  are
+defined  in  the  period sections of mapfiles, one period is
+compiled into _x_c_o_n_q (usually a version of WW II, since it is
+most  familiar).  Compiling other periods (using the utility
+_p_e_r_2_c) is straightforward, and there is no problem with mak-
+ing  unusual  default  periods for the program, but in prac-
+tice, periods do not take very long to read.
+
+The header of the period section has the form
+
+     Period _e_x_t_e_n_s_i_o_n
+
+where _e_x_t_e_n_s_i_o_n is the currently-unused extension flag.
+
+The remainder of the description is in  a  postfix  language
+similar to Forth or Postscript(tm), but even simpler.  _x_c_o_n_q
+includes an interpreter for this language, and program  exe-
+cution  results in a filled-in period description.  There is
+a compiler, called _p_e_r_2_c; it is used to produce a C  version
+of the period definition which is then compiled into _x_c_o_n_q.
+
+The objects of this language are quite  simple.   There  are
+only  integers,  strings, and vectors of integers.  Integers
+and strings have direct representation as tokens, as do sym-
+bols, while integer vectors must be constructed using square
+brackets or one of the  predefined  vector-returning  words.
+Tokens  are always separated by whitespace, which means whi-
+tespace may _n_e_v_e_r be part of a token (backslash may be  used
+for this purpose at some future date).  Thus, the syntax for
+a token is fairly simple:
+
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 4 -
+
+
+     token -> [+-]*[0-9][0-9]*[%]* | "[~"]*" | [~"+-0-9].*
+
+In other words, numbers are digits  optionally  preceded  by
++/-  and  followed by %, while strings are anything enclosed
+in double quotes, and symbols are anything else that is  not
+white  space.   A  semicolon  is  the comment character; the
+characters from the semicolon to the end  of  the  line  are
+discarded.   Numbers  are  limited  to the typical range for
+signed shorts; -32768 to 32767.  The percent sign % is  just
+for  readability  (since  many numbers are percentages), and
+its presence or omission has no effect on anything.
+
+Numbers and strings merely get pushed on  the  stack,  while
+symbols  are  assumed to be defined words.  The reader looks
+them up in the dictionary  and  executes  the  associated  C
+function,  if  one  is  defined  (otherwise, the symbol gets
+pushed).  Nearly all words take a fixed number of  arguments
+from  the  stack  and  push nothing, although there are some
+exceptions.  The program is terminated by the word end.
+
+Integer vectors are useful for filling  in  large  parts  of
+arrays.   They are individual objects, built using the words
+[ and ].
+
+Usage of these depends on the word, but typically words with
+two  or  more  arguments may include two vectors among them.
+For instance, the line
+
+      [ 1 1 2 8 ]  [ i a b B ]  hp
+
+sets the hit points for four types of units; 1 for unit type
+i, 8 for unit type B, and so forth.
+
+The words below generally follow some extremely regular pat-
+terns.  Most one-argument words define things for the entire
+period.  Most two-argument words define attributes of  units
+or  resources,  and  may be thought of one-dimensional array
+operations, while three-argument words usually fill in  two-
+dimensional  arrays.  In the two-argument and three-argument
+cases, the first argument (deepest  in  the  stack)  is  the
+value,  while  second  and  third arguments are indices.  At
+present, there are no words with four or more arguments.
+
+One-dimensional operations allow three  cases  of  the  four
+possibilities  for  vectors  and  scalars:  scalar value and
+index(set), scalar value/vector index (fill),  vector  value
+and  index  (mapping).  Two-dimensional operations offer six
+of the eight possible combinations (encoded here with S  for
+scalar  and  V  for vector, in the order value,index,index),
+disallowing only a vector value with either  two  scalar  or
+two  vector  indices (VSS and VVV), since these combinations
+are not very meaningful.  The six other combinations are SSS
+(element set), SVS and SSV (row fill), SVV (array fill), VVS
+and VSV (row mapping).  All of these combinations are useful
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 5 -
+
+
+- see existing periods for examples of their use.
+
+The following descriptions cover all the predefined words of
+the period language.  Most words correspond to period attri-
+butes, and thus have an associated default value;  when  not
+explicitly  mentioned,  the  default is 0.  For arguments of
+type _b_o_o_l, both 1 and 0 or true  and  false  are  valid  (an
+argument  characterized  as _b_o_o_l may still be a vector of 1s
+and 0s).  Arguments of type _n, _n%, and _n._0_1%  are  all  just
+integers.
+
+First, there are some useful words not  specific  to  period
+definition.
+
+true
+
+falsePushes a 1 and a 0 on the stack, respectively.
+
+[    Marks the beginning of a vector.  The following objects
+     must all evaluate to numbers only.
+
+]    Marks the end of a vector.  All numbers going  back  to
+     the  last  [  are  popped  and collected into a vector,
+     which is pushed back on the stack.
+
+_v_a_l_u_e _n_a_m_e define
+     Define the string _n_a_m_e to be a  word  that  pushes  the
+     object _v_a_l_u_e onto the stack.  This is especially useful
+     for assigning names to vectors, for instance  a  vector
+     of all cities or all ships.
+
+printPrint the current contents of the stack  onto  standard
+     output,  surrounded  by  /* */.  Very useful for debug-
+     ging!
+
+The global period definition words.
+
+_s_t_r_i_n_g period-name
+     Defines the name of the period that will  be  displayed
+     on startup.  Defaults to "unspecified".
+
+_s_t_r_i_n_g font-name
+     Defines the name of the font that will be  used.   This
+     is  not  needed  if  bitmaps  are  being  used instead.
+     Defaults to the name of the text font.  See below for a
+     discussion of bitmaps and fonts.
+
+The words to define new kinds of units, resources, and  ter-
+rain  all  add new words that push the number of their unit,
+resource, or terrain type onto the stack.  The numbering  is
+in  order;  the first of each type will be numbered 0.  Most
+of the period definition words use these values  as  indices
+when filling up arrays of numbers.
+
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 6 -
+
+
+_c_h_a_r _n_a_m_e _s_t_r_i_n_g utype
+     Define a type of unit.  The arguments are unit  charac-
+     ter (a string of length one), full name, and a one-line
+     help string.  The unit may thereafter be referred to by
+     either  its  character (as a one-char symbol) or by its
+     name.  Things will not work if a  blank  or  any  other
+     special  characters  (such as plus and minus signs) are
+     used as a unit character.   Mixing  terrain  characters
+     and  unit characters is also a bad idea, since both may
+     be used by a graphical display.  At present, up  to  30
+     or so unit types may be defined.
+
+_c_h_a_r _n_a_m_e _h_e_l_p rtype
+     Define a type of resource, by both name and  character,
+     and  supply  a help string for it.  The characters must
+     be distinct from unit characters, otherwise  this  word
+     is identical to utype.
+
+_c_h_a_r _n_a_m_e _c_o_l_o_r ttype
+     Define  a  type  of  terrain.   Unlike  the  other  two
+     definers,  the  terrain character does _n_o_t become a new
+     word, although the  name  still  does.   The  character
+     should  be  defined  in  the  basic _x_c_o_n_q font (the one
+     named xconq.onx, in the X10 interface), if  the  period
+     is  to  be  used with an interface that needs it (mono-
+     chrome X only, at this  writing).   The  color  may  be
+     either  approximate ("brown") or exact ("#334455"), but
+     in any case, the interpretation is up to the interface.
+
+u*   Push a vector of all unit types in order.
+
+r*   Push a vector of all resource types in order.
+
+t*   Push a vector of all terrain types in order.
+
+nothing
+     Push the index of a non-unit onto the stack.  This word
+     cannot  be  used  for unit attributes, but it is useful
+     for certain attributes  whose  values  are  unit  types
+     (first-unit,  first-product).   Use of this as an index
+     with any word that sets unit attributes  is  guaranteed
+     to cause nasty coredumps...
+
+_s_t_r_i_n_g _u_n_i_t icon-name
+     Set the name of the icon for the given unit  type.   If
+     undefined,  then  the  unit's character will be used in
+     whichever font is being used for unit icons (which  may
+     even  be the text font - works but not too attractive).
+     Definition of an icon overrides any  character  in  any
+     font.  As with the terrain, the exact interpretation of
+     this word  is  up  to  the  graphics  interface  -  for
+     instance,  the  curses interface ignores both the font-
+     name and icon-name words entirely.  In X, the  name  is
+     the  name  of  a  file  in  the usual bitmap format, as
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 7 -
+
+
+     produced by the _b_i_t_m_a_p program.  The actual  file  name
+     is  produced  by  appending  ".b"  for  X10 bitmaps and
+     ".b11" for X11 bitmaps.  The X11  interface  will  also
+     look for X10 bitmap files.
+
+_t_e_r_r_a_i_n default-terrain
+     Set the type of terrain to be substituted while reading
+     a  map with incomprehensible terrain characters.  Occa-
+     sionally useful, if the set of terrain types is a  sub-
+     set of the standard set.
+
+Initialization characteristics of a  period  are  used  only
+during  synthesis  of  maps, sides, and units, which happens
+when they are not supplied from a mapfile.  Periods that are
+used  only with complete scenarios need not use any of these
+words.
+
+_n% _t_e_r_r_a_i_n min-alt
+     Set the minimum percentile of terrain  elevations  that
+     result  in  the  given terrain type.  Together with the
+     other three words following, it is possible  to  subdi-
+     vide  all  the  possible  altitudes and moisture levels
+     into different kinds of terrain.  For instance,  desert
+     in the standard period ranges from sea level (70 desert
+     min-alt) to high elevations  (93  desert  max-alt)  but
+     only  in  the  lowest percentiles of moisture (0 desert
+     min-wet, 20 desert max-wet).  It is important that  all
+     percentiles  be  assigned  to some terrain type, or the
+     map generator will  complain;  when  designing  terrain
+     combinations,  it is helpful to make a graph with alti-
+     tude percentiles 0-100 on one axis and moisture percen-
+     tiles on the other.
+
+_n% _t_e_r_r_a_i_n max-alt
+     As for min-alt, but set the  maximum  altitude  percen-
+     tile.  Defaults to 100.
+
+_n% _t_e_r_r_a_i_n min-wet
+
+_n% _t_e_r_r_a_i_n max-wet
+     Set the minimum and maximum percentiles of world  mois-
+     ture  levels  that  result  in  the given terrain type.
+     Deserts should range in  the  low  percentiles  (0-20),
+     while  rain  forests  should  be  high  (90-100).   The
+     minimum defaults to 0, while the maximum is 100.
+
+_n% alt-roughness
+     Set a rather mysterious number that controls whether  a
+     random  map  tends  toward  large  continents or archi-
+     pelagos of small islands.  It must range between 0  and
+     100.  Altitude roughness of 0 will result in a map with
+     one large continent, while 100 produces dozens of  tiny
+     random  islands,  and  drastic altitude variations from
+     one hex to the next.  Defaults to 80.
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 8 -
+
+
+_n% wet-roughness
+     Set the "moisture roughness", which  is  like  altitude
+     roughness,  but affects the distribution of wet and dry
+     areas.  Defaults to 70.
+
+_t_e_r_r_a_i_n edge-terrain
+     Set the type of terrain to fill in on the northern  and
+     southern  edges of a map.  Best user-friendliness is to
+     have a type that is scarce elsewhere, so the edges  are
+     not mistaken for normal terrain.
+
+_d_i_s_t_a_n_c_e country-size
+     Set the radius of a randomly-placed country, in  hexes.
+     The  country  is  always  hexagonal  in  shape, and the
+     center hex is not counted in the  radius.   The  radius
+     should  be  sufficient  to  accommodate all the initial
+     units, without crowding them.  For radius r, the number
+     of  hexes  is 3/4*(2r+1)**2.  Keep in mind that terrain
+     may reduce the number of available hexes even  further.
+     If  one  type of unit can occupy another, then they are
+     free to be placed in the same hex.  Defaults to 3.
+
+_d_i_s_t_a_n_c_e country-min-distance
+
+_d_i_s_t_a_n_c_e country-max-distance
+     Set  the  minimum  and  maximum  distances  of  country
+     centers  from  each  other, in hexes.  These values are
+     sometimes tricky to set properly.  If too small,  coun-
+     tries  will mostly overlap; if too large, then attempts
+     to use small maps will  fail;  if  too  close  to  each
+     other,  placements  can also fail.  Default to 7 and 60
+     hexes, respectively.
+
+_u_n_i_t first-unit
+     Set the type of unit that player will  be  started  off
+     in.   Setting  this to nothing has the effect of giving
+     every unit in the country to the player at the  outset.
+     Production  will  not  be set automatically, so this is
+     not recommended for novices, who  tend  to  find  large
+     numbers  of units confusing at the outset.  Defaults to
+     nothing.
+
+_u_n_i_t first-product
+     Set the type of unit that will be  built  automatically
+     first.   A  "cheap"  (quick  to  build) type is usually
+     best,  although  interesting  situations  could  result
+     from,  say, the automatic production of one atomic bomb
+     at the outset (note that all sides start out in exactly
+     the same way).  Defaults to nothing.
+
+_n _u_n_i_t in-country
+     Set the number of units of the given type in a player's
+     country.  These units are randomly scattered, with some
+     bias towards the middle of the country, and subject  to
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 9 -
+
+
+     terrain  limitations  via  the  favored  parameter (see
+     below).
+
+_n _u_n_i_t density
+     Set the total number of units appearing throughout  the
+     map,  at  the  rate of one per ten thousand hexes.  The
+     numbers of units appearing in countries  is  subtracted
+     first,  so  that the final density of units is indepen-
+     dent of the  number  of  players.   If  this  value  is
+     nonzero, then at least one unit will appear on the map,
+     even if the map is very small (i.e. the calculation  of
+     numbers  rounds  up  not  down).  Units not assigned to
+     countries to meet the quota set  by  in-country  always
+     become neutral.
+
+_b_o_o_l _u_n_i_t named
+     Set a type of unit to get a random name during initial-
+     ization.   The names are usually the names of towns, so
+     this flag should  be  used  judiciously  (A  battleship
+     named  "Wankers Corner" is only briefly amusing!).  The
+     value can also be set to 2, in which case the unit name
+     will  be displayed by itself, without side name or unit
+     type name.
+
+_n_a_m_e uname
+     Define the string _n_a_m_e to be a plausible name for  ran-
+     dom assignment to an initial named unit.  The name will
+     be included with any previously defined, including pos-
+     sibly  ones  in the compiled-in period.  This behavior,
+     which is unlike any other period word except for sname,
+     is  intended to ensure that each period need not define
+     its own list of names.
+
+clear-unit-names
+     Reset the list of unit names.  This is  appropriate  if
+     the  compiled-in  list  is  completely  wrong  for  the
+     period.
+
+_n% _t_e_r_r_a_i_n _u_n_i_t favored
+     Set the probability of the unit being on the given type
+     of terrain at the outset.  The default of 0 is an abso-
+     lute prohibition against placing the unit on that  type
+     of terrain, thus every period must specify at least one
+     non-zero value for some terrain type and  some  initial
+     unit  type.   (Note  that this does not preclude a unit
+     type with no favored terrain, but it must  be  able  to
+     occupy  some  other unit already placed.  In fact, this
+     is a useful way to force one initial unit to start  out
+     inside another.)
+
+     This parameter is tricky to use properly, and not  very
+     flexible.   The  problem  is a widely differing favored
+     terrains for initial units may be too  constraining  to
+     work  with  the typical random map.  For instance, very
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 10 -
+
+
+     few small countries will include both ice and open sea,
+     or  deserts  and  forests  and swamps.  Failure to find
+     such combinations will result in  games  exiting  while
+     still  initializing, thus frustrating erstwhile players
+     of the period.  Best results will be had if the favored
+     terrains  are  the same for all initial types of units,
+     and the terrain types are common on random  maps.   (At
+     present,  the most-favored, or the lowest-numbered type
+     among equally-favored terrains should be  plentiful  on
+     the map; this is to get around a bug.)
+
+_n known-radius
+     Set the area of the world known about, in  those  cases
+     where the world is not already known.  _n is measured in
+     hexes, and represents  a  radius  which  will  be  seen
+     around each of the starting units.
+
+_b_o_o_l _u_n_i_t already-seen
+     Set the type of unit that is or  is  not  seen  at  the
+     outset.   This  should  usually  be true of things like
+     cities, independently of their always-seen setting.
+
+_n% _r_e_s_o_u_r_c_e _u_n_i_t stockpile
+     Set the percentage of capacity for the  given  resource
+     that each unit will start out with.  Defaults to 100.
+
+_n_a_m_e sname
+     Declare the string _n_a_m_e to be a plausible name for ran-
+     dom  assignment  to  a side.  The name will be added to
+     the others already defined,  including  ones  from  the
+     compiled-in period.
+
+clear-side-names
+     Reset the list of side names.  This is  appropriate  if
+     the  compiled-in  list  is  completely  wrong  for  the
+     period, but if used, you must supply at least  as  many
+     side names as there are possible sides (7 or so).
+
+_n _t_e_r_r_a_i_n inhabitants
+     Set the number of inhabitants in each hex of a  country
+     with  the  given  type of terrain.  The number is rela-
+     tive, and at present  is  only  treated  as  a  boolean
+     value.
+
+_n _t_e_r_r_a_i_n independence
+     Set the "independence" of the inhabitants in the  given
+     type of terrain; how they react to enemy units in terms
+     in attrition, supply, etc. [NIY]
+
+The first phase in a turn is devoted to spying.  This is the
+revealing  of  all  or  part  of  a side's unit positions to
+another randomly-selected side.  It is  controlled  by  only
+two parameters.
+
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 11 -
+
+
+_n% spy-chance
+     Set the percentage chance of spying occurring  on  this
+     turn.   If the chance is low, then the player doing the
+     spying will get a message, otherwise the  display  will
+     be  silently  updated.   The player spied upon is never
+     informed.  Defaults to 1.
+
+_n% spy-quality
+     Set the percentage of enemy units  that  will  be  seen
+     when spying is successful.  Defaults to 50 (i.e. on the
+     average about half of the side's units will be seen).
+
+The second  phase  in  a  turn  determines  any  revolts  or
+surrenders, attrition, and accidents.  Since these are (usu-
+ally)  rare  events,  the  probabilities  are  set  in  one-
+hundredth  percent  increments.   Revolts  happen  anywhere,
+while surrender happens only  if  enemy  units  are  nearby.
+Attrition is the loss of single hit points, without actually
+destroying a unit, while accident is the  complete  destruc-
+tion of the unit (both of these depend on terrain).
+
+Note that with  100  units  in  play,  the  lowest  possible
+nonzero  chance  of  1  for  a  value  still  results  in an
+occurence of that sort of accident every 100 turns or so, so
+these parameters require a "light touch".
+
+_n._0_1% _u_n_i_t revolt
+     Set the base chance for the unit  to  revolt  spontane-
+     ously  in  that turn.  This chance is reduced by better
+     morale and maybe other things.
+
+_n._0_1% _u_n_i_t surrender
+     Set the base chance  for  surrender  to  some  adjacent
+     enemy unit.  Each enemy unit present adds to the chance
+     by this amount.
+
+_n._0_1% _u_n_i_t siege
+     Set the additional chance for surrender when  the  unit
+     is completely surrounded by enemy units.  This is added
+     to the basic surrender chance.
+
+_n._0_1% _t_e_r_r_a_i_n _u_n_i_t attrition
+     Set the chance of a unit  losing  a  single  hit  point
+     while in the given terrain.
+
+_n _u_n_i_t attrition-damage
+     Number of  hit  points  lost  when  attrition  happens.
+     Defaults  to  1.   Note that repair is in the following
+     phase, and 1 hp of attrition damage might  be  repaired
+     immediately, and appear not to have happened.
+
+_s_t_r_i_n_g _u_n_i_t attrition-message
+     Set  what  to  say  when  unit  is  hit  by  attrition.
+     Defaults  to "suffers attrition".  If the string is "",
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 12 -
+
+
+     then the message will be suppressed entirely.
+
+_n._0_1% _t_e_r_r_a_i_n _u_n_i_t accident
+     Set the chance of completely losing the unit  while  in
+     the  given  terrain.  Accidents should be restricted to
+     definite hazardous situations, to go along  with  move-
+     ment  constraints  -  for instance, carriers in shallow
+     water should  move  more  slowly  and  have  a  nonzero
+     accident  rate.  See random movement for another way to
+     achieve similar effects.
+
+_s_t_r_i_n_g _u_n_i_t accident-message
+     Set what to say  when  unit  is  lost  in  a  disaster.
+     Defaults to "has met with disaster".
+
+The next phase of a turn handles creation of new  units  and
+repair  of damaged units.  Units can only be created by cer-
+tain other kinds of units, limited  both  by  time  and  raw
+materials.  Also there are startup and research times.
+
+_n _u_n_i_t_2 _u_n_i_t make
+     Set the time in turns needed for a unit of type _u_n_i_t to
+     build  one  unit  of  type  _u_n_i_t_2,  assuming sufficient
+     resources to do so.
+
+_b_o_o_l _u_n_i_t maker
+     Set the unit type to be a "maker".  Makers always build
+     unless  explicitly  idled, and may move while building.
+     If a period starts with no movers,  then  it  needs  at
+     least  one  maker in the country, who will prompt for a
+     unit type at the beginning of a game.
+
+_b_o_o_l _u_n_i_t occupant-produce
+     If true, then a unit may produce  as  the  occupant  of
+     another  unit.   Default  is FALSE.  Makers ignore this
+     flag and always produce.
+
+_n% _u_n_i_t startup
+     Set the extra time needed to build the first  unit,  if
+     the maker was producing something else before.  Startup
+     time should be higher for high-tech or large units, for
+     instance  to  represent  tooling or production pipeline
+     startup.
+
+_n% _u_n_i_t research
+     Set the extra time needed for a side to build the  very
+     first  unit  of that type.  This time is in addition to
+     the startup time for the  first  unit.   Long  research
+     time  is a good way to keep a unit type out of play for
+     awhile.
+
+_n% _u_n_i_t_2 _u_n_i_t research-contrib
+     Percent of research on _u_n_i_t_2  to  count  towards  _u_n_i_t.
+     All research contributions are summed and will never do
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 13 -
+
+
+     more than eliminate research on a unit type.  Only com-
+     pleted  research  is counted (i.e., a unit must already
+     have been produced).
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t to-make
+     Set the total amount of a resource type needed to build
+     a  unit.  This amount is amortized over the normal con-
+     struction schedule, which means  that  extra  resources
+     are consumed by startup or research times (representing
+     mistakes and experiments).
+
+_n _u_n_i_t_2 _u_n_i_t repair
+     Set the time needed for the unit type  _u_n_i_t  to  repair
+     one hit point of damage to unit type _u_n_i_t_2.  One of the
+     two units must be able to occupy the other; It is  also
+     legitimate for a unit to repair itself.  Resources used
+     to build units are also used at the same rate to accom-
+     plish repairs.
+
+The supply phase of a turn handles both  the  production  of
+resources and their distribution via supply lines.  Resource
+production involves a three-dimensional array indexing  unit
+type,  resource type, and terrain type, but supply lines are
+measured only by length and resource type.  Supply lines are
+always interrupted by enemy presence.
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t produce
+     Set the basic amount of each resource produced by  each
+     unit in one turn.
+
+_n _t_e_r_r_a_i_n _u_n_i_t productivity
+     Set the percentage productivity of a unit on a type  of
+     terrain.   This is multiplied with the basic production
+     rate to get actual production,  so  productivity  of  0
+     completely  disables  production  on that terrain type,
+     and productivity of 100  is  yields  the  maximum  rate
+     specified by produce.
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t storage
+     Set the unit's capacity to carry each sort of resource.
+     Amount  carried  does  not  affect  unit's performance.
+     When the value is 0, displays for  that  type  of  unit
+     will not mention this resource type at all.
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t consume
+     Set the amount of resources consumed by the unit  in  a
+     turn,  even  if  it  doesn't  move or do anything else.
+     This includes riding as a passenger.  This  only  comes
+     into  play if the unit has used less than its base con-
+     sumption while moving.  In other words, the total  sup-
+     ply  usage for one unit in one turn is max(#moves * to-
+     move, consume).  If the unit runs  out  of  a  resource
+     that it must consume, it dies due to starvation.
+
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 14 -
+
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t in-length
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t out-length
+     These two are used together to determine the length (in
+     hexes)  of  supply lines between units.  The given type
+     of resource can only be transferred from unit type A to
+     unit type B if the distance is less than the minimum of
+     the in-length of  B  and  the  out-length  of  A.   For
+     instance, the in-length for a fighter's fuel might be 3
+     hexes, while the out-length of fuel from a  city  is  4
+     hexes.   If the fighter's out-length is 0, then it will
+     be constantly supplied with fuel when within 3 hexes of
+     a  city,  but  will never transfer any fuel to the city
+     unless it actually lands there.  An in-  or  out-length
+     of  0 means that the two units must be in the same hex,
+     while a negative length disables the automatic transfer
+     completely.  Long out-length lines should be used spar-
+     ingly, since  the  algorithm  uses  the  out-length  to
+     define the radius of search for units to be resupplied.
+     Supply lines are not affected by terrain at present.
+
+_b_o_o_l _u_n_i_tconsume-as-occupant
+     If this is true, than this type of unit does  not  con-
+     sume  any supplies as long as it is an occupant on some
+     transport.  This is useful for  units  such  as  planes
+     which  always  consume  fuel  in the air but not on the
+     ground.  This defaults to TRUE.
+
+_n% _u_n_i_t survival
+     Chance that a unit type can  survive  on  no  supplies.
+     The test is made once per turn.
+
+_s_t_r_i_n_g _u_n_i_t starve-message
+     Set what to say when unit has no more of some supply to
+     consume.  Defaults to "runs out of supplies and dies".
+
+The movement phase is the main part of a turn in _x_c_o_n_q,  and
+the  only part involving interaction with players.  All com-
+bat happens during the movement phase.
+
+_n _u_n_i_t speed
+     Set  the  maximum  theoretical  speed  of  a  unit,  in
+     hexes/turn.   If  the  unit  cannot move on any sort of
+     terrain, it will never be prompted about -  thus  every
+     period should define at least one type of moving unit.
+
+_n _t_e_r_r_a_i_n _u_n_i_t moves
+     Set extra moves used up on  each  type  of  terrain.  0
+     indicates no decrease from theoretical max, 2 indicates
+     a move into that  type  of  terrain  uses  up  3  moves
+     instead  of  1,  and -1 indicates that movement on that
+     type of terrain is not possible.  Defaults to -1.
+
+_n._0_1% _t_e_r_r_a_i_n _u_n_i_t random-move
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 15 -
+
+
+     Set the randomness of movement of a unit  on  the  ter-
+     rain.   This  is different from disaster and attrition,
+     since it is not always fatal, and happens  only  during
+     attempts to move.  However, collisions with other units
+     or with impassable terrain, due to  random  moves,  are
+     always fatal.
+
+_b_o_o_l _u_n_i_t free-move
+     Set whether the unit can move even if there is insuffi-
+     cient   movement  allowance  remaining  in  this  turn.
+     Defaults to true.  (Most board wargames make this false
+     -  if you don't have enough movement points to meet the
+     entry requirement for a hex, that's too  bad.)  Can  be
+     useful to make "double movement phases", if attack time
+     is equal to movement allowance; a unit can only  attack
+     units  that it is adjacent to at the start of the move-
+     ment phase.
+
+_b_o_o_l _u_n_i_t one-move
+     Set whether the unit can make exactly one  move  before
+     dying  (appropriate  for  rockets  and  other automatic
+     equipment). [NIY]
+
+_b_o_o_l _u_n_i_t jump-move
+     Set whether a unit can jump over another  unit  to  get
+     somewhere. [NIY]
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t to-move
+     Set the amount of resource used by a unit to  move  one
+     hex.  The amount taken is independent of the terrain in
+     the hex.  If the unit is out of any movement  resource,
+     it is immobilized until it gets more.
+
+Transportation-related  parameters.   Capacity  is  measured
+both  by  number  and volume of occupants.  For instance, if
+you wanted a transport to carry  up  to  8  infantry  and/or
+armor,  but  no  more  than 4 armor units, then capacity for
+infantry should be 8 and capacity for armor 4,  the  volumes
+for each should be 1, while the transport hold-volume should
+be 8.
+
+_n _u_n_i_t_2 _u_n_i_t capacity
+     Set the basic carrying capability of a  transport  type
+     _u_n_i_t for its occupants of type _u_n_i_t_2.
+
+_n _u_n_i_t hold-volume
+     Set the volume capacity of a transport.  Volume measure
+     is  quite  arbitrary,  and is used only for comparison.
+     The default  value  of  0  implies  infinite  capacity,
+     volume-wise.
+
+_n _u_n_i_t volume
+     Set the volume of a unit.  The volume of a unit may  be
+     smaller  than  its  hold-volume, the code will not care
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 16 -
+
+
+     about this.
+
+_n _u_n_i_t_2 _u_n_i_t enter-time
+     Number of moves needed to enter a transport.  This is a
+     time measure; extra supplies are not used up.
+
+_n _u_n_i_t_2 _u_n_i_t leave-time
+     Number of moves needed to leave a transport; similar to
+     enter-time.
+
+_n% _u_n_i_t_2 _u_n_i_t alter-mobility
+     Set the effect of an occupant on the transport's  speed
+     as a ratio of the transport's usual speed.  Defaults to
+     100;  smaller values slow the transport, and 0 prevents
+     it  from  moving  entirely.  To simplify the code, only
+     the effect of one (randomly chosen)  type  of  occupant
+     has this effect.  If a transport has two types of occu-
+     pants each of which alter its  speed  differently,  the
+     resulting  transport  speed will be unpredictable.  The
+     total slowdown is multiplied by the number of occupants
+     of all types.
+
+Seeing is an important part of _x_c_o_n_q, and  needs  parameters
+to  accommodate submarines, radar installations, and Indians
+hiding in the woods.  The  visibility  of  a  unit  and  the
+intensity  of  viewing are computed separately, and compared
+to get the final decision on seeing something.  This doesn't
+allow for much differential between two types of units view-
+ing a third, but that's life.  For units seeing things at  a
+distance,  the  chances  are interpolated linearly, from the
+best conditions (adjacent hex) to worst (maximum range).
+
+_b_o_o_l all-seen
+     If true, then all sides see all of each other's  units.
+     If  secrecy  unneeded  (as  in a board game), this will
+     speed up the display process somewhat.
+
+_n% _u_n_i_t see-best
+     Set the basic chance of  one  unit  seeing  any  other,
+     under best possible conditions.  Defaults to 100.
+
+_n _u_n_i_t see-range
+     Set the maximum distance in hexes at which the unit can
+     see anything.  Defaults to 1 (adjacent hexes only).
+
+_n% _u_n_i_t see-worst
+     Set the chance of seeing a unit at the  maximum  range.
+     Defaults to 100.
+
+_n _u_n_i_t visibility
+     Set the basic chance of a unit to  be  seen.   Crippled
+     unit  is  more  visible,  in  proportion  to  hp  loss.
+     Defaults to 100.
+
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 17 -
+
+
+_n% _t_e_r_r_a_i_n _u_n_i_t conceal
+     Set the percent effect of terrain on seeing  the  unit.
+     This is subtracted from the basic chance, since it is a
+     "concealment factor".
+
+_b_o_o_l _u_n_i_t always-seen
+     Declare the unit to be of a type that  is  always  seen
+     and  up-to-date.   This  applies  only  to  units whose
+     underlying hexes have been seen.  This  is  useful  for
+     units  like  towns,  which  are  unlikely  to disappear
+     secretly.
+
+Combat is part of movement, and has its  own  large  set  of
+parameters.   The  basic plan of combat is for attackers and
+defenders to hit each other, then attackers  to  attempt  to
+capture.   Success  of  a hit attempt depends on a number of
+attributes, including chances, terrain, and the availability
+of the correct sort of ammo.
+
+_b_o_o_l _u_n_i_t multi-part
+     Set a unit to be treated as  an  aggregate  of  smaller
+     identical units.  Affects various things. [NIY]
+
+_n _u_n_i_t hp
+     Set the maximum number of hit points for each part of a
+     unit.  Defaults to 1, may never be set any lower.
+
+_n _u_n_i_t crippled
+     Set the hit point level below which the  unit  is  con-
+     sidered  to  be crippled.  Below this level, repair and
+     construction ceases, supply production is reduced, max-
+     imum  speed  starts to decrease, and the bridging capa-
+     bility is disabled.
+
+_n% _u_n_i_t_2 _u_n_i_t hit
+     Base chance of a single attack by the type _u_n_i_t hitting
+     the  defender  _u_n_i_t_2, assuming the resources are avail-
+     able.  If chance to hit is 0, attacker cannot attack or
+     defend itself.
+
+_n% _t_e_r_r_a_i_n _u_n_i_t defense
+     Set the decreased chance of hitting  if  the  defending
+     type  _u_n_i_t is in that terrain type.  Percentage is sub-
+     tracted from base chance.
+
+_n% neutrality
+     Set the change in defense for neutral units.   This  is
+     subtracted  from chances to hit and capture, but the _n%
+     can  be  negative,  which  would  make  it  harder   to
+     hit/capture.
+
+_n _u_n_i_t_2 _u_n_i_t damage
+     Number of hit points that the defender _u_n_i_t_2 loses when
+     hit by its attacker _u_n_i_t.
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 18 -
+
+
+_n nuke-hit
+     Minimum damage for a hit to qualify as a nuclear  blast
+     and be displayed appropriately.  Default value is 50.
+
+_b_o_o_l _u_n_i_t self-destruct
+     Declare that unit self-destructs when it attacks.  This
+     eliminates some weird messages and hit chances.
+
+_b_o_o_l counterattack
+     When true, combat  is  two-way;  the  initiator  of  an
+     attack  is also hit by a counterattack.  Otherwise, the
+     defender must wait to get  its  revenge.   Defaults  to
+     true.
+
+_b_o_o_l capturemoves
+     When true, a captured unit can  immediately  be  moved.
+     If  false,  then a captured unit can not be moved until
+     the next turn.  Default is TRUE.
+
+_b_o_o_l _u_n_i_t can-counter
+     Like counterattack, but applies only to particular unit
+     types being attacked.  Defaults to true.
+
+_n% _u_n_i_t_2 _u_n_i_t capture
+     Set the base chance of  the  type  _u_n_i_t  capturing  the
+     defender  type  _u_n_i_t_2.   This  is  conditional  on both
+     attacker and defender surviving initial  hits,  and  is
+     modified by morale and quality of both sides.
+
+_b_o_o_l _u_n_i_t_2 _u_n_i_t bridge
+     True if the unit type _u_n_i_t_2 can be captured by  another
+     unit _u_n_i_t, even across impassable terrain.
+
+_n% _u_n_i_t changes-side
+     Set chance that the given unit  will  change  sides  if
+     captured.   This is appropriate for units that are pri-
+     marily hardware or otherwise indifferent to their fate.
+     Units  that are captured and do not change sides become
+     prisoners (prisoners are not implemented yet).
+
+_n _u_n_i_t_2 _u_n_i_t guard
+     Set the number of unit hit points required to  garrison
+     or guard a captured type _u_n_i_t_2, whether or not the cap-
+     tured unit has changed sides  (at  present,  it  always
+     does).  The hit point loss is permanent.
+
+_n% _u_n_i_t retreat
+     Set the base chance that a  unit  will  retreat  rather
+     than  be  hit.   This choice depends on ability to move
+     into an  adjacent  hex  and  on  morale,  quality,  and
+     fatigue.
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t hits-with
+     Set the amounts of each resource used as  ammo  by  the
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 19 -
+
+
+     unit.
+
+_n _r_e_s_o_u_r_c_e _u_n_i_t hit-by
+     Set the amounts of each resource necessary to  score  a
+     hit  on the unit.  This is correlated with the previous
+     parameter to decide if right sort of ammo is  available
+     for an attack.
+
+_n _u_n_i_t_2 _u_n_i_t protect
+     Set the level of protection that _u_n_i_t offers to  _u_n_i_t_2.
+     Transports  protect  their  occupants by only letting a
+     percentage of  hits  get  through.   Occupants  protect
+     their  transports  by  reducing the chance of a hit and
+     increasing chance of a counterattack.  (The default  of
+     0 implies terrible carnage if a full transport is hit.)
+
+_n _u_n_i_t combat-time
+     Set the extra number of moves used by an attack.
+
+_s_t_r_i_n_g _u_n_i_t destroy-message
+     Set what to say when a unit is killed in combat, as  an
+     active  verb  for  what the destroying unit has done to
+     its victim.  Defaults to "destroys".
+
+General characteristics are not really classifiable anywhere
+else.
+
+_n _u_n_i_t territory
+     Set the territorial value of a unit.  Primarily used by
+     machine players and win/lose conditions.
+
+_n _u_n_i_t max-quality
+     Set the maximum quality achievable by a unit.
+
+_n% _u_n_i_t veteran
+     Set the effect of one point of quality on hit and  cap-
+     ture chances.
+
+_n _u_n_i_t max-morale
+     Set the maximum morale to which a unit can rise.
+
+_n% _u_n_i_t control
+     Set the chance of a unit obeying its orders.   Defaults
+     to 100.  When the unit does not obey orders, it makes a
+     decision using the machine players' algorithm.
+
+_b_o_o_l _u_n_i_t can-disband
+     Set whether a 'D' disband command can be  used  to  get
+     rid  of a unit.  It should not be possible to disband a
+     city, for instance, to eliminate it as a strategic tar-
+     get.   Note  that the default of 0 effectively disables
+     the disbanding command entirely.
+
+_n% efficiency
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 20 -
+
+
+     Units disbanded in a transport can have  the  resources
+     used  to build them reclaimed - this parameter sets the
+     percentage that is actually obtained.
+
+_b_o_o_l _u_n_i_t neutral
+     Set to true if unit can exist as a neutral.  If  false,
+     then  anything that would cause the unit to become neu-
+     tral (revolt, surrender of owner)  has  the  effect  of
+     removing it instead.  Defaults to false.
+
+Miscellaneous words.
+
+_n hostility
+     Set the level of hostility exhibited  by  a  population
+     toward a unit from some other side. [NIY]
+
+begin{notes}
+     Declare the beginning of the  designer's  notes.   This
+     word  kicks  in a special reader that absorbs all lines
+     until it sees the line "end{notes}".   The  intervening
+     lines  are  saved  as  period  notes  and listed out in
+     "parms.xconq".  The notes should rationalize the design
+     and discuss features of special interest to the player.
+
+end  Marks the end of the period description.
+
+Nearly all the elementary programming  errors  are  checked,
+such  as  stack  over/underflow,  and  as many of the period
+parameters as possible will be checked,  although  there  is
+plenty of room for subtle loopholes.  You should think care-
+fully about the consequences of each parameter,  being  par-
+ticularly  sensitive to degenerate winning strategies.  Most
+common are units that are too powerful, or that are built so
+quickly  that  they  overwhelm  any opposition.  The players
+should always be a little "hungry"; not able to get quite as
+much of units or resources as they would really like.
+
+Although there are many interesting  possibilities  inherent
+in this period description language, you should avoid making
+the period too complex to be humanly playable.  The compiled
+form of the period description can involve over 16,000 indi-
+vidually settable numbers, each with an  expected  range  of
+perhaps  100  distinct  values.   It  is clearly possible to
+spend many years exploring a single set  of  these  numbers.
+For  more playable and enjoyable games, either pick a single
+aspect to treat in detail, or else do all aspects in a  sim-
+plified  way.  Aspects could include exploration, logistics,
+naval  operations,  "shoot-em-up",  renditions  of  familiar
+board  games  or even some team sports (rugby for instance).
+Another thing to keep in mind is that the introduction of  a
+new  type  may  have  far-reaching consequences - a new unit
+type will need its interactions with _a_l_l  other  unit  types
+defined.   One  approach  is  to  introduce  a new type as a
+slight modification of an existing type, then to share  most
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 21 -
+
+
+of the definitions.
+
+Something else to keep in mind is that the period parameters
+have been chosen for their ability to combine in interesting
+ways, rather than for obvious usefulness.  For example, past
+startup,  the  production  rate  for  units  is constant and
+unending.  But suppose you  want  to  put  a  limit  on  the
+numbers  of  that  type  of  unit?   One  way is to define a
+resource that is essential for construction  of  that  type,
+let  the  builder have an initial supply, but provide no way
+to get more of that resource.  When it  runs  out,  no  more
+units!   Another  trick is to motivate an activity by making
+it a prerequisite to the basic builtin goal of defeating the
+other  player.   The  age of discovery worked this way.  The
+kings of that time weren't interested in new lands  per  se;
+they  wanted  exploitable  possessions that could be used to
+get gold to buy armies big enough to defeat their neighbors.
+The  period  language  could  describe this situation almost
+exactly, by making gold a resource obtainable  only  by  the
+capture  of neutral mines thinly scattered over the map.  Be
+inventive!  Studying the predefined periods should reveal  a
+number of tricks.
+
+Completely new periods usually have a number of  bugs.   The
+tools  are  rather  limited,  but  then most of the bugs are
+fairly obvious.  The print word is useful for examining  the
+stack,   and   a   number   of   errors   (such   as   stack
+overflow/underflow) have messages.  Finding  out  where  the
+problem  occurred  requires  the  use of the _x_c_o_n_q debugging
+flag -D, which has the effect of  listing  out  each  period
+token  as it is read.  This can also be used with the period
+compiler, which starts up faster; invoke  it  as  "per2c  -D
+<newperiod.per".  The most serious problems with periods are
+play balance issues.  Some can be found out  by  watching  a
+machine  player,  since its decisions are based on perceived
+values of the units.  The  most  subtle  bugs  can  only  be
+uncovered  by  extensive  play  interspersed  with judicious
+alteration of parameters.  I find it useful to  play  for  a
+while, then go over all the period parameters, thus avoiding
+tweaking one parameter only  to  find  that  it  results  in
+another  being  inconsistent.   Parameters  interact in many
+ways - you should keep this in mind when experimenting.
+
+_M_A_P_S
+
+Maps alone are the easiest  thing  to  customize.   You  can
+either  do  ordinary  text  editing to acquire the map data,
+then add the headers, or  use  the  online  terrain  editing
+capability of _x_c_o_n_q and save the terrain alone.
+
+The map header has the form
+
+     Map _w_i_d_t_h _h_e_i_g_h_t _s_c_a_l_e _s_e_e_n _e_x_t_e_n_s_i_o_n
+
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 22 -
+
+
+where _w_i_d_t_h and _h_e_i_g_h_t are the size of the  map,  while  the
+_s_c_a_l_e  is  the width of a single hex in km (measured between
+parallel faces).  The _s_e_e_n flag is 0 if the map is not known
+to  the  players, and 1 if it is (this is like using "-v" on
+the command line).  The _e_x_t_e_n_s_i_o_n is an extension flag, with
+a  value of 0 for the normal map.  Other values are reserved
+for extensions.
+
+The preferred way to build a map is to use the  "-B"  option
+of  _x_c_o_n_q.   This  enables  the space bar to "paint" terrain
+onto the map.  The "brush" is defined by using  the  terrain
+characters  as  commands (they will override any normal com-
+mands on the same letters).  The argument is also  useful  -
+if positive, it is the radius of the area to be painted with
+the given terrain type, if negative, it is the length  of  a
+horizontal  bar.  Thus, in the standard period, the sequence
+"999. " will convert all but the largest maps into open sea.
+To  save  the map by itself, answer with the string "m" when
+"saving the game" (described in more detail below).
+
+The other way to build is by using a text editor and follow-
+ing  the  format  exactly.   The terrain data is a number of
+long lines of characters.  The length of the lines  must  be
+exactly  the  width  of the map.  The characters for terrain
+types are defined by the period.  The coordinate  system  is
+Cartesian  oblique,  with  the  y  axis tilted to form a 60-
+degree angle with the x axis.  Thus, landforms in  the  map-
+file should appear to be leaning to the left, if they are to
+appear upright during play.
+
+Maps should have some distinguishing terrain on the northern
+and  southern  edges;   also,  remember that the default map
+shape wraps around in the east-west direction, so  landforms
+should match up.  If the wraparound is undesirable, a verti-
+cal stripe of some  otherwise-unused  type  (such  as  outer
+space) is useful to block movement.
+
+Run-length encoding is also available.  It is flagged  by  a
+numeric digit, followed by any number of digits, followed by
+a terrain character.  The terrain character will  be  repli-
+cated  the  number  of  times specified by the digit string.
+The encoding may be freely intermixed with  normal  terrain,
+but cannot extend over line boundaries.
+
+_G_L_O_B_A_L_S
+
+Globals include a number of values affecting an entire game.
+The header is in the following form:
+
+     Globals _g_a_m_e_t_i_m_e _e_n_d_t_i_m_e _s_e_t_p_r_o_d_u_c_t  _l_e_a_v_e_m_a_p  _n_u_m_c_o_n_d_s
+     _e_x_t_e_n_s_i_o_n
+
+where _g_a_m_e_t_i_m_e is the elapsed turns,  _e_n_d_t_i_m_e  is  the  last
+turn   of   the   game,  _s_e_t_p_r_o_d_u_c_t  controls  whether  unit
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 23 -
+
+
+construction is changeable, _l_e_a_v_e_m_a_p allows units  to  leave
+by  the  map edges, and _e_x_t_e_n_s_i_o_n is reserved for extensions
+(is normally 0).
+
+_n_u_m_c_o_n_d_s specifies the number of winning/losing  conditions.
+Conditions are evaluated at the end of each turn (along with
+other ways to lose, such as losing all of one's  units).   A
+win condition results in the side achieving it winning while
+all others lose.  A losing condition knocks the side out  of
+the  game,  and the other sides continue normally.  Multiple
+win and lose conditions act as disjunctions -  when  one  is
+satisfied, something will happen.  There is a limit of about
+10 conditions or so.  All conditions include a starting  and
+ending  time  for  when  they  are in effect, as well as the
+number of a side to which it applies, or  -1  it  is  to  be
+applied to all sides equally.
+
+The first line of a condition is the same for all types:
+
+      _w_i_n/_l_o_s_e _t_y_p_e _s_t_a_r_t _e_n_d _s_i_d_e(_s)
+
+where _w_i_n/_l_o_s_e is 1 if the condition is for  winning  and  0
+for  losing, _s_t_a_r_t and _e_n_d are the starting and ending turns
+for testing the condition, _s_i_d_e(_s) is the number of  a  side
+to  which  the condition applies (or -1 if it applies to any
+side), and _t_y_p_e is the type of condition:
+
+0    Territory; next line is one number, the amount of  ter-
+     ritory (above if to win, below if to lose).
+
+1    Number of units; next line is list of numbers, one  for
+     each  unit  type.   To  win, must possess at least that
+     many of each type.  To lose, must be at or  below  that
+     many  for  _a_l_l  unit  types simultaneously (the default
+     losing condition is this one, with all zeros).  To make
+     this condition apply to only one unit type, set all the
+     other numbers to very low (for win condition)  or  very
+     high  (for  lose  condition)  values, outside the range
+     normally occurring during a game.
+
+2    Quantity of resources; next line is a list of  numbers,
+     one for each resource type.  Winning and losing is same
+     as for unit types.
+
+3    Possession; next line is three numbers, the  first  two
+     representing  the  coordinates  of a hex, and the third
+     the number of a unit type (or -1 to indicate  all  unit
+     types).  To win, must have a unit of the specified type
+     on the hex.  To lose, do not have a unit on that hex.
+
+Each condition has a sort of  dual  identity,  since  it  is
+interpreted slightly differently, depending on whether it is
+flagged for winning  or  losing.   The  logic  is  a  little
+twisted  perhaps  - special conditions should have all cases
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 24 -
+
+
+tested carefully before a scenario is released.
+
+_S_I_D_E_S
+
+Sides need relatively little information stored about  them,
+particularly for a scenario.  The header is simple:
+
+     Sides _n_u_m_s_i_d_e_s _d_e_t_a_i_l _e_x_t_e_n_s_i_o_n
+
+where _n_u_m_s_i_d_e_s is the number of sides recorded,  and  _d_e_t_a_i_l
+is the level of detail that was recorded.
+
+The side's name can be set using the naming or Call command,
+when  the  cursor  is  not over a unit, or if an argument is
+supplied (this will be the number of a side, and can be used
+in build mode to change the names of other sides).
+
+The exact contents of each level of detail are as follows:
+
+1    Name of side only is saved.   This  is  sufficient  for
+     many scenarios.
+
+2    Name, attributes, and political status  and  production
+     counts (used for numbering unnamed units) saved.
+
+3    All of above, plus view of explored part of world.
+
+4    All of above, plus hosts and player types, plus statis-
+     tics if used.
+
+9    All possible data.  This is the level  used  for  saved
+     games.   (At the moment, this is equivalent to level 4,
+     but may include more data in the future.)
+
+The data for each level begins on a new line, and some  lev-
+els  need  several  lines (such as the view data).  The best
+way to study the layout is to examine a saved game.
+
+_U_N_I_T_S
+
+Units have quite a few attributes, nearly all of which  must
+be saved.  The header is as simple as for sides:
+
+     Units _n_u_m_u_n_i_t_s _d_e_t_a_i_l _e_x_t_e_n_s_i_o_n
+
+where _n_u_m_u_n_i_t_s is the number of units saved, _d_e_t_a_i_l  is  the
+level  of  detail that was recorded, and of course _e_x_t_e_n_s_i_o_n
+is the usual extension with only a value of  0.   There  are
+several levels of detail:
+
+1    Type, name, and position,  and  side.   The  re-created
+     units  will be fully supplied and awake.  Neutral units
+     have a side of -1.  Units capable of construction  will
+     be  idled, so there should be at least one movable unit
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 25 -
+
+
+     present.
+
+2    All  of  above,  plus  scalar  attributes  and   supply
+     amounts, all on one line.  (Look at a saved game or the
+     source code to interpret the numbers.)
+
+3    All of  above,  plus  orders  and  standing  orders  if
+     defined.
+
+9    All possible data.  This is the level  used  for  saved
+     games.  (Same as level 3 at present.)
+
+Build mode offers a number of way to manipulate units on any
+side, as described in the next section.
+
+_S_C_E_N_A_R_I_O_S
+
+The -B command line option starts up _x_c_o_n_q  in  _b_u_i_l_d  _m_o_d_e,
+where  many  additional  actions  are possible, all oriented
+towards the editing of game state.  All commands can be per-
+formed  on any side's units, and none of the machine players
+will move (this can be toggled by  using  the  quit  command
+'Q',  then  saying 'n' to the confirmation question).  Build
+mode allows some other acts:
+
+     Move any unit anywhere instantly, using the moveto com-
+     mand 'm'.
+
+     Create any unit anywhere, using '\' (prompts  for  unit
+     type, argument specifies side, defaults to neutral).
+
+     Modify terrain anywhere, as  described  under  the  map
+     section.
+
+     See all units everywhere, using 'V'
+
+     Do anything to any unit as if it were your  own,  using
+     the usual commands.
+
+Once all desired changes have been made,  you  may  wish  to
+allow  machine  players  to move a little, just to randomize
+things a bit.  Then use the normal game  save  command.   In
+build  mode,  you will be asked to enter a string indicating
+sections and levels of detail.  The string should contain  a
+character  for  each  section you want written out - 'g' for
+globals, 'u' for units, and so forth.  The letters  'u'  and
+'s' must each be followed by a digit indicating the level of
+detail desired, as described earlier.  The default string is
+"ms1u1",  which  will  write  a  mapfile  with the map, side
+names, and unit types/names/positions/sides, which is suffi-
+cient for many interesting scenarios.  The file that will be
+written is always called "random.scn", is written  into  the
+current  directory, and should be renamed as desired.  After
+sufficient playtesting, it may  be  added  to  the  scenario
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 26 -
+
+
+menu,  just by adding its name to the file "mapfiles" in the
+library directory.
+
+Scenario construction  is  not  for  everybody.   Since  the
+processes  are  semi-internal,  the error-checking is not as
+extensive.  For instance, you can load a submarine with bat-
+tleships  as  passengers.   There are also more subtle ques-
+tions of balance, which are  usually  revealed  by  repeated
+play of the scenario.  As a rule, the lower levels of detail
+are safer to use - level 1 details for sides and  units  are
+often simple enough to be typed in or edited by hand.
+
+_E_X_A_M_P_L_E_S
+
+A period description with only infantry and cities:
+
+        Xconq 0 -+---- Very simple test period
+        Period 0
+
+        "generic" period-name
+
+        "standard" font
+
+        "i" "infantry" "moves around" utype
+        "@" "city" "makes infantry units" utype
+
+        "+" "land" "green" ttype  ; must always have at least one terrain type
+
+        1 @ in-country
+        100 land @ favored
+
+        @ first-unit
+        i first-product
+
+        1 i @ make
+        true @ maker
+        1 i @ capacity  ; makers need to be able to hold or be held by products
+
+        1 i speed
+
+        0 t* i moves
+
+        begin{notes}
+        This is just a test.
+        Kids, don't try this at home!
+        end{notes}
+
+        end
+
+A tiny map with two cities,  including  an  "empire"  period
+description to ensure meaningful city definitions:
+
+
+
+
+
+
+                     February 25, 1991
+
+
+
+
+
+                           - 27 -
+
+
+
+        Xconq 1 --+--+ Tiny map;
+        just an example...
+        empire.per
+        Map 9 5 100 1 0
+        :........
+        :.+++++..
+        :..+^^^..
+        :...+~~..
+        :........
+        Units 2 1 0
+        @ New Cork 2,3 -1
+        @ Old York 4,1 -1
+
+
+_L_O_S_S_A_G_E_S
+
+Several words are marked NIY, meaning that although they can
+be used, the code does not actually take them into account.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     February 25, 1991
+
+

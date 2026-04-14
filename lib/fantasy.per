@@ -1,0 +1,1291 @@
+Xconq 0 -+---- Fantasy warfare period...
+Period 0
+
+"The Age of Swords and Sorcery." period-name
+
+"standard" font-name
+
+; movers & fighters (10)
+"W" "Wizard" "Magician, wielder awesome magic" utype ; type #0
+"i" "Light Infantry" "Foot soldiers and mercenaries." utype ; #1
+"b" "Barbarian" "Rugged, ferocious, lightly armoured warriors." utype ; #2
+"k" "Heavy infantry" "Foot soldiers in heavy armour" utype ; #3
+"P" "Paladin" "Holy warrior, extremely tough and well equipped" utype ;4
+"R" "Longbowmen" "Archers, scouts, rangers" utype ; #5
+"H" "Priest" "The Spiritual guides of the land" utype ; #6
+"s" "Serfs" "Mobs of Peasant serfs and levies" utype ; #7
+"D" "Dragon" "Dragon, lays waste to the lands" utype ; #8
+"u" "Undead" "Undead warriors, raised by priests of wizards" utype ; #9
+"h" "Horse Cavalry" "Knights that ride horses." utype ; number 10
+
+; magical effects (3)
+"A" "Armageddon spell" "Spell of awesome destruction" utype ; #11
+"L" "Lightning spell" "Spell good for killing tough things" utype ; #12
+"F" "Fireball spell" "Spell great for causing lots of damage to soft targets" utype ; #13
+"M" "Mass Charm" "A spell that charms units over to the caster's side!" utype
+; #14
+"E" "Wizard Eye" "A spell for spying on things" utype ; #15
+
+; transport (6)
+"G" "Wagon" "Wagons, logistical unit" utype ; #16
+"C" "Flying Carpet" "Magical flying carpet" utype ; #17
+"K" "Cloudkeep" "Wizard's Floating keep" utype ; #18
+"S" "Sailing" "ship, for traveling the seas" utype ; #19
+"g" "Galley" "Fast, light, not so seaworthy warship" utype ; #20
+
+; Forts,  bases and other special places (5)
+"w" "Wall" "Fortified walls" utype ; #21
+"c" "Castle" "Walled castle" utype ; #22
+"T" "Tower"  "Fortified Mage's Tower" utype ; #23
+"/" "Camp" "Campsite. Practically a mobile village" utype ; #24
+"t" "Temple" "Holy Place of spiritual power" utype ; #25
+
+; cities (3)
+"V" "Village" "small town" utype ; #26
+"*" "Town" "smaller than a city" utype ; #27
+"@" "City" "Large city, seat of a city-state" utype ; #28
+
+
+; Magical items.
+"r" "Ring of Regeneration" "A magical ring that makes its wearer heal faster" utype ; 
+"B" "Crystal Ball" "A magical device that scans the local area" utype
+"p" "Ring of protection" "A protective magical device" utype
+"f" "Everfull Plate" "A magical wondor that creates food!" utype
+"a" "Amulet of Power" "Generates mana for its wearer" utype
+
+; resources
+"Y" "food" "Foodstuffs: an army marches on its stomach!" rtype
+"X" "mana" "Magical power" rtype ; used to produce magical effects
+"Z" "metal" "Steel, metal, manufacturing capacity for armour and weapons" rtype
+; Food: the resource commonly used for movement
+; Metal: for units that have a significant material requirement
+; Mana: to produce magical effects
+
+; terrain types
+"." "sea" "sky blue" ttype ; 0
+"=" "swamp" "yellowgreen" ttype ; 1
+"~" "desert" "yellow" ttype ; 2
+"+" "plains" "green" ttype ; 3
+"%" "forest" "forest green" ttype ; 4
+"(" "hills" "khaki" ttype ; 5
+"^" "mountains" "sienna" ttype ; 6
+"_" "ice" "white" ttype ; 7
+":" "void" "black" ttype ; 8
+
+plains default-terrain
+;for when the period gets sent a terrain type it doesn't know
+
+
+"Wizard" W icon-name
+"hoplite" i icon-name
+"Viking" b icon-name
+"Knight" k icon-name
+"Paladin" P icon-name
+"archer" R icon-name
+"HolyMan" H icon-name
+"Serf" s icon-name
+"Dragon" D icon-name
+"Undead" u icon-name
+"MiniNuke" A icon-name
+"Lightning" L icon-name
+;"FireBall" F icon-name
+"fire" F icon-name
+"CharmSpell" M icon-name
+"Eye" E icon-name
+"Wagon" G icon-name
+"FlyingCarpet" C icon-name
+"city30" K icon-name
+"cavalry" h icon-name
+"frigate" S icon-name
+"trireme" g icon-name
+"walltown" w icon-name
+"castle" c icon-name
+"Tower" T icon-name
+"camp" / icon-name
+"parthenon" t icon-name
+"fort" T icon-name
+"village" V icon-name
+"town20" * icon-name 
+"city20" @ icon-name 
+
+"Ring" [ r p ] icon-name
+"CrystalBall" B icon-name
+"Plate" f icon-name
+"Amulet" a icon-name
+
+true  void  dark
+
+false spy-chance ; we don't spontaneously see all the enemies
+false spy-quality ; and we don't see any of them if we do!
+
+t* t* nuked  ; most terrain won't actually change when nuked
+desert [ plains forest ] nuked ; except forest, plains turn to desert.
+mountains ice nuked ; ice gets nuked into mountains.
+
+
+; sea swp des pln for hil mtn ice vac 
+;[  .   =   -   +   %   ~   ^   _  : ]
+[   0  29  70  70  70  75  93  99  0 ] t* min-alt
+[  69  71  93  93  93  98  99 100  0 ] t* max-alt
+
+[   0  50   0  20  80   0   0   0  0 ] t* min-wet
+[ 100 100  20  80 100  99 100 100  0 ] t* max-wet
+; ranges at which we see the various terrain types
+; units are altitude
+; first is for altitude
+; next is for  wetness
+
+45 alt-roughness ; 0-100  the higher this is, the more altitude roughness
+80 wet-roughness ; Similar to alt-roughness
+
+void edge-terrain ; Edge of the world: you'll fall off!
+
+
+; some useful vectors for easy grouping of similar units.
+[ w c T t K / V * @ ] "bases" define
+[ V * @ ] "cities" define
+[ A L F M E ] "spells" define
+[ w c T K ] "forts" define
+[ D C K ] "flyers" define
+[ S g ] "ships" define
+[ H R b i s w ] "ltfoot" define
+[ k P W ] "hvyfoot" define
+[ h G ] "hoof" define
+[ W D ] "magickers" define
+[ W i b k P R H s D u G C K h S g ] "movers" define
+[ W i b k P R H s u ] "foot" define
+[ G K C S g ] "transport" define
+[ u ] "undead" define
+[ r B p f a ] "magicitems" define
+
+[ sea ] "water" define
+[ swamp plains forest desert hills mountains ] "land" define
+
+; units with names
+true cities named
+true K named
+; mages and dragons are named
+true magickers named
+; actually, so should everything else!
+; I'll have to snarf up a Crack names dictionary for the names...
+; or go through /etc/passwd with awk. :-)
+; or grab the names list that dude on r.g.frp collected? 
+
+
+4 country-size ;  the radius of a 'country'
+5 known-radius
+17 country-min-distance ;  the closest a country may be
+90 country-max-distance ;  the furthest apart a country may be.
+
+[ 1 2 1 ] cities in-country ; units player starts with
+[ 1 4 1 1 ] [ c s t W ] in-country ; some more misc units
+;nothing first-unit ; all units in country are owned then.
+;@ first-unit ; start out only owning city
+;i first-product ;  First produce infantry
+nothing first-unit 
+nothing first-product
+
+
+
+; units throughout the map
+[ 15 30 60 ] [ @ * V ]  density ; throughout the map.  per 10,000 hexes
+[ 1 50 2 5 10 20 5 ] [ K s W C T t D ] density ; some rare freaks to find
+
+; generic defaults
+0 sea u* favored
+30 land u* favored
+
+100 land forts favored
+
+100 t* K favored ; the flying citadel[s] could be anywhere!
+0 void K favored ; but the void, of course
+
+30 land magickers favored
+60   hills magickers favored
+100   mountains  magickers favored
+
+[ 20 100 80 10 40 20 ] land s favored
+
+0 mountains hoof favored ; just in case...
+
+20 land cities favored
+100 plains cities favored
+
+0 void u* favored ; nothing goes in void
+
+false K already-seen ; the K's shouldn't be seen
+
+; starting stockpiles
+0 r* u* stockpile ; we don't start with any resources 
+100 food u* stockpile ; except food...
+
+50 food bases stockpile ; bases are only half full. filled units?
+30 mana magickers stockpile ; magic casters get 30% of their mana capacity
+
+; disasters: units are in HUNDREDTHS of a percent each TURN
+5 magickers revolt ; sure, tell wizards and dragons orders! Good luck!
+5 b revolt ; those crazy barbarians
+100 s revolt ; Serfs dont' enjoy being oppressed
+
+50 forts surrender
+[ 100 60 30 ] cities surrender
+1500 bases siege ; most things could be sieged easily
+350 forts siege ; rare for a siege to take a fort...
+[ 1500 3000 3000 ] [ V * @ ] siege ; medieval cities fell easily
+0 K siege
+0 K surrender
+
+; attrition. Mostly ships at sea
+[ 200  1000  ] sea ships attrition
+"gets caught in a storm" ships attrition-message
+
+
+[ 10 50 ] sea ships accident ; ships arent too seaworthy...
+"lost in a storm" ships accident-message
+
+;heavy-foot units should have accidents in swamp and/or mountains
+100 [ mountains  swamp ] foot attrition
+50 [ mountains  swamp ] foot accident
+200 [ mountains swamp ] hvyfoot attrition
+100 [ mountains swamp ] hoof accident
+300 [ mountains swamp ] hoof attrition
+"fell down and couldn't get up!" foot accident-message
+"broke down and had to be destroyed." hoof accident-message
+
+
+;and magickers should have 'accidents'
+50 t* magickers attrition
+2 D attrition-damage
+"had a dangerous Arcane accident" magickers attrition-message
+5 t* magickers accident
+"returns to its lair to hibernate and disappear into legend" D accident-message
+"disappears into a puff of smoke" W accident-message
+
+
+; production by units.
+; Unit production time should be starting at a base value, and modified
+; by how good the producer is at that particular unit...
+; Base times:
+;  W  i  b  k  P  R  H  s  D  u  A  L  F  M  G  h  C  K  S  g
+; 25  5  8 10 15  9 15  5 30  2  2  2  2  2
+; note: short times for spells compensated by large mana costs
+;  w  c  T  /  t  V  *  @
+;  5 20 15  5 12 30 35 40
+;
+;
+; magickers production
+2 spells W make
+[ 25 2 10 30 10 ] [ D u C K T ] W make ; wiz's make magic stuff
+2 [ F L ] D make
+
+; first, production by city-type units
+[ 2 2 30 20 ] [ A L D W ] K make 
+
+15 t P make ; paladins can make shrines, eventually
+
+7 / R make ; Archers can camp...
+
+[ 11 5 ] [ t u ] H make ; 'holy' men can make undead?
+[ 6 25 15 6 10 30 35 40 ] [ w c T / t V * @ ] s make ;serfs make lots of stuff
+
+[ 10 17 5 15 ] [ k P i h ] c make ; Castles 
+
+30 W T make ; Towers can train wizards...
+
+[ 12 20 ] [ H P ] t make
+[  8 25 6 ] [ w c / ] i make
+
+
+; i b  R  H s G  h  S  g  W  k  P ] make vector
+[ 6 8 10 18 6 7 18 19 16          ] [ i b R H s G h S g       ] V make 
+[ 5 5 11 15 5 7 16 14 13 32  9    ] [ i b R H s G h S g W k   ] * make
+[ 4 4 11 13 5 6 14 13 11 25  7 20 ] [ i b R H s G h S g W k P ] @ make
+
+
+; stuff needed to make units...
+
+;  mana required for magical stuff
+; typical mage should get 2 to 4 mana per turn, dep on site...
+;   A  L   F  M  E ] spells define
+[  50 14  12 20  6 ] mana spells to-make
+
+[ 200 10 400 80 ] mana [ D u K C ] to-make
+
+; most units don't really take food to make...
+; but armoured ones take metal...
+
+ 3 metal i to-make
+ 15 metal k to-make
+ 15 metal P to-make
+  5 metal G to-make
+ 40 metal S to-make
+ 25 metal g to-make
+ 20 metal w to-make
+ 80 metal c to-make
+ 20 metal T to-make
+  3 metal / to-make
+ 45 metal V to-make
+ 60 metal * to-make
+ 120 metal @ to-make
+
+
+; makers always make stuff, even while moving
+true magickers maker
+true bases maker
+false [ w / ] maker
+;  Note: xconq crashes if a maker can't actually make anything!
+; it goes into an infinite loop, not letting maker be idle
+
+; No startup time ; no industry to retool!
+0 u* startup
+
+; Everything's pretty much known how to make, or is made custom each time.
+0 u* research
+
+; mages must first figgure out how to cast their spells!
+200 spells research
+300 M research
+1000 A research
+
+; Repair
+; do this by what a unit may repair
+[ 3 3 3 4 2 3 3 3 3 2 3 3 3 ] [ W D u C K S g w c T V * @ ] W  repair
+2 bases i repair
+2 g b repair
+3 bases b repair
+2 c k repair
+2 bases P repair
+2 P P repair ; paladin's healing powers!
+2 [ R / ]  R repair
+3 s s repair 
+1 foot H repair
+1 bases s repair
+1 G s repair
+2 S s repair
+1 D D repair
+4 h h repair
+0 u u* repair ; undead can't be repaired...
+2 K W repair   ;  Wizards slowly repair cloud castles
+2 foot G repair
+
+1 u* bases repair
+1 u* forts repair
+1 u* cities repair
+4 forts forts repair ; forts have a few people who can fix them
+4 cities cities repair  ; cities have the people to maintain themselves...
+ 1  [ i K h ] c repair
+1 [ W ] T repair
+1 foot t repair
+
+
+
+; mana production
+ 5 mana W produce ; * very terrain dependent
+ 4 mana D produce ; *
+ 2 mana H produce
+12 mana K produce
+ 5 mana T produce ; *
+ 2 mana t produce
+ 1 mana P produce
+
+; food production
+; i b k P R H  s c T / t V  *  @ K ] 
+[ 2 4 2 3 6 4 10 2 1 3 6 8 12 16 3 ] food [ i b k P R H s c T / t V * @ K ] produce
+1 food W produce
+
+; metal production
+[ 2 4 1 2 4 8 16 ] metal [ H s T c V * @ ] produce
+
+
+; terrain affects on resource production
+
+; general defaults...
+100 t* u* productivity ;the default anyway!
+0 sea foot productivity
+0 sea hoof productivity
+50 sea [ H P ] productivity
+
+
+; sea swp des pln for hil mtn ice vac 
+;[  .   =   -   +   %   ~   ^   _  : ] t*
+ [ 60  60  60  40  60  80 100 120  0 ] t* W productivity ; 1 per 20%
+ [ 75  50  50  50  75  75 100 125  0 ] t* D productivity ; 1 per 25%
+ [  0  60  40  40  60  80 100 120  0 ] t* T productivity ; 1 per 20%
+; considerable advantage for mana production on 'ice' and other
+; difficult terrain.
+; ice is usually highest mountain.
+; note, building a T on ice is a pain, as a wiz must do it!
+
+; swamp/plains/forest/desert/hills/mountains = land
+[  50 100  90 20  25  50 ] land i productivity ; one arg must be a scalar...
+[  50 100  90 20  25  50 ] land b productivity
+[  00 100  90 20  25  50 ] land k productivity
+[  50 100 100 50 100  75 ] land P productivity
+[ 100 100 100 50 100 100 ] land R productivity
+[  75 100 100 50  75  75 ] land H productivity
+[  50 100  90 70  75  50 ] land s productivity
+[  50 100  90 70  75  50 ] land / productivity
+[  50 100  90 70  75  50 ] land t productivity
+[  50 100  90 25  75  50 ] land V productivity
+[  50 100  90 25  75  50 ] land * productivity
+[  50 100  90 25  75  50 ] land @ productivity
+
+100 sea ships productivity
+100 t* K productivity
+
+;--storage of resources for units
+; food, mana, metal
+[ 10 100 6 ] r* W storage
+[ 16  0 10 ] r* i storage
+[ 16  0  6 ] r* b storage
+[ 16  0 12 ] r* k storage
+[ 12  4  6 ] r* P storage
+[ 16  0  6 ] r* R storage
+[ 10  8  6 ] r* H storage
+[ 10  0  6 ] r* s storage
+[ 200 30 6 ] r* D storage ; dragons can eat alot!
+[  0  0  4 ]  r* u storage
+ 0 food spells storage
+ 0 metal spells storage
+ 3 mana spells storage
+ 2 mana L storage
+ 8 mana E storage ; it has extra duration
+[  0  10 2 ] r* C storage
+[ 150 0  6 ] r* G storage
+[ 50 200 10 ] r* K storage
+[ 50  0 20 ] r* h storage
+[ 100 0 30 ] r* S storage
+[  50 0 15 ] r* g storage
+[  20 0  6 ] r* w storage
+[ 200 0 30 ] r* c storage
+[ 100 60 20 ] r* T storage
+[ 100 0 25 ] r* / storage
+[ 100 8 20 ] r* t storage
+[ 150 0 15 ] r* V storage
+[ 300 0 30 ] r* * storage
+[ 600 0 60 ] r* @ storage
+
+
+; units' comsumption
+1 food movers consume ; all consume 1 food per turn, except...
+2 food [ i k ] consume ; many infantry per unit, knights are pigs
+2 food D consume ; dragons are voracious!
+0 food undead consume ; just skeletons, not ghouls!
+0 food spells consume
+0 food C consume
+2 food [ h G ] consume ; horses eat a lot
+1 food g consume ; crew needs to eat more when active
+
+1 mana spells consume ; spells burn mana in-flight
+1 mana C consume ; magic carpet burns mana in flight.
+
+; mutual supply rules:
+; consume-as-occupant is cool!  1 means they do consume!
+1 u* consume-as-occupant
+0 spells consume-as-occupant ; spells in storage require no mana support
+0 ships consume-as-occupant ; ships not at sea need no food...
+
+; inlength is how far away a unit can receive fuel from 
+; out-length is how far away a unit can deliver fuel.  Should be kept
+; small, as it can waste much CPU time
+;
+;set the supply line the defaults...
+
+; defaults
+0 r* movers out-length ; most movables can't supply other things.
+1 r* movers in-length  ; but they can be supplied by nearby things.
+1 r* bases in-length   ; bases can recieve things from neighbors.
+1 r* bases out-length  ; bases somewhat supply neighbors
+2 r* cities out-length ; cities trade with surrounding lands
+0 mana W out-length    ; mages selfishly hoard magic to themselves. 
+
+-1 mana spells in-length ; you have to charge the spells yourself
+
+2 food G out-length ; wagons are supply vehicles
+
+1 r* s out-length ; serfs will trade supplies to units near them
+1 r* s in-length  
+
+; 0 mana bases in-length ; They generate it, not take it!
+; leave it with normal  in-length -- bases can exchange with each other.
+
+[ 0 3 0 ] K r* out-length ; flying citadel magically transmits its mana
+
+
+75 [ R b ] survival ; archer, barbarian can live off the land.
+50 [ H P ] survival ; holy dudes are used to fasting
+33 s survival ; peasants don't need the food that badly... :-)
+
+; movement statsitcs
+;
+;[ W i b k P R H s  D u G C  K h S g ] "movers" define
+[  1 2 3 2 2 3 2 1 10 1 5 12 4 6 5 7 ] movers speed
+
+;[ A L F M E ] "spells" define
+[  2 9 5 3 6 ] spells speed
+
+
+; permitted terrains
+; default: unit can't move in that terrain!
+
+0 land bases moves ; so you can build bases anywhere?
+
+0 sea ships moves ; seas  -- ships Ok, air OK, most others, no go.
+
+0 t* flyers moves ; flyers can go almost anywhere.
+0 t* spells moves ; same for spells
+1500 t* K random-move ; CloudKeeps often drift with the winds...
+
+0 water ships moves ; sea is pretty straightforward...
+
+; movement on terrain...
+;[ W i b k P R H s  D u A L F G C K h S g ] "movers" define
+
+; ground units and land terrain:
+; [ swamp plains forest desert hills mountains ] "land" define
+; ground units ant how they handle terrain:
+[  1 0 0 0 0 1 ] land W moves
+[  1 0 0 0 0 1 ] land i moves
+[  1 0 1 0 0 1 ] land b moves
+[  1 0 1 1 1 1 ] land k moves
+[  0 0 0 0 1 1 ] land P moves
+[  0 0 0 0 0 1 ] land R moves
+[  1 0 1 1 1 1 ] land H moves
+[  1 0 1 0 1 1 ] land s moves
+[  0 0 0 0 0 1 ] land u moves
+[ -1 0 1 1 2 3 ] land G moves
+[  2 0 1 1 2 3 ] land h moves
+
+0 ice [ W b G P R u ] moves ; units that can handle ice!
+
+1 food movers to-move ; all units take 1 fuel to move
+4 food s to-move ; this is actually lost food production
+
+; Magical things don't require food to move....
+0 food u to-move ; undead dont eat!
+0 food K to-move 
+1 mana K to-move ; floating castle requires mana to move
+0 food spells to-move
+0 food C to-move
+
+0 food S to-move ; they sail!
+
+-1 void u* moves ; nothing can go into the void!
+
+;
+;  What units can carry which others
+;
+; format:
+; [#] [units] unit1 capacity -- # of units unit1 can hold.
+
+1 spells volume 
+
+6 spells W capacity
+6 magicitems u* capacity
+1 u W capacity ; wizards can hold the undead they make.
+10 W hold-volume
+
+1 spells D capacity
+3 [ L F ]  D capacity
+1 [ W k P ] D capacity   ; dragonriders?
+3 D hold-volume ; yes, riders take up one of a dragon's spell slots
+; odd, but necessary
+
+2 [ W i b k P R H s u ] G capacity
+2 G hold-volume
+
+1 u H capacity ; so they can be made!
+1 H hold-volume
+
+5 [ W i b k P R H s G h u ] S capacity
+5 S hold-volume
+
+1 [ W i k P R H s ] C capacity
+1 C hold-volume
+
+[ 1 1 4 1 1 2 1 1 3 ] [ W i b k P R H s u ] g capacity
+4 g hold-volume
+
+; bases capacity
+2 [ W i b k P R H s G h u C ] w capacity
+2 w hold-volume
+
+4 [ W k P R s D u C ] K capacity
+8 K hold-volume
+
+3 [ W i b k P R H s G h S g u ] c capacity
+4 c hold-volume
+
+2 [ W i b k P R H s G h u C ] T capacity
+4 T hold-volume
+
+6 [ W i b k P R H s G h S g C ] / capacity
+12 / hold-volume
+
+8 [ W i b k P R H s G h S g C ] V capacity
+16 V hold-volume
+
+6 [ W i b k P R H s G h S g C ] t capacity
+10 t hold-volume
+
+8 [ W i b k P R H s G h S g C ] * capacity
+20 * hold-volume
+
+15 [ W i b k P R H s G h S g C ] @ capacity
+1 D @ capacity
+30 @ hold-volume
+
+2 spells [ T K ] capacity
+; 1 A [ T K ] capacity ; armageddon spell is 'bigger'?
+
+1 movers volume
+[ 3 2 2 4 3 ]  [ D G h S G ] volume ;  the exceptions
+1 spells volume
+
+; 90 foot h alter-mobility ; h slowed by holding things?
+
+20 u* flyers enter-time ; aircraft can't sortie again until next turn
+20 bases ships enter-time
+ 1 bases ships leave-time
+
+
+true [ V * @ ] always-seen
+1 u* see-range
+0 spells see-range
+4 E see-range ; the spy-eye!
+3 flyers see-range
+2 bases see-range
+5 K see-range
+4 T see-range ; Towers are good for spotting things
+2 w see-range ; can see a little ways from walls.
+3 @ see-range ; cities have tall structures, and people wandering.
+2 * see-range
+3 c see-range
+2 R see-range ; Archers are good at knowing the surrounding land.
+[ 2 3 ] [ g S ] see-range ; ships can see far over flat water
+
+; visibility of stuff
+; non 0/1 visibility must be harsh on CPU! keep # of units with this down
+20 K visibility ; hard to spot in them clouds!
+ 5 C visibility ; hard to spot in the clouds 
+50 R visibility ; Archers are good at hiding on the land.
+ 0 E visibility ; invisible spy-eye
+20 magicitems visibility ;  magic items are sometimes hard to spot.
+
+; small forces hidden by rough terrain
+[ 80 75 60 40 ] [ forest swamp mountains hills ] R conceal
+
+true D always-seen ; Dragons are hard to miss...
+
+
+; HP of various units.
+[ W i b k P R H s D u h A L F M E G C  K S g  w  c  T  /  t  V  *  @ ] "units" define
+[ 2 2 2 3 4 2 2 2 8 4 3 1 1 1 2 1 2 1 10 4 3 10 20  8  4  8 15 30 45 ] units hp
+[ 1 1 1 1 1 0 1 0 3 0 2 1 1 1 1 1 1 0  4 2 1  2  3  4  2  2  8 16 25 ] units crippled
+; NOTE: crippled is at <= value, not <
+
+2 spells hp ; not 1 so that they can survive an attack when attacking.
+0 spells crippled
+; 1 M hp ; So mass charm survives the attack to capture!
+
+; split the matrix in half to make it fit on an 80 col screen!
+[  W   i   b   k   P   R   H   s   D   u   G   C   h ] "u1" define
+[  A   L   F   K   S   g   w   c   T   /   t   V   *   @ ] "u2" define 
+; [chances] u# unit hit
+; chances for unit to hit member of u#
+
+; so, here we define the units by how good they are at hitting others
+; ranges:  30% is typical attack percent.
+; it ranges up and down from there...
+;[ W   i   b   k   P   R   H   s   D   u   G   C   h ] u1 define
+[ 25  35  10  30  10  35  20  40  40  30  40  40  30 ] u1 W hit
+[ 50  30  40  20  15  60  25  45  10  20  40  30  20 ] u1 i hit
+[ 45  45  35  25  25  55  35  45  15  30  50  20  25 ] u1 b hit
+[ 35  40  45  25  20  65  30  50  20  30  30  15  30 ] u1 k hit
+[ 40  40  45  35  30  80  30  30  40  50  30  15  30 ] u1 P hit
+[ 30  45  50  25  20  65  30  40  20  15  30  30  25 ] u1 R hit
+[ 30  20  35  20  20  50  35  30  10  45  30  10  20 ] u1 H hit
+[ 20  10  15   5   3  10  10  30   1  10  30   5  10 ] u1 s hit
+[ 40  50  55  35  20  70  40  80  30  40  60  40  80 ] u1 D hit
+[ 20  30  35  20  10  50  10  50  10  30  40  30  30 ] u1 u hit
+[ 50  99  60  90  70  90  80  99  60  99  99  99  99 ] u1 A hit
+[ 50  80  50  90  60  80  80  99  70  99  99  99  99 ] u1 L hit
+[ 50  90  50  80  60  90  80  99  60  99  99  99  99 ] u1 F hit
+[  0   0   0   0   0   0   0   0   0   0   0   0   0 ] u1 G hit ; noncombatants
+[  0   0   0   0   0   0   0   0   0   0   0   0   0 ] u1 C hit ; noncombatants
+[ 10   5   5   5   5   5   5   5  25   5  15  20   5 ] u1 K hit ; Cloudkeep can drop rocks!
+[ 50  45  50  30  30  70  40  60  25  40  50  15  30 ] u1 h hit ; Cavalry
+[  0   0   0   0   0   0   0   0   0   0   0   0   0 ] u1 S hit ; ships can only attack other ships
+[  0   0   0   0   0   0   0   0   0   0   0   0   0 ] u1 g hit
+[ 11  30  35  20  10  40  30  40  20  30   0   0  20 ] u1 w hit
+[ 10  40  40  25  12  40  35  40  25  35   0   0  20 ] u1 c hit
+[ 10  35  35  20  10  40  30  40  20  30   0   0  20 ] u1 T hit
+[  5  20  17  15  10  25  20  30  10  20   0   0  10 ] u1 / hit
+[  8  25  30  20  18  35  30  40  15  35   0   0  15 ] u1 t hit
+[  9  25  30  20  15  30  30  40  15  20   0   0  25 ] u1 V hit
+[ 10  30  35  25  20  40  35  45  20  25   0   0  30 ] u1 * hit
+[ 15  35  40  30  25  50  40  50  25  30   0   0  30 ] u1 @ hit
+
+;[ A   L   F   K   S   g   w   c   T   /   t   V   *   @ ] u2 define 
+[  1   1   1  50  30  40  25  20  25  30  35  40  40  40 ] u2 W hit
+[  1   1   1  10  10  10  10  10  10  25  20  20  20  20 ] u2 i hit
+[  1   1   1  10  10  10   8   5   8  40  30  50  50  50 ] u2 b hit
+[  1   1   1  10  10  10   9   9  10  20  25  30  30  30 ] u2 k hit
+[  1   1   1  11   7   8  15  15  15  20  40  20  20  20 ] u2 P hit
+[  1   1   1   8   5   5   8   8   8  30  30  30  30  30 ] u2 R hit
+[  1   1   1   3   4   4   4   4   4  20  50   5   5   5 ] u2 H hit
+[  1   1   1   1   2   2   1   2   2  20  15  20  20  20 ] u2 s hit
+[  1   1   1  20  60  50  30  25  28  50  40  60  60  60 ] u2 D hit
+[  1   1   1   2  10  10  11  11  10  30  20  30  30  30 ] u2 u hit
+[  1   1   1  30 199 199 199 150 150 299  70 130 110 100 ] u2 A hit
+[  1   1   1  30  40  40  80  80  80  99  70  90  90  80 ] u2 L hit
+[  1   1   1  30  99  99  60  50  69  99  75  90  90  90 ] u2 F hit
+[  1   1   1   0   0   0   0   0   0   0   0   0   0   0 ] u2 G hit ; noncombatat
+[  1   1   1   0   0   0   0   0   0   0   0   0   0   0 ] u2 C hit ; noncombatant
+[  1   1   1  40   0   0   0   0   0   0   0   0   0   0 ] u2 K hit  
+[  1   1   1  10  10  10   6   6   9  40  35  30  30  30 ] u2 h hit ;
+[  1   1   1   0  20  10   0   0   0   0   0   0   0   0 ] u2 S hit ; ships ramming each other!
+[  1   1   1   0  50  30   0   0   0   0   0   0   0   0 ] u2 g hit
+[  1   1   1   0   0   0   0   0   0   0   0   0   0   0 ] u2 w hit ; matrix here and below  is all non-movers vs non-movers!
+[  1   1   1   0   0   0   0   0   0   0   0   0   0   0 ] u2 c hit 
+[  0   1   0   0   0   0   0   0   0   0   0   0   0   0 ] u2 T hit
+[  0   0   0   0   0   0   0   0   0   0   0   0   0   0 ] u2 / hit
+[  0   0   0   0   0   0   0   0   0   0   0   0   0   0 ] u2 t hit
+[  0   0   0   0   0   0   0   0   0   0   0   0   0   0 ] u2 V hit
+[  0   0   0   0   0   0   0   0   0   0   0   0   0   0 ] u2 * hit
+[  0   0   0   0   0   0   0   0   0   0   0   0   0   0 ] u2 @ hit
+
+0 u* E hit
+10 u* M hit ; can do some damage as it attempts to capture
+
+; and this allows ti to even attack...
+50 spells movers hit ;  spells can be killed by attacking them, but
+10 M movers hit ;
+; they shouldn't have much time where they can be attacked.
+; they are either in-flight, or stored on someone!
+
+; terrain effects
+15 [ forest swamp mountains hills ] foot defense
+10 [ forest swamp mountains hills ] hvyfoot defense
+
+[ 75 60 60 40 10 ] [ forest swamp mountains hills desert ] R defense 
+; archers are good at using terrain to hide in.
+
+40 [ hills mountains ] forts defense
+[ 20 50 ] [ hills mountains ] T defense
+[ 20 50 ] [ hills mountains ] c defense
+
+; shall we damage things?
+20 nuke-hit ; damage for a 'nuke' explosion  
+1 u* u* damage ; default
+2 u* D damage
+0 magicitems u* damage  ;  otherwise, items are always destroyed by capture
+
+3 bases D damage
+4 cities D damage
+3 bases b damage ; barbarians torch them cities!
+
+4 D R damage ; rangers with those special arrows!
+
+2 ships g damage
+
+3 u [ P H ] damage
+
+1 ltfoot h damage
+
+4 ships F damage
+4 cities F damage
+2 u* F damage
+4 / F damage
+
+3 u* L damage
+1 u* M damage ; it might do some damage as the victim struggles 
+
+21 u* A damage ; Armageddon spells are nuclear!
+
+ 0 neutrality ; neutrals are normal difficulty to take
+
+true capturemoves ; gotta secure newly captured units first
+; false capturemoves is buggy?
+
+true counterattack 
+
+false spells can-counter ; they're specifically targeted!
+false w can-counter ; walls don't fight back! They're just walls!
+true  spells self-destruct
+
+
+; stuff that can change sides when captured
+0 u* changes-side  ; most units are fanatically loyal beings
+100 transport changes-side ;  inanimate units that may be captured
+100 magicitems changes-side  ; 
+[ 20 20 40 80 20 ] [ W i b s D ] changes-side 
+
+; these units may be persuaded to go traitor
+
+
+[ 20 20 20 40 20 40 30 30 30 20 50 40 ]  [ W i k s D u A L F G K T ] W capture
+;[ s  G h  S  g  w c  T  /  t  V  *  @ ] 
+[ 40 50 5 30 30 10 5  8 30 20 40 25 15 ] [ s G h S g w c T / t V * @ ] i capture
+[ 40 50 5 45 40  8 3  7 40 25 20 10  7 ] [ s G h S g w c T / t V * @ ] b capture
+[ 10 20 5 10 10  8 3  7 40 25 45 25 10 ] [ s G h S g w c T / t V * @ ] R capture
+[ 45 40 5 15 10 12 6  9 35 25 45 25 13 ] [ s G h S g w c T / t V * @ ] k capture
+[ 50 30 8 20 20 11 7 10 36 45 40 20 10 ] [ s G h S g w c T / t V * @ ] P capture
+[ 50 40 5  5  5  5 1  5 60 30 40 20 10 ] [ s G h S g w c T / t V * @ ] h capture
+[ 60 10 10              20 35 40 15 15 ] [ s G h           / t V * @ ] H capture
+[ 40 50   25 30 11 6  9 20 10 15 10  5 ] [ G S   S g w c T / t V * @ ] u capture
+
+[ 20 15 40 ] [ i b u ] H capture ; priests can convert people!
+[ 20 30 45 30 30 20 15 ] [ s G K / V * @ ] s capture
+
+; the Charm Spell...
+100 u* M capture ; the standard default
+
+[ w c T / t V * @ ] [ 100 50 100 200 25 60 50 40 ] M capture 
+			; works better against low populations
+
+[ 50 10 40 50 25 80 ] [ W P H D K T ] M capture
+100 magicitems u* capture   ;  magical items don't have loyalty
+
+true u* u* bridge ; lets everything attack everywhere: no terrain immunity
+
+; protect: # u1 u2 protect: protection offered to u1 by u2
+30 u* bases protect ; general bases protect their occupants ok
+80 u* forts protect ; forts prottect their occupants very well
+20 movers / protect  
+20 movers V protect 
+30 movers * protect 
+40 movers @ protect
+50 forts [ i k P W ] protect
+40 forts u protect
+30 bases [ i k P W ] protect
+
+50 T H protect ; priests and their temples...
+
+
+80 [ K T ] W protect ; wiz's protect their towers and keeps very well
+
+
+true u* neutral
+false i neutral
+
+10 movers retreat
+33 R retreat ; those rangers like to run away!
+0 ships retreat ; boats can't retreat!
+
+-5 food D hits-with ; dragon feeds on enemies!
+1 mana W hits-with ; mages use spells in combat!
+1 metal K hits-with ; Cloudcastles throw stuff down to attack
+
+"defeats" land destroy-message
+"sinks" ships destroy-message
+"knocks down" flyers destroy-message
+"sacks" cities destroy-message
+"slays" [ D h ] destroy-message
+
+; NIY? 100 u* max-quality ;  what's the range of this?
+; NIY? 100 u* veteran ;  
+; NIY? 1000 u* max-morale ;  what's the range of this?
+50 u* efficiency ; disbanding units for their parts?
+
+true u* neutral ;everything can become neutral
+
+true u* can-disband  ; perhaps they're not so fanatic?
+true [ W i b k D u A L F G h C S g / ] can-disband
+
+; help for machine strategy
+[ 1 20 8 8 30 2 8 10 50 ] bases territory ;  territory values for victory pts.
+5 s territory ; serfs are valuable!
+
+
+;[ r B p f a ] magicitems define
+; magic items stats tacked on at the end!
+5 magicitems density ; some random ones to be lying around easy to capture
+0 sea magicitems favored ; they'd sink!
+100 r* magicitems stockpile ; they're usually statically full
+[ 10 6 8 6 15 ] magicitems W make ; wizards make them only
+[ 12 12 9 4 0 ] magicitems H make ; priests can make some items
+[ 30 20 25 10 60 ] mana magicitems to-make
+50 magicitems research ; discover the magic formulae?
+25 magicitems magicitems research-contrib 
+
+1 u* r repair ; ring of regeneration magically fixes everything!
+; ring must be able to hold supplies to perform repairs! Sheesh!
+
+1 r* r produce ; ring produces everything, just in case...
+6 food f produce ; FOOD!
+6 mana a produce ; amulet of power generates mana
+
+100 t* magicitems productivity
+
+10 r* r storage
+10 food f storage
+100 mana a storage ; holds lots of power, might have it all when found!
+
+0 r* magicitems in-length
+0 r* magicitems out-length
+2 mana a out-length
+-1 mana a in-length ; it doesn't take mana, just give it!
+
+0 magicitems consume-as-occupant ; they dont consume anyway!
+0 magicitems speed ; they're inanimate!
+-1 sea magicitems moves
+0 land magicitems moves
+
+0 magicitems volume 
+5 magicitems u* capacity ; rule of 5 magic items, but everything can hold them
+0 magicitems spells capacity ; except spells
+0 u* magicitems capacity ; and other magic items!
+
+10 B see-range ; that's what its for!
+1 magicitems hp ;
+
+; combat stats should be irrelevant, since they're always occupants
+100 magicitems u* hit ; everything can hit them
+0 u* magicitems hit ; they can't hit back!
+0 u* magicitems damage ; they can't hurt anything
+0 magicitems can-counter
+100 magicitems u* capture ; just pick them up!
+
+100 magicitems changes-side
+20 p u* protect ; ring of protection, reduces hit-chance by 20%
+
+1 magicitems can-disband ; they can' be destroyed!
+true magicitems neutral
+
+begin{notes}
+
+     This is the fantasy combat period. The period file is so complex, it
+revealed a lot of xconq bugs that I had to fix.
+Anyway, if you need to know more, mehlhaff@ocf.Berkeley.EDU is the person to 
+mail to...
+
+This is a generic fantasy combat period.  IT seems to be a little heavy on
+the magic use side, but that's the basis of the fantasy genre, anyway!
+
+end{notes}
+
+
+clear-side-names
+
+; The more significant countries of the modern world
+
+"American" sname "Canadian" sname "Mexican" sname "Guatemalan" sname
+"Honduran" sname "Sandinista" sname "Costa Rican" sname "Panamanian" sname
+"Colombian" sname "Ecuadorean" sname  "Peruvian" sname "Chilean" sname
+"Argentinian" sname "Uruguayan" sname "Paraguayan" sname "Brazilian" sname
+"Bolivian" sname "Guyanan" sname "Venezuelan" sname "Cuban" sname
+"Haitian" sname "Jamaican" sname "Irish" sname "British" sname
+"Portuguese" sname "Spanish" sname "French" sname "Italian" sname
+"Albanian" sname "Greek" sname "Turk" sname "Bulgarian" sname
+"Cypriot" sname "Maltese" sname "Icelander" sname
+"Rumanian" sname "Soviet" sname "Finnish" sname "Swedish" sname
+"Polish" sname "Czech" sname "Hungarian" sname "Austrian" sname
+"German" sname "Swiss" sname "Belgian" sname "Dutch" sname
+"Danish" sname "Norwegian" sname "Moroccan" sname "Mauritanian" sname
+"Senegalese" sname "Guinean" sname "Liberian" sname "Ghanan" sname
+"Nigerian" sname "Cameroon" sname "Gabonese" sname "Zairean" sname
+"Angolan" sname "Namibian" sname "South African" sname "Botswanan" sname
+"Mozambiquan" sname "Zimbabwean" sname "Zambian" sname "Tanzanian" sname
+"Rwandan" sname "Djiboutian" sname "Madagascaran" sname
+"Kenyan" sname "Ugandan" sname "Somalian" sname "Ethiopian" sname
+"Sudanese" sname "Egyptian" sname "Libyan" sname "Tunisian" sname
+"Algerian" sname "Syrian" sname "Lebanese" sname "Israeli" sname
+"Jordanian" sname "Saudi" sname "Yemeni" sname "Omani" sname
+"Kuwaiti" sname "Iraqi" sname "Iranian" sname "Afghan" sname
+"Pakistani" sname "Indian" sname "Nepalese" sname "Burmese" sname
+"Vietnamese" sname "Kampuchean" sname "Laotian" sname
+"Siamese" sname "Malaysian" sname "Indonesian" sname "Australian" sname
+"Micronesian" sname "Fijian" sname "Tongan" sname "Samoan" sname
+"Tahitian" sname "New Zealander" sname
+"Papuan" sname "Polynesian" sname "Filipino" sname "Japanese" sname
+"Korean" sname "Chinese" sname "Mongolian" sname "Tibetan" sname
+
+; The following names are derived from the Rand-McNally International Atlas
+; and from their US road atlas.  Although nominally these could end up on
+; any sort of unit, they are likely to be attached to city-like units only.
+
+clear-unit-names
+
+; Soviet Union  
+"Uglegorsk" uname "Taganrog" uname "Kuzemino" uname "Igodovo" uname 
+"Izhevsk" uname "Leninskoye" uname "Zvenigorod" uname "Faustovo" uname 
+"Tokma" uname "Bolotnoje" uname "Pudino" uname "Predivinsk" uname 
+"Gotoputovo" uname "Stupino" uname 
+; Japan  
+"Toyooka" uname "Kobayashi" uname "Kamiyahagi" uname "Fukude" uname 
+; China  
+"Dandong" uname "Xingtai" uname "Xiaojiagang" uname "Wushu" uname 
+"Wutangjie" uname "Qingfeng" uname "Dushikou" uname "Huilong" uname 
+"Linyi" uname "Miaoyang" uname "Xinbo" uname "Bugt" uname 
+; Indochina  
+"Tan-an" uname "Ban Khlong Kua" uname "Bo Phloi" uname "Thot-not" uname
+"Herbertabad" uname "Mong Pawn" uname "Roi Et" uname
+; Indonesia  
+"Butong" uname "Lubukbertubung" uname "Moutong" uname "Gimpu" uname 
+"Waingapu" uname "Sindangbarang" uname "Kualakapuas" uname "Bongka" uname 
+"Salimbatu" uname "Bonggaw" uname "Baing" uname "Grokgak" uname 
+; India  
+"Bap" uname "Meerut" uname "Harda" uname "Garwa" uname 
+"Digboi" uname "Kurnool" uname "Nirmal" uname "Coondapoor" uname 
+"Tetulbaria" uname "Maheshwar" uname "Paramagudi" uname "Bhakkar" uname 
+"Mungaoli" uname "Shorapur" uname "Channapatna" uname "Chilaw" uname 
+; Middle East and Central Asia  
+"Bajandalaj" uname "Cogt-Ovoo" uname "Un't" uname "Ich-Uul" uname 
+"Yazd" uname "Samarkand" uname "Mashhad" uname "Chah Bahar" uname 
+"Jubbah" uname "Al-'Awsajiyah" uname "Kifri" uname "Kashgar" uname 
+"Chundzha" uname "Ushtobe" uname "Dzaamar" uname "Wadi Musa" uname 
+"Bogustan" uname "Gakuch" uname 
+; Africa  
+"Pibor Post" uname "Umm Digulgulaya" uname "Umm Shalil" uname "Buzaymah" uname 
+"Gedo" uname "North Horr" uname "Todenyang" uname "Madadi" uname 
+"Ngetera" uname "Ouadda" uname "Mazoula" uname "Tiglit" uname 
+"Gummi" uname "Gbarnga" uname "Burutu" uname "Bafwabalinga" uname 
+"Goonda" uname "Ankoroka" uname "Vryburg" uname "Matuba" uname 
+"Bakouma" uname "El Idrissia" uname "Agadir" uname "Nungwe" uname 
+"Bunianga" uname "Ngali" uname "Nguiroungou" uname "Otukpa" uname 
+"Hell-Ville" uname "Morafenobe" uname "Tongobory" uname "Farafangana" uname 
+"Mungbere" uname "Haco" uname "Barbar" uname "Oulessebougou" uname
+; Australia  
+"Nookawarra" uname "Bunbury" uname "Buckleboo" uname "Breeza Plains" uname 
+"Mistake Creek" uname "Boolaloo" uname "Yarloop" uname "Dubbo" uname 
+"Bushy Park" uname "Old Cork" uname "Cessnock" uname "Wagga Wagga" uname 
+"Mungar Junction" uname "Koolywirtie" uname "Wonthaggi" uname
+"Oatlands" uname "Bindebango" uname "Alice Springs" uname
+; New Guinea  
+"Kwatisore" uname "Finschhafen" uname "Yobi" uname "Rumahtinggih" uname 
+; USA  
+; AL  
+"New Hope" uname "Hackleburg" uname 
+; AK  
+"Kaktovik" uname "Fort Yukon" uname 
+; AZ  
+"Benson" uname "Gila Bend" uname "Turkey Flat" uname "Tuba City" uname  
+"Wide Ruins" uname 
+; AR  
+"Metalton" uname "Oil Trough" uname "Hackett" uname
+; CA  
+"Burnt Ranch" uname "Calexico" uname "Eel Rock" uname "Gilroy" uname 
+"Joshua Tree" uname "Milpitas" uname "Mormon Bar" uname "Pumpkin Center" uname 
+"Death Valley Junction" uname "Toms Place" uname
+"Pinole" uname "Petaluma" uname 
+"Scotts Valley" uname "Whiskeytown" uname "Leucadia" uname "Lompoc" uname
+"Granada Hills" uname
+; CO  
+"Las Animas" uname "Silver Plume" uname 
+; CT  
+"Upper Stepney" uname "Moosup" uname "Danbury" uname
+; FL  
+"Yeehaw Junction" uname "Big Pine Key" uname 
+"Panacea" uname "Wewahitchka" uname "Estiffanulga" uname 
+; GA  
+"Dixie Unameion" uname "Fowlstown" uname "Dacula" uname "Americus" uname 
+; HW  
+"Laupahoehoe" uname 
+; ID  
+"Malad City" uname "Kootenai" uname 
+; IL  
+"Farmer City" uname "Aroma Park" uname "Goreville" uname "Illiopolis" uname  
+"Mascoutah" uname "Metamora" uname "Metropolis" uname "New Boston" uname  
+"Pontoon Beach" uname "Romeoville" uname "Teutopolis" uname  
+; IN  
+"Etan Green" uname "French Lick" uname "Loogootee" uname "Needmore" uname  
+"Ogden Dunes" uname "Oolitic" uname "Star City" uname  
+; IA  
+"Coon Rapids" uname "Correctionville" uname "Grundy Center" uname
+"Lost Nation" uname "Ossian" uname "Sac City" uname  
+; KA  
+"Countryside" uname "Mankato" uname "Pretty Prairie" uname  "Greeley" uname
+"Grouse Creek" uname
+; KY  
+"Big Clifty" uname "Cloverport" uname "Druid Hills" uname "Fancy Farm" uname 
+"Hardburly" uname "Hardshell" uname "Horse Cave" uname "Pleasureville" uname 
+"Science Hill" uname "Sublimity City" uname "Watergap" uname 
+; LA  
+"Bayou Goula" uname "Cut Off" uname "Hackberry" uname "Lutcher" uname 
+"Waggaman" uname 
+; ME  
+"Veazie" uname "Madawaska" uname 
+; MD  
+"Bestgate" uname "College Park" uname "Frostburg" uname "Pocomoke City" uname 
+"Port Deposit" uname "Pumphrey" uname "Tammany Manor" uname
+"Weems Creek" uname "Whiskey Bottom" uname "Hack Point" uname
+; MA  
+"Assinippi" uname "Buzzards Bay" uname "Dorothy Pond" uname "Hopkinton" uname 
+"Housatonic" uname "Pigeon Cove" uname "Swampscott" uname "Gloucester" uname
+"Hyannis Port" uname "Ipswich" uname "Boxford" uname
+; MI  
+"Bad Axe" uname "Brown City" uname "Cassopolis" uname "New Buffalo" uname 
+"Petoskey" uname "Ishpeming" uname "Ypsilanti" uname "Saugatuck" uname 
+; Michigan UP (from Sandra Loosemore)  
+"Skanee" uname "Bruce Crossing" uname "Baraga" uname "Germfask" uname 
+"Assinins" uname "Tapiola" uname "Gaastra" uname "Bete Grise" uname 
+; MN  
+"Ada" uname "Blue Earth" uname "Brainerd" uname "Eden Valley" uname  
+"Lino Lakes" uname "New Prague" uname "Sleepy Eye" uname "Waconia" uname  
+; MS  
+"Bogue Chitto" uname "Buckatunna" uname "Guntown" uname "Picayune" uname 
+"Red Lick" uname "Senatobia" uname "Tie Plant" uname "Yazoo City" uname  
+; MO  
+"Bourbon" uname "Doe Run" uname "Hayti" uname "Humansville" uname 
+"Lutesville" uname "Moberly" uname "New Madrid" uname "Peculiar" uname 
+"Sappington" uname "Vandalia" uname  
+; MT  
+"Big Sandy" uname "Hungry Horse" uname 
+"Kalispell" uname  "East Missoula" uname
+; NE
+"Hershey" uname "Loup City" uname 
+"Minatare" uname "Wahoo" uname  "Grainfield" uname
+; NV  
+"Winnemucca" uname "Tonopah" uname "Jackpot" uname  
+; NH  
+"Littleton" uname "Winnisquam" uname  
+; NJ  
+"Cheesequake" uname "Freewood Acres" uname
+"Forked River" uname "Hoboken" uname "Succasunna" uname  
+"Maple Shade" uname "New Egypt" uname "Parsippany" uname "Ship Bottom" uname  
+; NM  
+"Adobe Acres" uname "Cloudcroft" uname "Ruidoso" uname "Toadlena" uname  
+"Los Padillos" uname "Ojo Caliente" uname 
+; NY  
+"Angola on the Lake" uname "Podunk" uname "Chili Center" uname
+"Aquebogue" uname "Muttontown" uname "Hicksville" uname 
+"Hoosick Falls" uname "Nyack" uname
+"Painted Post" uname "Peekskill" uname "Portville" uname  
+"Ronkonkoma" uname "Wappingers Falls" uname 
+"Sparrow Bush" uname "Swan Lake" uname
+; NC  
+"Altamahaw" uname
+"Biltmore Forest" uname "Boger City" uname "Granite Quarry" uname  
+"High Shoals" uname "Lake Toxaway" uname
+"Scotland Neck" uname "Hiddenite" uname 
+"Mocksville" uname "Yadkinville" uname "Nags Head" uname 
+"Kill Devil Hills" uname "Rural Hall" uname  
+; ND  
+"Cannon Ball" uname "Hoople" uname "Zap" uname  
+; OH  
+"Academia" uname "Arcanum" uname "Blacklick Estates" uname "Blue Ball" uname  
+"Crooksville" uname "Dry Run" uname "Flushing" uname "Gratis" uname  
+"Lithopolis" uname "Mingo Junction" uname "Newton Falls" uname
+"New Straitsville" uname "Painesville" uname "Pepper Pike" uname 
+"Possum Woods" uname "Sahara Sands" uname  
+; OK  
+"Bowlegs" uname "Broken Arrow" uname "Fort Supply" uname "Drumright" uname 
+"Dill City" uname "Okay" uname "Hooker" uname  
+; OR  
+"Condon" uname "Happy Valley" uname "Drain" uname "Junction City" uname 
+"Molalla" uname "Philomath" uname "Tillamook" uname "Wankers Corner" uname
+; PA  
+"Atlasburg" uname "Beaver Meadows" uname "Birdsboro" uname "Daisytown" uname 
+"Fairless Hills" uname "Fairchance" uname "Kutztown" uname "Erdenheim" uname 
+"Hyndman" uname "Pringle" uname "Scalp Level" uname "Slickville" uname 
+"Zelienople" uname "Sugar Notch" uname "Toughkenamon" uname "Throop" uname 
+"Tire Hill" uname "Wormleysburg" uname "Oleopolis" uname
+; RI  
+"Woonsocket" uname "Pawtucket" uname
+; SC  
+"Due West" uname "Ninety Six" uname 
+"Travelers Rest" uname "Ware Shoals" uname  
+; SD  
+"Deadwood" uname "Lower Brule" uname 
+"New Underwood" uname "Pickstown" uname 
+"Plankinton" uname "Tea" uname "Yankton" uname  
+; TN  
+"Berry's Chapel" uname "Bulls Gap" uname "Cornersville" uname "Counce" uname 
+"Gilt Edge" uname "Grimsley" uname "Malesus" uname "Soddy-Daisy" uname  
+; TX  
+"Bastrop" uname "New Braunfels" uname "Harlingen" uname "Dimock" uname 
+"Devils Elbow" uname "North Zulch" uname "Llano" uname "Fort Recovery" uname 
+"Arp" uname "Bovina" uname "Cut and Shoot" uname "College Station" uname 
+"Grurer" uname "Iraan" uname "Leming" uname "Harlingen" uname 
+"Muleshoe" uname "Munday" uname "Kermit" uname "La Grange" uname 
+"Ropesville" uname "Wink" uname "Yoakum" uname "Sourlake" uname  
+; UT  
+"Delta" uname "Moab" uname "Nephi" uname "Loa" uname 
+"Moroni" uname "Orem" uname "Tooele" uname "Sigurd" uname 
+; VT  
+"Bellows Falls" uname "Chester Depot" uname "Winooski" uname  
+; VA  
+"Accotink" uname "Ben Hur" uname "Ferry Farms" uname "Disputanta" uname 
+"Dooms" uname "Sleepy Hollow" uname "Max Meadows" uname "Goochland" uname 
+"Rural Retreat" uname "Sandston" uname "Stanleytown" uname
+"Willis Wharf" uname "Stuarts Draft" uname 
+; WA  
+"Black Diamond" uname "Carnation" uname "Cle Elum" uname "Cosmopolis" uname 
+"Darrington" uname "Enumclaw" uname "Forks" uname "Goose Prairie" uname 
+"Navy Yard City" uname "La Push" uname "Soap Lake" uname "Walla Walla" uname 
+"Sedro Woolley" uname "Pe Ell" uname "Ruston" uname  
+; WV  
+"Barrackville" uname "Pocatalico" uname "Fort Gay" uname "Big Chimney" uname 
+"Nutter Fort" uname "Hometown" uname "Nitro" uname "Triadelphia" uname 
+"Star City" uname  
+; WI  
+"Combined Lock" uname "Coon Valley" uname "Black Earth" uname
+"New Holstein" uname "Little Chute" uname "Wisconsin Dells" uname
+"Random Lake" uname "Sheboygan" uname "Nauwatosa" uname  
+; WY  
+"East Thermopolis" uname "Fort Washakie" uname "Paradise Valley" uname 
+; Canada  
+"Sexsmith" uname "Squamish" uname "Fort Qu'Appelle" uname "Flin Flon" uname 
+"Moose Jaw" uname "Grand-Mere" uname "Great Village" uname "Pugwash" uname 
+"Chiliwack" uname "Cranbery Portage" uname  
+"Moosonee" uname "Joe Batt's Arm" uname "St.-Polycarpe" uname
+"Crabtree Mills" uname "Copper Cliff" uname "Uxbridge" uname 
+"Penetanguishene" uname "Boger City" uname "Drumheller" uname 
+"Port Blandford" uname "Hamtramck" uname
+; USA?
+"Hackensack" uname "North Middleboro" uname "Fannettsburg" uname 
+"Corkscrew" uname "Boynton Beach" uname 
+"Belchertown" uname
+; South America  
+"Huatabampo" uname "Zapotiltic" uname "Ipiranga" uname "Perseverancia" uname 
+"Bilwaskarma" uname "Aguadulce" uname
+"Albert Town" uname "Fuente de Oro" uname 
+"Pedras de Fogo" uname "Maxaranguape" uname "Comodoro Rivadavia" uname
+"Coribe" uname "Rossell y Rius" uname "General Alvear" uname
+"Ushaia" uname "Los Antiguos" uname "Puerto Alegre" uname "Quevedo" uname 
+; Eastern Europe  
+"Kannonkoski" uname "Uusikaupunki" uname "Ulfborg" uname "Wloszczowa" uname 
+"Drohiczyn" uname "Vrchlabi" uname "Oroshaza" uname "Klagenfurt" uname 
+"Pisz" uname "Krokowa" uname "Partizanske" uname "Ozd" uname 
+"Jimbolia" uname "Peshkopi" uname "Galaxidhion" uname "Naxos" uname 
+; Iceland
+"Thingvellir" uname "Honningsvag" uname "Vikna" uname "Jokkmokk" uname
+; Scandinavia
+"Rimbo" uname "Kukkola" uname "Viitasaari" uname
+"Guderup" uname "Grindsted" uname "Store Andst" uname "Odder" uname 
+"Vrigstad" uname "Trollhaetten" uname "Kinsarvik" uname "Grimstad" uname 
+; Ireland
+"Ballybunion" uname "Banagher" uname "Carncastle" uname
+; Belgium
+"Lisp" uname "Knokke" uname "Bialy" uname "Bor" uname
+"Hel" uname "Puck" uname
+; Germany
+"Diepholz" uname "Sangerhausen" uname "Biedenkopf" uname 
+"Mosbach" uname "Butzbach" uname "Goslar" uname "Studenka" uname
+"Slavonice" uname "Gouda" uname "Dokkum" uname "Oss" uname
+"Bad Bramstedt" uname "Dinkelsbuehl" uname "Hoogezand" uname 
+"Schoensee" uname "Fuerstenfeldbruck" uname 
+"Pfaffenhausen" uname "Namlos" uname "Bad Hall" uname
+"Consdorf" uname "Cloppenburg" uname "Bad Muskau" uname "Exing" uname
+; France
+"Bois-d'Arcy" uname
+"Presles-en-Brie" uname "Silly-le-Long" uname "Saint-Witz" uname 
+"Limoux" uname "Crozon" uname "Guilvinec" uname "Poggibonsi" uname 
+"Pignans" uname "La Tour-du-Pin" uname "Roquefort" uname "Saint-Quentin" uname 
+; Italy
+"Bobbio" uname "Viareggio" uname "Siderno" uname "Cortona" uname 
+; Spain
+"Pedrogao Grande" uname "Villarcayo" uname "Alosno" uname "La Bisbal" uname 
+; UK 
+"Cold Norton" uname "Potten End" uname "Battlesbridge" uname 
+"Fawkham Green" uname "Ysbyty Ystwyth" uname "Bletchley" uname
+"Llanbrynmair" uname "St Keverne" uname "Foxholes" uname 
+"Whitby" uname "Sutton-on-Sea" uname "Tweedmouth" uname "Wrexham" uname
+"Kirkwall" uname "Blair Atholl" uname "Inchbare" uname "Blackwaterfoot" uname 
+"Ramsgate" uname "Llantwit Major" uname "Minehead" uname "Buckfastleigh" uname 
+"Pocklington" uname "Robin Hood's Bay" uname "West Kilbride" uname
+"Inchnadamph" uname "North Tolsta" uname "Oykel Bridge" uname
+"Pangbourne" uname "Moreton-in-Marsh" uname "Wye" uname "Congresbury" uname
+
+end

@@ -1,0 +1,27 @@
+! This is an example of things you can put in your .Xdefaults.
+
+! The program name is always "xconq", its class is always "XConq".
+
+xconq.TextFont:		timrom12
+xconq.IconFont:         xconq
+xconq.UnitFont:         standard
+xconq.Map.Period.HexDisplayMode: BothIcons
+!Use BorderHex if you don't want terrean icons (just colors).
+!xconq.Map.Period.HexDisplayMode: boRDerheX
+
+! Any of the utility colors can be altered.  The following list shows
+! the compiled-in default.
+! At present there is nothing to change individual terrain colors,
+! short of editing a period definition file.
+
+!xconq.map.<period>.ownColor:		black
+!xconq.map.<period>.alternateColor:	blue
+!xconq.map.<period>.differentColor:	maroon
+!xconq.map.<period>.borderColor:	blue
+!xconq.map.<period>.grayColor:		light gray
+!xconq.map.<period>.enemyColor:		red
+!xconq.map.<period>.neutralColor:	light gray
+!xconq.map.<period>.goodColor:		green
+!xconq.map.<period>.badColor:		red
+
+!class xconq.map.Period.{Foreground|Background}

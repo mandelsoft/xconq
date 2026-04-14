@@ -1,0 +1,190 @@
+#! /bin/csh -f
+#
+# Xconq front-end shellscript, to make setting up games simpler
+# Version 1.0 by Peter Mardahl (peterm@ocf.berkeley.edu)
+# Version 2.0 (vitually a complete rewrite) 
+#		   ERic Mehlhaff mehlhaff@ocf.berkely.EDU
+
+set libdir = /usr/local/games/lib/xconq
+# xconq lib directory, holding periods, maps, etc.
+
+set executable = /usr/local/games/xconq
+# xconq binary path.
+
+set period = ( -p autest )
+# default period
+
+
+echo "Welcome to xconq, a multi-player wargame."
+echo This is a shell-script front-end for xconq, to make setting up
+echo a game far simpler. Read the xconq man page and invoke it from
+echo the command line to get all the rest of its cool options.
+echo " "
+echo But enough of that, on with the game\!
+echo " "
+
+set origdir=`pwd`
+# original directory, in case someone is sourcing this script instead of
+# executing it
+
+set humanplayers=
+
+echo First, who will be playing.  Will there be any human players other 
+echo -n than you\? \(y/N\)" "
+set response=$<
+
+if ( "$response" =~ [Yy]* ) then
+    set machinenames=
+    set machine=
+    # to initialize the variable
+
+    # multiple X displays on the same machine not supported...
+
+    while( "$machine" != "" || "$humanplayers" == "" )
+	if ( "$machinenames" !="") then
+	    echo " "
+	    echo So far there will be players on these machines:
+	    echo $machinenames
+	endif
+	echo Type the machine name that a player will be playing on
+	echo -n \(hit return to end adding players\):" "
+	set machine=$<
+	if( $machine !="") then
+	    set humanplayers = ( $humanplayers ${machine}:0.0 )
+	    set machinenames = ( $machinenames $machine )
+	endif
+    end
+    # remind people about xhost!
+    if( humanplayers !="" ) then
+	echo " " 
+	echo OK, make sure their displays are open. They can do this
+	echo with the command:
+	echo xhost `hostname`:0.0
+    endif
+endif
+
+# done adding players, their X displays are listed in $humanplayers
+
+@ minplayers = 0
+if ($#humanplayers == 0) then
+    @ minplayers = 1
+else
+    @ minplayers = 0
+endif
+
+if ($#humanplayers > 0 && $humanplayers[1] != "" ) then
+    if( $#humanplayers > 6) then
+	echo There are too many humans in the game\!
+	edho only 7 players can be in xconq.
+	exit
+    endif
+    @ maxplayers = 6 - $#humanplayers
+else
+    @ maxplayers = 6
+endif
+
+
+
+GetEnemies:
+echo " " 
+echo How many computer opponents shall there be\?
+echo -n enter a number from $minplayers to $maxplayers": "
+set numenemies = $<
+
+# this crashes when the bozo user inputs non-numeric number in numenemies
+if ( "$numenemies" < 0 || "$numenemies" > $maxplayers ) then
+    echo No, That just won\'t do\!
+    echo " "
+    goto GetEnemies
+endif
+
+
+set map=
+echo " " 
+echo -n Do you want a pregenerated map\? \(y/N\)" "
+set response=$<
+if( "$response" =~ [Yy]* )then
+#   way cool random ugly code to pick a map
+#   wish this were faster on these apollos...
+
+    cd $libdir
+    set mapnames=*.map
+    PickaMap:
+    @ j = 0
+    echo These are the maps we have installed:
+    echo Num  Name	Description
+    foreach i ($mapnames)
+	@ j++
+	echo -n $j $i:r "	"
+	head -1 "$i" | sed -e 's/Xconq . [-+]*//'
+	# don'tcha just love sed?
+    end
+
+    echo -n Pick a number from 1 to ${#mapnames}": "
+    set  selection = $<
+
+    # again, this will crash if the bozo enters non-numeric
+    if( $selection < 0 || $selection > $#mapnames) then
+    echo I don\'t know that map\!
+    goto PickaMap:
+    endif
+    set map = ( -m $mapnames[$selection]:r )
+
+else
+
+    echo " " 
+    echo OK, a random map will be generated then.
+    echo -n Do you want to specify the size of this random 'map?(y/N\) '
+    set response=$<
+    if( "$response" =~ [yY]* ) then
+	echo -n Enter a 'width: '
+	set width = $<
+	echo -n Enter a 'height: '
+	set height = $<
+
+	# once again, if the user enters non-numerics, it crashes...
+	set map= ( -M $width $height )
+    endif
+endif
+
+
+# Now to pick a period...
+echo -n Would you like to pick a historical 'period?(y/N) '
+set response=$<
+if( "$response" =~ [Yy]* )then
+#   again, ugly code, but it's virtually identical to map picking code
+    cd $libdir
+    set pernames=*.per
+    PickaPer:
+    @ j = 0
+    echo These are the periods we have installed:
+    echo Num  Name	Description
+    foreach i ($pernames)
+	@ j++
+
+	# note, there's a tab in following "   " to improve columns spacing
+	echo -n $j "$i:r" "	"
+
+	head -1 "$i" | sed -e 's/Xconq . [-+]*//'
+	# don'tcha just love sed?
+    end
+
+    echo -n Pick a number from 1 to ${#pernames}": " 
+    set  selection = $<
+
+    # again, this will crash if the bozo enters non-numeric
+    if( $selection < 0 || $selection > $#pernames) then
+    echo Hey, we don\'t have that period installed\!
+    goto PickaPer:
+    endif
+    set period = ( -p $pernames[$selection]:r )
+endif
+
+
+cd $origdir
+# just in case. This makes save files go in a saner place too.
+
+echo OK, starting the game\!
+echo " "
+echo xconq $humanplayers -C $map -e $numenemies $period
+exec $executable $humanplayers -C $map -e $numenemies $period 

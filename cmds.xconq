@@ -1,0 +1,97 @@
+To move a unit, use the mouse or [hlyubn]
+[HLYUBN] moves unit repeatedly in that direction
+Mousing unit makes it sit, mousing enemy unit attacks
+  
+    ---------- UNIT COMMANDS ----------------------------------------
+d   delay unit's move until later in turn
+s   put a unit on sentry duty
+^S  sentry occupants
+w   wake units up from whatever they were doing
+^W  wake specific kind of unit
+W   wake ALL units in area, including occupants
+m   move to given location
+    (Space Bar) make unit be on sentry this turn only
+r   return unit to nearest city/transport
+$   move to filling transport
+f   follow a designated leader
+LF  move to the marked unit
+e   embark units onto transport occupying same unit
+E   recursivly pickup units onto this unit
+^E  pickup units onto this unit
+^F  order transport to sleep until full
+j   leave current transport
+J   unload units from this unit
+@   disembark units from one transport into unit
+g   give supplies to the transport
+t   take supplies from the transport
+x   mark unit for later reference
+F   follow a coastline
+p   go on a patrol
+P   set/change unit production
+*   set/change unit group
+^P  set next product
+I   set unit to not produce anything
+C   call a unit or side by a name
+^A  Turn unit over to machine control
+D   disband a unit and send it home
+G   turn unit over to another side
+T   take supplies from the transport recursively
+!   show production of unit type
+a   look at the occupants
+    
+    --------------- UNIT ITERATION COMMANDS --------------------------
+>   show producer of specified product
+.   show next producer of current product
+<   show unit of specified type
+,   show next unit of current type
+^   find a unit type, (arg gives unit number)
+^T  find next unit, (arg gives unit number)
+^D  Show next dead unit.
+    
+            ---------- SEE NEXT PAGE FOR MORE COMMANDS ----------
+To move a unit, use the mouse or [hlyubn]
+[HLYUBN] moves unit repeatedly in that direction
+Mousing unit makes it sit, mousing enemy unit attacks
+  
+    --------------- STANDING ORDER COMMANDS --------------------------
+O   set standing orders for occupants
+i   inform about standing orders
+R   remove standing order
+DEL delete a standing order
+ESC cancel teach mode
+^O  change condition while in teach mode
+    
+    --------------- GLOBAL COMMANDS ----------------------------------
+z   toggle between survey and move modes
+c   designate current location as center of action
+M   send a message to other sides
+\   build a new unit (Build mode only)
+A   add a new player to the game
+V   display program version
+S   save the game into a file
+X   resign from the game
+Q   kill game for all players
+    
+    --------------- DISPLAY OPTIONS ----------------------------------
+o   set various options
+    Change (d)isplay Mode, (g)raph, Win (h)eight,
+    (i)nverse Video, (2)-color, (n)otice Buffer
+    (r)obot, Start (b)eep Time, Win (w)idth
+    World Map (m)agnification, (v)isibility
+    (p)roducts, (P)roducers, (o)rders, (Ss)tanding Orders
+    (a)rrow Mode, (t)hin/Thick Lines, (e)Distinct Sorders
+    (l)ook Mode, (z) Working Mode, (?) Help
+TAB jump to last seen enemy
+RET return to old position
+       cancel with ESC
+`   center the screen around current location
+v   highlight current position
+^R  redraw screen erase very old views
+^L  redraw screen
+    
+    --------------- HELP COMMANDS ------------------------------------
+?   display help info
+/   identify things on screen
+=   display details about a type of unit
+#   measure the distance from the current point
++   put various data into files for printing

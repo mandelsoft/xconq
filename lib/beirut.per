@@ -1,0 +1,103 @@
+Xconq 0 -+---- The heroic fighters of Beirut--no fun
+Period 0
+
+; buildings should be able to be neutral after revolt
+; death squads should be as fast as leaders and shouldn't retreat
+; and should be able to take over buildings.
+; no capturing if leader if they are win/lose condition.
+
+"Beirut 1982" period-name
+
+"m" "militia" "hide and fight from building to building" utype
+"d" "death squad" "hit people and not buildings" utype
+"l" "leader" "an individual" utype
+"c" "car bomb" "destroys buildings" utype
+"t" "tank" "also destroys buildings and other things" utype
+"B" "building" "good for hiding out" utype
+
+; hostages rtype?
+
+"." "sea" "sky blue" ttype
+"," "beach" "yellow" ttype
+"+" "street" "light gray" ttype
+"^" "junkheap" "sienna" ttype
+"=" "fields" "green" ttype
+"%" "trees" "forest green" ttype
+
+true junkheap dark
+
+[   0  20  25  35  80  90 ] t* min-alt
+[  20  25  35  80  90 100 ] t* max-alt
+
+"soldiers" m icon-name
+"45" d icon-name
+"man" l icon-name
+"auto" c icon-name
+"tank" t icon-name
+"city20" B icon-name
+
+[ m d l c t ] "movers" define
+[ c t ] "vehicles" define
+[ sea ] "water" define
+[ beach street junkheap fields trees ] "land" define
+
+1 B territory
+10 l territory
+
+[ 5 1 1 2 2 1 ] u* in-country
+3000 B density
+100 street movers favored
+100 junkheap B favored
+
+; 100 t* u* favored
+
+5 country-size
+5 country-min-distance
+;10 country-max-distance
+
+100 B revolt
+
+[ 1 1 2 3 3 ] movers speed
+
+0 land [ m d l ] moves
+0 [ beach street ] vehicles moves
+
+2 [ m d l ] B capacity
+
+0 d visibility
+true B already-seen
+
+true all-seen
+
+[ 1 1 1 1 2 10 ] u* hp
+
+[ 50 50 50 50 50 50 ] u* m hit
+[  5 50 70 20 20  0 ] u* d hit
+[  0 20 50  0 20  0 ] u* l hit
+[ 90 90 90 90 90 90 ] u* c hit
+[ 90 90 90 90 90 90 ] u* t hit
+[ 10 10 10 10  0  0 ] u* B hit
+
+1 u* u* damage
+1 B t damage
+[ 2 10 ] [ t B ] c damage
+
+-100 neutrality
+
+true c self-destruct
+
+100 B m capture
+100 c m capture
+; 50 l m capture
+50 t m capture
+
+[ 20 80 90 0 0 ] movers retreat
+
+;30 m control
+
+50 [ m d ] B protect
+90 B m protect
+
+true B neutral
+
+end

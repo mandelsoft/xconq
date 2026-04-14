@@ -1,0 +1,49 @@
+THINGS TO DO WHEN YOU'RE FEELING AMBITIOUS
+
+Fix where initial view is not drawn until after a ^L.
+
+Find out why Open Look doesn't redirect keyboard events.
+
+Do something about SUN/NeWS font conversion?
+
+Do something reasonable with garrisoning unit's occupants.
+
+Find and fix lr-off-by-one in cconq after changing the view.
+
+Add/remove '*' from side names in cconq. (not removed after
+machine finishes turn?)
+
+When does transport still think it's occupied by a dead unit?
+
+Fix so units can move one last hex when almost out of fuel.
+
+Make routefinding code switchable.
+
+Speed up the unit routefinding code.
+
+Figure out possible freezeup bug in Beirut scenario.
+
+Prevent deep recursion in fill_region from crashing xconq on large maps.
+
+Finish merging/documenting the different versions of standard period.
+
+Add cool periods contributed by various people.
+
+Eliminate obvious junk from the library.
+
+Update manuals to reflect new commands and period words.
+
+Add more X command args, at least -geometry.
+
+Add auto-save and/or a checkpoint user command.
+
+The help screen is non-reentrant.  Two players using it at the same
+time interfere with each other.
+
+
+ERic's TODO:
+Fix infinite loop bug in surrender phases.  
+
+Get out of unit command
+
+Magic items in fantasy period.

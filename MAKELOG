@@ -1,0 +1,84 @@
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c xconq.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c init.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c command.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mplay.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mutil.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mproduce.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mvars.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c sergeant.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c move.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c minit.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c attack.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c phases.c
+phases.c: In function `disaster_phase':
+phases.c:91: structure has no member named `loop_check'
+phases.c:102: structure has no member named `loop_check'
+phases.c:112: structure has no member named `loop_check'
+phases.c:122: structure has no member named `loop_check'
+phases.c:137: parse error before `Unit'
+phases.c:164: parse error before `Unit'
+phases.c:218: parse error before `Unit'
+phases.c:236: parse error before `Unit'
+phases.c:269: parse error before `{'
+phases.c:276: `side' undeclared (first use this function)
+phases.c:276: (Each undeclared identifier is reported only once
+phases.c:276: for each function it appears in.)
+phases.c:279: `occ' undeclared (first use this function)
+*** Exit 1
+
+Stop.
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c xconq.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c init.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c command.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mplay.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mutil.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mproduce.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mvars.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c sergeant.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c move.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c minit.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c attack.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c phases.c
+phases.c: In function `disaster_phase':
+phases.c:137: parse error before `Unit'
+phases.c:164: parse error before `Unit'
+phases.c:218: parse error before `Unit'
+phases.c:236: parse error before `Unit'
+phases.c:269: parse error before `{'
+phases.c:276: `side' undeclared (first use this function)
+phases.c:276: (Each undeclared identifier is reported only once
+phases.c:276: for each function it appears in.)
+phases.c:279: `occ' undeclared (first use this function)
+*** Exit 1
+
+Stop.
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c phases.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c map.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c mkmap.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c side.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c unit.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c order.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c util.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c input.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c help.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c period.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c ginit.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c draw.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c output.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c per2c.c
+rm -f per2c
+gcc -o per2c  per2c.o period.o -O -U__STDC__ -D_PROTOTYPES       
+rm -f lib/standard.c
+per2c < lib/standard.per > lib/standard.c
+rm -f standard.c
+ln -s lib/standard.c standard.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c standard.c
+gcc -DXCONQLIB=\"/usr/src/xconq/xconq/lib/\" -DXAPPLRESDIR=\"/usr/src/xconq/xconq/lib/\"   -DBCOPY -DSELECT2 -DUNIX  -c X11.c
+X11.c:20: X11/Xos.h: No such file or directory
+X11.c:24: X11/Xlib.h: No such file or directory
+X11.c:25: X11/Xutil.h: No such file or directory
+X11.c:26: X11/Xresource.h: No such file or directory
+X11.c:27: X11/Intrinsic.h: No such file or directory
+*** Exit 1
+
+Stop.

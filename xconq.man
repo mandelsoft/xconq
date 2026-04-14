@@ -1,0 +1,250 @@
+.TH XCONQ 6 Utah
+.SH NAME
+xconq - X-based strategy game
+.SH SYNOPSIS
+.B
+xconq
+[ options ] ...
+.SH DESCRIPTION
+\fIXconq\fP is a multi-player strategic wargame.
+Your goal is to save the world from the evil empires attempting to
+take over.  You get cities, armies, airplanes, and ships with which to
+accomplish your task.  Success is achieved by the neutralization or
+defeat of the other sides, by any means available.  First you have to
+find them!
+.PP
+Although the game can get complicated, to start you need only
+know about the help command '?', which is valid at any time.
+You start with only one city, which makes things even simpler.
+The city will automatically produce a military unit, which you
+will be prompted to move around.  Eventually, you will get more and
+can attempt to take over other cities.
+The game keeps going
+until only one side is left in action;
+this player is then declared the winner.
+.PP
+By default, \fIxconq\fP
+starts up with one human (on the display in $DISPLAY) and one
+machine, playing on a randomly generated 60x30 world.  Options are
+available to set numbers and kinds of players, as well as the
+kind of map used.  In addition, \fIxconq\fP has extensive and
+elaborate facilities for building maps, scenarios, and historical
+periods, resulting in a wide variety of games.
+.SH OPTIONS
+.TP 5
+.I host:display
+adds a human player to the game and assigns to the given host and display.
+Players get created in the same order as they appear on the command line,
+interleaved with the players created via \fB-e\fP and \fB-A\fP.
+All of the player adding options may be used any number of times in any order.
+.TP 5
+.B \-A \fIhost:display\fP
+attaches a machine player to the given display.  Ideal for those who like
+to watch.
+.TP 5
+.B \-C
+allows the machine player to play in cheat mode.  It will get a
+complete update of the screen every turn.
+.TP 5
+.B \-e \fInumber\fP
+sets the number of machine players not attached to displays.
+Non-displayed machine players form alliance blocks of 5-9 countries.
+.TP 5
+.B \-m \fIname\fP
+reads the map named \fIname\fP and starts up a game on it.
+.TP 5
+.B \-M \fIwidth height\fP
+generates a random map of the given size.  The size must be at least 5x5,
+although some periods will impose additional constraints on the lower bound.
+In theory, there is no upper bound (but 200x100 is huge).
+.TP 5
+.B \-p \fIname\fP
+reads the historical period specified by \fIname\fP, and sets everything
+up for that period.
+.TP 5
+.B \-r
+resets the list of players on the command line.  It is most useful when
+placed before other player specifications, to clear out the default
+players.
+.TP 5
+.B \-s \fIname\fP
+reads a scenario with the name \fIname\fP.  A scenario sets up a particular
+situation; it has a fixed number of sides that can participate.
+.TP 5
+.B \-t \fInumber\fP
+toggles a chess-clock-like feature that limits the total time of play for
+each side.  The amount is \fInumber\fP minutes per side.  Time is only counted
+while actually waiting for input.
+.TP 5
+.B \-T \fInumber\fP
+toggles a timeout that limits the length of each turn for all sides.
+The amount is \fInumber\fP minutes per turn.  Time is counted
+continuously.  The clock will stop updating after you have moved all
+possible units, but if you then want to see how much time is left for
+the other players, press ^L.
+.TP 5
+.B \-T \fInumber\fP
+toggles a chess-clock-like feature that limits the per-round time of play for
+each side.  The amount is \fInumber\fP minutes per side.
+.TP 5
+.B \-v
+make the entire world seen by all players at the outset.
+This is useful if exploration
+is deemed to be time-consuming, or if the map is already known to everybody.
+Some maps already have this enabled.
+.\" .TP 5
+.\" .B \-x
+.\" allows scenarios, maps, periods, and players to be set up interactively
+.\" via menus.  The menus should be self-explanatory.
+.LP
+In addition, \fB-B\fP and \fB-D\fP are recognized;
+see the customization document for more details.
+.SH EXAMPLES
+.TP 8
+.B
+xconq
+One human on local display, one machine, 60x30 random map
+.TP 8
+.B
+xconq -m crater
+One human vs one machine, on the "crater lake" map
+.TP 8
+.B
+xconq -e 0 blitzen:0 kzin.eel:0
+Three humans.  One on the local display, one on blitzen:0 in the same
+network, and another: kzin.eel:0 in another network.  60x30 random map
+.TP 8
+.B
+xconq -e 2 -M 90 40 -A shark:0
+One human, three machines (one on display shark:0), 90x40 random map
+.TP 8
+.B
+xconq -r -e 3 -m 1987 wind:0 surfer:0 -A springs:0
+Six players (4 machine, 1 on springs:0; 2 human, on wind:0 and surfer:0),
+all playing on a 360x122 map of the earth with present-day cities.  Major!
+.SH "X DEFAULTS"
+.TP 10
+.B Class / name
+You may specify these resources in your .Xres (or .Xdefaults) using a
+spec of the form
+.sp
+    XConq.Class: value
+.sp 
+or
+.sp
+    XConq.name: value
+.sp
+and you can mix classes and names in the spec.  This is just standard X
+resource stuff.
+.PP
+The following resources have a prefix of
+.B XConq.Map.Period / xconq.map.%s
+\.
+.TP 10
+.B HexDisplayMode / hexDisplayMode
+This is how \fIxconq\fP will display the terrain hexes.  Possible values
+are \fBFullHex\fP, \fBBorderHex\fP, \fBTerrIcons\fP, and \fBBothIcons\fP.
+.TP 10
+.B Background / ownColor
+The color for your own units.
+.TP 10
+.B Background / alternateColor
+I forgot
+.TP 10
+.B Background / differentColor
+Reminders would be appreciated
+.TP 10
+.B Foreground / borderColor
+It shouldn't be hard to figure out anyway
+.TP 10
+.B Foreground / grayColor
+but my boss is looking over my shoulder
+.TP 10
+.B Foreground / enemyColor
+The color of enemy units
+.TP 10
+.B Foreground / neutralColor
+The color of neutral units
+.TP 10
+.B Foreground / goodColor
+The color of allied units
+.TP 10
+.B Foreground / badColor
+And I really shouldn't play this game until I've finished the project
+.TP 10
+.B Font / textFont
+Font for all text.
+.TP 10
+.B Font / iconFont
+Font for miscellaneous pictures.
+.TP 10
+.B Font/ helpFont
+Font for the help pages.
+.SH AUTHORS
+Stan Shebs (shebs@cs.utah.edu)
+.sp
+Version 5.4 by Greg Fisher (fisher@cs.rutgers.edu)
+.sp
+Version 5.5 by Robert Forsman (thoth@lightning.cis.ufl.edu)
+.sp
+Version 6.0 in the works.  It doesn't work too well yet, Stan's still
+fixing things.
+.SH FILES
+\fIsave.xconq\fP	saved game
+.br
+\fIemergency.save.xconq\fP	game saved after program crash
+.br
+\fIstats.xconq\fP	performance statistics for a game
+.br
+\fIcmds.xconq\fP	listing of commands
+.br
+\fIparms.xconq\fP	listing of units and their characteristics
+.br
+\fIview.xconq\fP	printable version of the map display
+.br
+\fI/local/lib/x11r4/xconq/*.map\fP	 predefined maps
+.br
+\fI/local/lib/x11r4/xconq/*.scn\fP	 predefined scenarios
+.br
+\fI/local/lib/x11r4/xconq/*.per\fP	 predefined historical periods
+.br
+\fI/local/lib/x11r4/xconq/*.onx\fP	 X10 fonts
+.br
+\fI/local/lib/x11r4/xconq/*.bdf\fP	 X11 uncompiled fonts
+.br
+\fI/local/lib/x11r4/xconq/*.snf\fP	 X11 compiled fonts
+.br
+\fI/local/lib/x11r4/xconq/xconq.news\fP	 news about features/additions
+.SH "SEE ALSO"
+.br
+.IR "Liberating the World (Made Simple)"
+.br
+.IR "Customizing Xconq (Made Somewhat Simple)"
+.SH DIAGNOSTICS
+If a given display cannot be opened due to a missing \fIxhost(1)\fP command,
+\fIxconq\fP will quit with a message "Error opening display host:0".
+.PP
+If the icon fonts cannot be found or opened, text will be substituted.
+This is usually pretty yucky.
+.PP
+If the map is too small for the desired number of players, \fIxconq\fP will
+complain about not being able to place units.
+.PP
+There are some panic messages which usually precede a core dump by a few
+milliseconds.
+.PP
+Incorrect combinations of periods, maps, and scenarios
+can generate a host of different error messages.
+.SH BUGS
+.PP
+Since some periods/maps/scenarios are interdependent, they must be specified
+in a particular order on the command line (period first usually).
+.PP
+Does not cope gracefully (it doesn't really cope at all) with
+insufficient memory.
+.PP
+Some annoying behaviors are actually features.
+.PP
+Feel free to report bugs to xconq@uunet.uu.net.  There are people
+there willing (if not able) to help you.  If you wish to listen in on
+the list you may join by sending mail to xconq-request@uunet.uu.net.

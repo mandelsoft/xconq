@@ -1,0 +1,38 @@
+	In single player mode even though there is more than one human
+player in a game, only a single display is opened for the current
+player based on the current players DISPLAY environment variable
+value.  If this player has units to move he can move them, save the
+game and mail the save.xconq file to the next player allowing for a
+mail version of xconq.  In this single player mode the messages
+sent to players are saved in files named: <player>.not.  These
+files can be mailed along with the save.xconq file to other
+players.
+
+	Starting the game with the -S option is similar to starting
+the game with the -r option.  Specify the value of the DISPLAY
+environment variable each player will have when starting the game on
+the command line, including one for the person starting the game.  If
+the display value is unknown a dummy value with the persons name can
+be used and when the actual person starts his turn he will get the
+unknown player prompt and be able to select the proper side as 
+described bellow.
+
+	If during the game a person's DISPLAY variable changes.  (i.e.
+they move to a new machine or a dummy value was used starting the
+game) When they start the game they will get a prompt indicating that
+the DISPLAY value isn't in the saved game and ask them to select their
+side.  This person should select the side they have been playing as.
+This will update his new DISPLAY value in the save.xconq file for that
+side when he saves the game.
+
+	In this version each person must have a unique DISPLAY value.
+Only one person can have a "local:0.0" value. And two people can't
+play on the same host unless one uses local:0.0 and the other the
+actual name. Or there is some other unique alias for the host to use
+for each player.
+
+		Brent Allsop
+		allsop@fc.hp.com
+		(303)229-2377
+
+

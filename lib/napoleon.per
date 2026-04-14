@@ -1,0 +1,149 @@
+Xconq 0 -+---- Napoleonic era
+Period 0
+
+"1800" period-name
+
+"i" "infantry" "the backbone of the army" utype
+"c" "cavalry" "zips around for shock effect" utype
+"a" "artillery" "slow but pounds on infantry" utype
+"t" "transport" "" utype
+"f" "frigate" "" utype
+"F" "fleet" "a full line of battle fleet" utype
+"B" "balloon" "fragile but good for reconnaissance" utype
+"/" "fortifications" "" utype
+"*" "city" "" utype
+"@" "capital" "" utype
+
+"$" "food" "" rtype
+"s" "shot" "" rtype  ; what artillery and ships use
+
+"." "sea" "sky blue" ttype
+"," "shallows" "cyan" ttype
+"=" "swamp" "gray" ttype
+"+" "plains" "green" ttype
+"%" "forest" "forest green" ttype
+"~" "desert" "yellow" ttype
+"^" "mountains" "sienna" ttype
+"_" "ice" "white" ttype
+
+[   0  69  70  71  71  71  95  99 ] t* min-alt
+[  69  70  71  95  95  95  99 100 ] t* max-alt
+[   0   0   0  20  80   0   0   0 ] t* min-wet
+[ 100 100 100  80 100  20 100 100 ] t* max-wet
+
+ice edge-terrain
+
+"soldiers" i icon-name
+"cavalry" c icon-name
+"cannon" a icon-name
+"brig" t icon-name
+"frigate" f icon-name
+"twodecker" F icon-name
+"balloon" B icon-name
+"camp" / icon-name
+"town20" * icon-name
+"city18" @ icon-name
+
+[ plains desert forest mountains ] "land" define
+[ i c a t f F B ] "movers" define
+[ i c a ] "land-forces" define
+[ t f F ] "ships" define
+
+1 [ * @ ] named
+[ 1 5 25 ] [ / * @ ] territory
+
+1 @ in-country
+5 * in-country
+100 * density
+100 plains [ / * @ ] favored
+@ first-unit
+i first-product
+true u* already-seen
+
+[ 4 10 10 15 20 30 30 ] movers @ make
+[ 4 10 10 15 20 30 30 ] movers * make
+0 B * make
+8 / i make
+8 / c make
+1 [ * @ ] maker
+20 u* startup
+0 i startup
+50 B research
+1 u* [ * @ ] repair
+10 [ f F ] [ f F ] repair
+
+1 food land-forces produce
+1 food / produce
+10 [ food shot ] [ * @ ] produce
+100 [ plains forest ] land-forces productivity
+100 [ plains forest mountains ] / productivity
+0 desert / productivity
+100 plains [ * @ ] productivity
+70 [ forest mountains ] [ * @ ] productivity
+30 desert [ * @ ] productivity
+[ 4 10  4 300 300 300  0 10 500 1000 ] food u* storage
+[ 1  0 30  30  30  50  0 100 200 400 ] shot u* storage
+1 food land-forces consume
+1 food ships consume
+-1 r* land-forces out-length
+
+[ 1 3 1 2 5 3 5 ] movers speed
+
+0 land land-forces moves
+-1 [ forest mountains ] a moves
+2 [ forest mountains ] c moves
+0 [ sea shallows ] [ t f F ] moves
+1 shallows f moves
+-1 shallows F moves
+0 t* B moves
+0 land [ / * @ ] moves  ; looks strange, but needed to define allowable places
+
+5 u* * capacity
+10 u* * capacity
+5 u* [ * @ ] capacity
+1 u* / capacity
+[ 5 2 1 ] land-forces t capacity
+[ 1 ] [ i ] f capacity
+[ 2 1 ] [ i c ] F capacity
+0 [ / * @ ] [ / * @ ] capacity
+
+[ 1 1 1 2 3 6 1 10 20 40 ] u* hp
+
+; old...
+; [ 40  30  70  20  10   5  60  10  10  10 ] u* i hit
+; [ 50  40  70  10   5   1  20  10  10  10 ] u* c hit
+; [ 60  60  30  50  50  40  10  99  99  99 ] u* a hit
+; [ 20  30  10  20  10  10   5   0   0   0 ] u* t hit
+; [ 50  40  25  60  50  50  10  60  60  60 ] u* f hit
+; [ 50  50  30  80  40  50  50 100 100 100 ] u* F hit
+; [ 10  10  10  10  10  10  10  10  10  10 ] u* B hit
+; [  0   0   0   0   0   0   0   0   0   0 ] u* / hit
+; [ 20  20  20  20  20  20  20  20  20  20 ] u* * hit
+; [ 40  40  40  40  40  40  40  40  40  40 ] u* @ hit
+
+[ 40  50  30  20  10   5  75  99  99  99 ] u* i hit
+[ 40  50  30  10   5   2  50  50  50  50 ] u* c hit
+[ 60  70  60  50  50  40  20  99  99  99 ] u* a hit
+[ 20  30  10  20  10  10  10  10  10  10 ] u* t hit
+[ 30  40  20  60  50  50  20  60  60  60 ] u* f hit
+[ 40  50  30  80  40  50  50 100 100 100 ] u* F hit
+[ 10  10  10  10  10  10  10  10  10  10 ] u* B hit
+[  0   0   0   0   0   0   0   0   0   0 ] u* / hit
+[ 20  20  20  20  20  20  20  20  20  20 ] u* * hit
+[ 40  40  40  40  40  40  40  40  40  40 ] u* @ hit
+
+1 u* u* damage
+2 u* [ a ] damage
+3 u* F damage
+
+[ 20 70 50 20 ] [ a / * @ ] i capture
+
+1 ships can-disband
+
+1 [ * @ ] neutral
+
+begin{notes}
+end{notes}
+
+end
+

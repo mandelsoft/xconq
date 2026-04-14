@@ -1,0 +1,25 @@
+more_units()
+{
+  xcconnect -q "$@" | {
+    read a
+    if [ "$a" = "There are more units to move." ]; then
+      return 0
+    else
+      return 1
+    fi
+  }
+}
+
+flag=0
+
+while true; do
+  if more_units "$@"; then
+    if [ $flag = 0 ]; then
+      flag=1
+      echo "There are more units to move in xconq!" >/dev/console
+    fi
+  else
+    flag=0
+  fi
+  sleep 120
+done

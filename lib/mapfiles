@@ -1,0 +1,20 @@
+Scenarios
+hill      King of the Hill
+europe42  Axis vs Allies in Europe
+Periods
+empire    Old (WB) Empire
+flattop   Operational-level carrier battles
+greek     The ancient Greeks
+napoleon  The Age of Napoleon
+fred      Frederick the Great
+future    A strange future
+Maps
+crater    Map with a crater lake
+earth1    Big (360x122) map of the Earth
+earth2    Smaller (180x60) map of the Earth
+steppes   All land and nothing else
+sea       All sea and nothing else
+three     Three identical islands
+hard      Single continent
+harder    Single continent, everybody inland
+End

@@ -1,0 +1,17 @@
+***************
+*** 200,206 ****
+  {
+      fprintf(stderr, "Usage: %s [display] [-A display] [-B] [-C] [-e n] [-m name]\n",
+  	    programname);
+!     fprintf(stderr, "  [-M w h] [-p name] [-r] [-s name] [-t n] [-v]\n");
+      exit(1);
+  }
+  
+--- 205,211 ----
+  {
+      fprintf(stderr, "Usage: %s [display] [-A display] [-B] [-C] [-e n] [-m name]\n",
+  	    programname);
+!     fprintf(stderr, "  [-M w h] [-p name] [-r] [-s name] [-t n] [-T n] [-v]\n");
+      exit(1);
+  }
+  

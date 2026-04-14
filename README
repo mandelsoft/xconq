@@ -1,0 +1,226 @@
+Copyright (c) 1986, 1991  Stanley T. Shebs.
+This program may be used, copied, modified, and redistributed freely
+for noncommercial purposes, so long as this notice remains intact.
+
+
+
+WELCOME TO XCONQ!				XC5.5 3/19/92 EWZ
+
+If you're reading this file, you've found the best multiplayer strategy
+game that's come around in a while (ok, maybe of all time).
+
+Xconq 5.5 is the version you have right now and seems fairly stable. 
+It's basically four years worth of incremental improvements on my July
+1988 5.0 release.
+
+Xconq 6.0 is either a) an "unofficial" version that has been hacked on
+is available, or b) what Stan was calling hew new version up until a few
+days ago.  Copies of another "6.0" have been reportedly floating around
+Europe.
+
+Xconq 7.0 is Stan Shebs' "new" version.  Like Intel's i786 chip, it's not
+even close to an alpha product yet.  It will draw upon the past experience
+with 5.x, but will be a complete rewrite full of improvements that hope-
+fully make it *the* programmable game system of the 90s.
+
+						Eric Ziegast
+						uunet!ziegast
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+INSTALLATION NOTES
+
+This is the source directory for XCONQ, a multi-player strategy game.
+The code herein includes interfaces for curses and X11R4&5.
+
+1. Look at the Imakefile and configure it to suit any of your sys-
+tem's quirks.  Imake should be able to figure out most everything,
+but there may be a few defines which may have to be set to catch
+special cases in the source.
+
+2. Look at config.h and edit as desired.  It contains mainly game
+controls.
+
+3. Do "xmkmf" or the appropriate imake command to create a working
+Makefile.
+
+4. Do "make depend" to iron out the dependencies between the files.
+
+5. Do:
+    "make all" 		to build xconq and cconq.
+    "make install"	to install the binaries, library, etc...
+    "make install.man" 	to install the man pages.
+    "make docs"		to convert the ms documents to readable ASCII.
+
+Read the part of the Imakefile regarding "FONTS".  It gives you important
+info regarding the loading of fonts which you need to address.
+
+6. If you installed everything in default places, you're ready to
+just do "xconq" or "cconq".  Unless you want to use a hard-to-read
+text font in "xconq" you must first set your font path correctly.
+See the Imakefile for more info.
+
+7. The man pages just tell how to start up the programs; xconq.ms has
+complete details on every aspect of play.  A lot of behavior can be
+figured out by experimentation and by using the extensive online help
+('?' should always provide something).
+
+8. If installed in a public place, announce availability.  The library
+file "xconq.news" provides a convenient place to put in any notes
+about changes, new maps/scenarios, and so forth.
+
+9. If you get bored with the standard game, look at "custom.doc",
+which tells how to build your own historical periods, maps, and
+scenarios.  Many have already been defined; all are in the library
+directory.
+
+The program has been tested on lots of different kinds of systems.
+Porting to other graphics environments should not be too difficult,
+since all the user interface goes through about 50 abstract functions.
+(Suntools, Macintosh, and Atari ST would be good candidates.)
+Non-Un*x should be straightforward also, since there are only a
+handful of Un*x system calls, and none of those are absolutely
+required.  Please contact me about any portability problems.
+
+OpenWindows: People seem to have a lot of trouble with OpenWindows.
+We expect this is because they are not gods.  If you encounter any
+problem with OpenWindows that you solve by changing our code or
+installation procedure, TELL US!
+
+  HPUX: (pronounced "HPOX" or "HPsucks") These guys have something
+screwy with random and you may have to link with the MIT X library
+instead of their installed one.  Earlier versions also didn't have the
+strcasecmp function, so uncomment bsd.o from the OBJS line in the
+Makefile if you have a problem.  We will have to improve our support
+in the future, since HPs look like they're going to stomp Sun into the
+ground.
+
+  AIX 3.0: Miraculously, the game compiled without modification.  It
+seems that IBM's successes are as surprising as it's screw-ups.
+
+Finally, to repeat what is all over the files, you may copy,
+redistribute, modify, or even mangle the code, as long as the
+copyright notices are retained, and you don't try to sell it.  Common
+decency dictates that you identify your changes before passing the
+sources on, and it would help future hackers if you try to maintain
+the style and standards of the existing code.  Also I would enjoy seeing
+any improvements/fixes/suggestions, and will try to incorporate them in
+future versions of XCONQ.
+
+						Stan Shebs
+						shebs@apple.com
+
+Thanks to the many XCONQ players around the net who have sent in
+literally hundreds of suggestions, fixes, and improvements.  The
+manual includes more detailed acknowledgments.
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+XCONQ MAILING LIST
+
+Xconq has a mailing list for xconq players and developers.  The list
+includes discussion on anything related to xconq (design, bugs, strat-
+egies, etc...).  In addition, patches and new releases will be announced
+through the mailing list.  To subscribe to the list, send mail to
+"xconq-request":
+
+    Internet: xconq-request@uunet.uu.net
+    UUCP:     ...!uunet!xconq-request
+
+To post to the list, send mail to "xconq":
+
+    Internet: xconq@uunet.uu.net
+    UUCP:     ...!uunet!xconq-request
+
+Mail to the list is archived on ftp.uu.net in the xconq directory.
+Look for the file "mail.Z".
+
+If you have anything that you would like to add to xconq archive on
+ftp.uu.net, mail it to xconq-request.
+
+Any binary files should be uuencoded before sending.
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+HOW TO GET XCONQ
+
+Listed below are sites where you can get the most current release of
+xconq.  If this info is outdated, send mail to xconq-request.
+
+By FTP:
+
+    UUNET is the official xconq archive of the 1992 Summer Olympics.
+    Any sources or other xconq errata can be usually be found here.
+
+        $ ftp ftp.uu.net
+        Name: ftp
+        Password: anything (your mail address is preferred)
+        ftp> bin
+        ftp> cd games/xconq
+        ftp> ls
+
+    A copy of the most recent source can also be found at ufl.edu:
+
+        $ ftp ftp.cis.ufl.edu
+        Name: ftp
+        Password: anything (your mail address is preferred)
+        ftp> bin
+        ftp> cd pub/empire
+        ftp> ls
+
+
+By UUCP:
+
+    Xconq is accessable from the uunet archives.  Those who are not
+    UUNET subscribers can access the archives via UUNET's 900 number.
+    (No, it's not a sex line, at least not unless you're a modem. ;^)
+    For more information on using the 900 number, mail xconq-request.
+        
+    Once you are able to access UUNET via UUCP, you can use the fol-
+    lowing shell scripts to access files in the archive.
+
+       #!/bin/sh
+       # How to get the index of files you can transfer.
+       DESTDIR=/usr/spool/uucppublic/xconq
+       uucp -d -r -m uunet!~/games/xconq/Index $DESTDIR/Index
+   
+       #!/bin/sh
+       # How to get a bunch of files at once.
+       #
+       # For the "FILES" variable below, # add any files you want to
+       # retrieve.  They should appear below the same as they do in
+       # the Index.
+       # 
+       DESTDIR=/usr/spool/uucppublic/xconq
+       FILES='
+       README
+       '
+       for file in $FILES
+       do
+           uucp -d -r uunet!~/games/xconq/$file $DESTDIR/$file
+       done
+   
+    After executing these shell scripts you can wait for UUCP to
+    poll uunet, or you can poll uunet manually:
+
+        uucico -r1 -x1 -suunet
+
+    See the uucp(1) and uucico(8) man pages or a local system
+    administrator for further info.
+
+(For further info on how to retrieve files, mail xconq-request)
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+ROGUES GALLERY
+
+  Stan Shebs - founding father + and mother invention (ala 7.0)
+  <shebs@apple.com>
+
+  Greg Fisher - master hacker
+  <fisher@paul.rutgers.edu>
+
+  Eric Zeigast - postmaster + archiver
+  <ziegast@uunet.uu.net>
+
+  Robert Forsman - resuscitator + hacker
+  <thoth@manatee.cis.ufl.edu>

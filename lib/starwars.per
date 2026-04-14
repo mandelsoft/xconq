@@ -1,0 +1,189 @@
+Xconq 0 -+---- Star Wars, sort of
+Period 0
+
+"long long ago in a galaxy far far away" period-name
+
+"s" "stormtrooper" "" utype
+"w" "walker" "" utype
+"h" "hovercraft" "" utype
+"x" "x-wing fighter" "" utype
+"t" "tie fighter" "" utype
+"y" "y-wing fighter-bomber" "" utype
+"C" "cruiser" "" utype
+"D" "death star" "" utype
+"d" "death beam" "" utype
+"*" "town" "" utype
+"@" "city" "" utype
+
+"trooper" s icon-name
+"walker" w icon-name
+"hovcraft" h icon-name
+"xwing" x icon-name
+"tiefightr" t icon-name
+"ywing" y icon-name
+"impcruisr" C  icon-name
+"deathstar" D icon-name
+"deathray" d icon-name
+"town22" * icon-name
+"city30" @ icon-name
+
+"F" "fuel" "basic motive power" rtype
+
+"." "sea" "sky blue" ttype
+"+" "plains" "green" ttype
+"%" "forest" "forest green" ttype
+"~" "desert" "yellow" ttype
+"^" "mountains" "sienna" ttype
+"_" "ice" "white" ttype
+":" "vacuum" "black" ttype
+
+true vacuum dark
+
+t* t* nuked  ; most terrain won't actually change
+desert [ plains forest ] nuked
+mountains ice nuked
+
+[   0  70  70  70  95  99   0 ] t* min-alt
+[  70  95  95  95  99 100   0 ] t* max-alt
+[   0  20  80   0   0   0   0 ] t* min-wet
+[ 100  80 100  20 100 100   0 ] t* max-wet
+
+vacuum edge-terrain
+
+[ * @ ] "cities" define
+[ D * @ ] "makers" define
+[ s w h x t y C D d @ ] "movers" define
+[ sea ] "water" define
+[ plains forest desert mountains ] "land" define
+
+1 cities named
+[ 10 5 25 ] makers territory
+
+1 @ in-country
+3 * in-country
+100 * density
+@ first-unit
+s first-product
+20 land * favored
+40 plains * favored
+100 plains @ favored
+8 country-min-distance
+48 country-max-distance
+
+; no disasters yet
+
+[ 4 6 6 5 5 8 15 40 0 0 0 ] u* @ make
+[ 4 6 6 5 5 8 15 40 0 0 0 ] u* * make
+3 d D make
+1 makers maker
+20 u* startup
+; no special resources to make
+1 u* makers repair
+7 [ C D ] [ C D ] repair
+
+20 fuel cities produce
+[ 30 30 30 20 22 35 200 500 2 200 400 ] fuel u* storage
+100 t* cities productivity
+;[s w h x t y C D d @ ] movers define
+[ 3 4 6 9 8 7 6 5 2 1 ] movers speed
+
+0 land s moves
+0 land w moves
+0 ice w moves
+0 t* D moves
+0 t* [ h C ] moves
+0 t* [ x t y ] moves
+0 t* d moves
+0 t* @ moves
+-1 vacuum @ moves
+
+1 fuel movers to-move
+0 fuel s to-move
+
+10 u* * capacity
+20 u* @ capacity
+[ 2 1 6 4 4 2 ] [ s w h x t y ] C capacity
+[ 5 3 8 8 4 4 1 3 ] [ s w h x t y C d ] D capacity
+
+1 cities always-seen
+;[s w h x t y C   D d  *  @ ]  units define
+[ 1 2 1 1 1 2 10 40 1 20 40 ] u* hp
+;[  s   w   h   x   t   y   C   D   d   *   @ ]  units define
+[  65  40  30  20  20  30  10   5   0   3   5 ] u* s hit
+[  75  59  39  20  20  30  20  10   0   3   5 ] u* w hit
+[  50  60  80  20  20  30   0   0   0   3   5 ] u* h hit
+[  40  35  80  80  80  80  20   5   0  40  40 ] u* x hit
+[  40  25  80  80  80  80  20   5   0  40  40 ] u* t hit
+[  20  35  50  50  50  50  50  25   0  75  75 ] u* y hit
+[  20  25  80  80  80  80  80  50   0  90  90 ] u* C hit
+[  20  25  80  80  80  80  80  50   0  90  90 ] u* D hit
+90 u* d hit
+[  30  20  60  80  90  50  50  50   0   0   0 ] u* * hit
+[  50  40  60  80  90  50  50  50   0   0   0 ] u* @ hit
+
+1 u* u* damage
+2 w [ C D ] damage
+3 [ C D ] [ C D ] damage
+4 [ C D ] cities damage
+3 C [ y C ] damage
+10 D D damage
+20 D [ x t y ] damage
+49 u* d damage
+
+50 nuke-hit  ; death rays are not nukes?
+
+-50 neutrality
+
+1 d self-destruct
+
+[ 50 30 ] cities s capture
+[ 40 15 ] cities w capture
+10% cities w protect
+50% cities s protect
+true cities s bridge
+
+1 fuel u* hits-with
+1 fuel u* hit-by
+
+1 [ * @ ] always-seen
+
+1 movers can-disband
+
+1 cities neutral
+
+true movers changes-side
+true cities changes-side
+
+"defeats" [ s w ] destroy-message
+"shoots down" [ x t y ] destroy-message
+"blasts out of the sky" [ C ] destroy-message
+"miraculously destroys" [ D ] destroy-message
+
+"flattens" cities destroy-message
+
+
+
+; help for machine strategy
+;[  s   w   h   x   t   y    C      D  d   *  @  ]  units define
+[ 200 150 100 100  100  100  100  100 10 500 500 ] u* attack-worth
+[ 200  80 200 130  130  130  100  100 10 500 500 ] u* defense-worth
+[ 200  50 100 100  100  100  200   20  1 500 500 ] u* explore-worth
+
+
+
+begin{notes}
+Originally designed as a test, and so we could fly Death Stars around.
+Additional plausibility supplied by Alan Wexelblat <wex%sw.MCC.COM@MCC.COM>.
+
+  Tweaked a little bit 1/27/92 by peterm@cory.berkeley.edu. 
+   I increased fuel contained
+  in towns and cities from 100.  I decreased accuracy of death beam from 100
+  to 90.  I think that 100% hits doesn't agree well with the software.
+
+  Also added a machine strategy to get the computer players to actually
+  produce some of the tougher units, like C and D.
+end{notes}
+
+end
+
+

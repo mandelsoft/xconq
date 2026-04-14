@@ -1,0 +1,509 @@
+Complete List of Changes From 5.1
+
+(Note: this change list is cobbled together from various sources, and only
+lightly edited.)
+
+*** 5.5
+
+Updated README
+
+Moved all system-dependent defines from config.h to the Imakefile.
+By virtue of the Imakefile, pcf font support was added as well as
+several install & clean definitions.
+
+Created an Imakefile.
+
+* b4
+
+Added marginal support for HPUX.  Including a user-written version of
+strcasecmp.
+
+Changed occurrences of #endif WORD to #endif /* WORD */ to shut up
+some wimpy preprocessors.
+
+Disabled the stack trace facility since the developer has a real
+debugger and the signal interceptor prevents the core from recording
+useful information.
+
+Fixed the OpenWindows input focus problem (ICCCM non-compliance on our
+part).
+
+Enabled the game to support more than 7 players.
+
+Added letters to the terrain font so that players above 9 would have
+unique identifiers.
+
+Added a little error checking to the resignation command.
+
+Added a world-map magnification option.
+
+Added the ability to add a player in the middle of the game.  Very
+limited, and kinda screwy still.
+
+Improved the internal geometry manager to handle periods with lots of
+units a little better.
+
+Since having 20 allied robots results in a lot of view updating, robot
+alliances are now in blocks of 5-9 countries.  This will make it a
+little easier for humans since robots can now fight each other.
+
+fixed the do_look command so that it's not shadowed by the do_fill
+command.
+
+Added a little error checking to the map loader so that 0-length files
+wouldn't crash it.
+
+Expanded unit ids to ints.  This may cause problems since I can't
+guarantee I've found all the code that will be affected.
+
+Nailed a couple of bizzare conditions that CodeCenter found in the
+machine player.
+
+Bulletproofed the wake_unit code when passed an other==NULL.
+
+Did a little tapdance to prevent the "builder has moved" message when
+garrisoning.  Also fixed the "nonmover has moved" message during
+garrisoning.  Also don't print message when garrison operation doesn't
+destroy anything.
+
+Improved the resource distribution system.  It seems to work well with
+the standard period and 4tech.  Will it work with other periods as
+well?
+
+Tried to define the direction field in sergeant.c as a signed char,
+ran into a few problems with Sun's sucky compiler.
+
+Fixed bug where captured units regained full movement.  They now
+merely hang onto whatever movement they had if the capturemoves
+periodflag is enabled.
+
+Added a few things to the manual page.  Documented the resources.
+
+* b3
+
+Better messages when searching for app-defaults and .Xdefaults.
+
+area-radius reimplemented finally.
+
+fixed problem in do_embark() caused by transport variable not being
+initialized.
+
+Made the help window behave better when handed unimplemented keystrokes.
+
+Made saved game restore more robust and verbose in the face of errors.
+
+Fixed version mismatch error message.
+
+Removed wander_to() from movement routine until we can decide what the
+movement routine's behaviour should be.
+
+Fixed cost estimation routine in sergeant.c that was broken in the
+shift from b1 to b2.
+
+Allowed units to consume their last fuel with a mouse click movement.
+
+Fixed problem where a maker intended to garrison its occupant would have
+both itself and that occupant destroyed before the occupant got placed
+correctly.
+
+*b2
+
+Added period.leavemap and period.repairscale to per2c output.
+
+Fixed inconsistency in handling of repair for different repair rates
+and scales.
+
+Fixed curses display of neutral units to show a quote instead of "7".
+
+Hacked period reader so that a non-zero extension in the header means
+to not clear the period before reading (makes period inclusion more
+useful :-) ).
+
+Units not waiting to fill up will not be woken up when they become full.
+
+Added terrain name information to the info window.
+
+Fixed units changing sides so that you can't capture or give away
+units that don't change side.  Also fixed it so that allied units
+couldn't be given away by an ally.
+
+Added X app-defaults handling (I think).
+
+Added an icon hint to the main window, made the help window part of
+main's windowgroup.
+
+Improved X resource handling some: added ability to set the showmode
+through resources.
+
+Improved X resize and expose handling (the latter was a VERY dramatic
+improvement).
+
+Fixed problems with the worldmap viewport box not being drawn
+correctly.
+
+Added better event handling so that the help window could stay up
+while the game was being played.  Also bound a few more keys in the
+help window.
+
+Added the move-toward-unit command, accessible with the ^M key (move
+toward marked unit with confirmation) or <Shift><Mouse>.  The
+possibility of binding different things to different mouse keys and
+different modifiers does not escape me.
+
+Added the ability to select the next unit to move in survey.
+
+Added automatic delay of off-screen units so that the action does not
+skip around as much (fewer viewport changes).
+
+Nailed a SEGV in maybe_wakeup.
+
+Added a parser keyword for the leave-map period variable.
+
+Added a new keyword repair-scale that sets how many hps are repaired
+each turn (assuming the chance succeeds).  The repair system needs to
+be revamped in 6.0.
+
+Fixed the border condition in handling of crippled units.
+
+Added -d[display] to specify a display for the first (default) player.
+
+Changed xconq library dir to be settable from an env variable XCONQLIB.
+
+Stopped incessant scrolling when a unit is on the top edge.
+
+Changed config details to be defined by specific features, rather than
+by "BSD", "SYSV", etc (which never works right, Un*x systems are too
+mixed up these days).
+
+Made low-supply units not wake up if they are already on their way to a
+transport (doesn't check refueling ability though).
+
+Simplified X11 font opening to follow the standard.
+
+Flushed recognition of .b11 extension for X bitmap files, now only .b allowed.
+Converted all bitmaps to usual X11 arrangement (array of bytes, not words).
+
+Made color allocation more forgiving of slight mismatches in rgb values.
+
+Enabled clicking on world map to generate map positions just like map display.
+(!!)
+
+Added ability to resize window by dragging the corner (subwindows anyway,
+main window a problem).
+
+Changed period reader to only warn rather than error out if undefined words
+are seen.  The stack is emptied out also.
+
+Changed movement algorithm to take a least-cost path that wouldn't run
+the unit out of resources.  This was a superior rewrite of the 5.3
+capabilities.
+
+  Fixed the coast following routines, the new ones are also superior
+to 5.3 and handle map wrap.  I had to create a new order-arg type for
+this.
+
+  Modified follow leader to handle map wrap and use the new movement
+algorithm.
+
+  Created a Fill command that would sleep the transport until it was
+full.  This got hooked into occupy_unit, just like embark.
+
+  Created a Move To Transport command that would send the unit to any
+nearest transport with orders to Fill.
+
+  Changed the Return command into an actual order that would search
+for the nearest possible transport.  The old Return code was actually
+implemented as a moveto, which didn't work too well when the
+destination moved.
+
+  Added the ability to delete standing orders.
+
+  Added the ability to set certain colors using the ResourceManager.
+No app-defaults parsing yet, but the .Xdefaults is supported as a
+fallback.
+
+  Added rudimentary error handling upon failure to open a display.
+
+  Handled interupted select system calls (handy when debugging).
+
+  Did a teency bit of abstraction in the direction macros.
+
+  Added some abstraction on the three delayed orders commands (Sentry,
+Embark and Fill).  Kudos to Greg for thinking that stuff up.
+
+  Rearranged a few keys to be more mnemonic and similar to 5.3 (at
+least I think they're mnemonic).
+
+  Added a Move To Unit command, but didn't bind it anywhere, so why
+mention it?  Maybe someone can suggest a good keybinding.
+
+  Revamped copy_orders to use bcopy instead of the icky switch
+statment.  This should work until the Order structure gets some
+pointers.
+
+  Fixed the code so that units with see-range 0 wouldn't cause a
+floating exception.
+
+  Fixed the path generation so that absolute paths could be given for
+period files.
+
+*** 5.4
+
+Below are a list of changes to xconq that are noticeable to a user
+directly.  In addition, a number of bug fixes have been made which are
+only noticeable in that the program fails to crash as often.   The
+machine players have also been modified in a number of ways, which
+tends to improve their play.  
+
+Playing changes 
+---------------
+
+Center is changed so that no units can be forgotten because of your,
+or another player doing a center command.
+
+Units wake up if an enemy appears next to them.  The wakeup is
+immediate.  They also remember why they were woken up even if the unit
+waking them has gone away.
+
+Changed name display so that only first part of host name displayed.
+
+Provided a second font for the help window.  The default will be small
+enough that the whole standard help window will fit on the screen. 
+
+Print a message at the start of each turn.  Beep if active units are
+in play and time > start beep time has elapsed since the players last
+turn.  This can be set with the option command.
+
+Fix display routine so that it does not make pieces disappear on small
+screens.
+
+Added clock to tell amount of time taken by each player.  It displays
+if countdown clocks are not in use.  Theses counts as well as the
+chess clock values are saved to the savefile.
+
+Added messages for segmentation faults and bus errors localizing the
+errors.   This has expanded to a complete stack trace of some subset
+of the procedures called.
+
+Fixed standing orders so that they can be created and saved without
+crashing the program.
+
+The supply allocation has been changed so that units will not dump all
+of their supplies to a base.  It should now try to do reasonable
+things for trying to make sure everyone has at least some supplies.
+
+Changed the save files so that saved games restart exactly where the
+game was left, rather than at the beginning of the next turn.  This
+avoids any the loss of moves for units which come after the one active
+when the game was saved.  The order of the units is changed, since the
+restore routine needs the units to be sorted.
+
+Added a recenter command, installed under '.'.  This command places
+the current hex in the middle of the display.
+
+Added follow action mode, installed as a toggle command on ^F.  In
+follow action mode, any changes to your view are shown to you.  If the
+current display does not have the changed location, it will be put in
+the center of the display.
+
+Changed viewing routine so that previously unseen hexes with invisible
+units in them appear as empty rather than as unseen.
+
+Changed unit allocation and garbage collection so that the number of
+units can grow past the initial limit.
+
+Added an optional argument to the redraw command so that it will erase
+any views older than the argument.  This is particularly useful after
+a briefing.  Only non-moving units views will be erased.  ^R defaults
+to erasing the views of moving units we haven't seen in 10 turns.  ^L
+defaults to never erasing views unless an explicit argument is given.
+
+Changed briefings so that all old views of the side doing the briefing
+are erased first.  (ie., briefings say where units are not as well as
+where they are.)
+
+Implemented a cheat mode under -C.  This just lets the machine see
+everything. 
+
+Captured units cancel all standing orders.
+
+Made wakeup 'w' wake up the unit being surveyed as well as the top
+unit.
+
+All moves or attacks use at least one point of movement.  This prevents
+units who are in a transport on terrain they can not move on (movement
+value is -1 for these places) from having an infinite number of
+attacks.  This also means that units entering a base will not gain an
+extra point of movement.
+
+# command has been added.  This prints the distance between the
+current location and another point.
+
+T and ^T commands have been added to find units.  These commands are
+identical, except that T prompts for a unit type, while ^T uses the
+type of the current unit.  These commands find a unit of the given
+type.  ^T repeated will give the next unit of the given type.  This
+allows a player to look at all of the units of some type.  Useful when
+some units are in transports (and possibly out of supplies).  An
+argument to either command looks for the unit with that number.
+
+Changing product to the current product no longer resets the schedule.
+
+Write in savefile views using run length encoding.
+
+Occupants are sorted in decreasing order of their speed.
+
+Fixed survey mode for no-movers so that they can look at units that
+are occupants of other units.
+
+Added machine control of selected units (^A).  The machine will make
+all decisions until the unit is woken by the users.  Standing orders
+to use automatic control are added to rather than replacing previous
+standing orders.  This allows the user to give standing orders to move
+to some location and then let the machine take over.
+
+Embark (e) has been changed so that is will take an argument.  The
+unit will wait around that many turns trying to embark on some
+transport before waking up.  This command can be given as a standing
+order, allowing much more complete automation of the movement of
+units. 
+
+Provided an escape from robot mode.  Typing escape while a robot in a
+multiplayer game will change a robot into a human.  This will work
+either during a human player turn, or at the end of the turn if there
+are no human players in the game.
+
+Expanded the help pages so that the commands don't go off the bottom
+of the page.
+
+Added find dead unit (^D) which cycles through units that died in the
+last turn.
+
+Prevented the automatic return to move mode when the current unit is
+given an order.
+
+Added scrolling to the notice buffer.  Click on the top or bottom to
+scroll the messages.
+
+--
+
+Units on sentry can be woken up any time during the turn.  Thus, a
+unit on sentry duty does not lose its move by doing sentry.  It just
+prevents the player from being prompted about the unit unless it is
+woken up.
+
+A next product command has been added (as control-p).  This determines
+what a unit will produce after it finishes producing its current unit.
+
+The side name is set by reading the resource xconq.SideName at
+startup.  If this is not set, a random name is chosen.
+
+Period options added 
+--------------------
+
+Provided a flag to prohibit production by occupants who are not also
+makers.  The default is that only makers can produce inside of other
+units.
+
+Provided a flag to indicate whether or not captured units can
+immediately be moved.  Thus, all units will behave the same when
+captured, regardless of the ordering of the new and former owners in
+the turn sequence. 
+
+Provided a flag to allow occupants to not consume supplies.  Useful
+for planes on the ground.
+
+Standard period changes.
+-----------------------
+
+(Troop transports have 3 hp.)
+
+(Submarines have only 2 ph.)
+
+Infantry and armor defend the cities and bases they are in.  
+
+Aircraft carriers can hold 400 fuel instead of 200.
+
+The out-length of all units that are not transports have been set to
+-1, prohibiting them from giving up their fuel at bases except by
+order from a player.
+
+Gave capital cities a viewing range of 3 hexes instead of the one for
+all other units.
+
+Aircraft do not consume supplies while on the ground.
+
+Changed the out-length of all units other than fighters and infantry
+to 0.  This allows them to transfer fuel automatically.
+
+The enter-time of ships has been set to 0, correcting for the loss of
+movement incurred when minimum movement of 1 point was incurred.
+Ships are allowed to enter and leave bases with no cost to movement.
+
+Bases repair units at a rate of one point every three turns.  Infantry
+repair bases at one point per turn and towns or cities at one point
+per ten turns.
+
+*** 5.3ufl:
+
+	all following changes by <thoth@manatee.cis.ufl.edu>
+
+- added new "j" command to jump unit A out of transport B into
+	transport C (which contains B).
+
+- added new "t" command to throw a unit out the back of a transport.
+	This is not heavily tested.
+
+- let "od" take arguments ("3od" is my favorite display format).
+
+- expanded map capabilities to handle 254 unit types and 255 sides
+	(should have this code #ifdefed).
+
+- changed supply line algorithms to limit flow.
+
+- implemented arearadius.
+
+- fixed periods and changed some colors.
+
+- fixed bugs with hidden unit display (still tracking down some).
+
+- fixed bug that allowed units to move without cost when clicking in
+	unknown territory that was incompatible with the unit type
+	(the sail-across-ocean bug).
+
+ outstanding BUGS:
+- looking for old "orders" bug that causes SEGVs for restored games.
+
+ new BUGS:
+- monochrome seems to be busted, this is not a priority (unfortunately).
+
+*** 5.3:
+
+- Removed menu of maps and scenarios.
+
+- Removed bar graph display of unit hit points, fuel and ammo.
+
+- New view encoding allows up to 15 sides to play.
+
+- Units are stored in a circular doubly-linked list.
+
+- New routine for sorting units in order of geographic proximity.
+
+- The format of save files and map files is incompatible with xconq 5.1
+
+- Units will try to automatically move around obstables in order to reach
+  their destination.
+
+- New coast following routine
+
+- New unit orders:
+	a - move to and attack the nearest enemy unit
+	e - sleep until a transport is adjacent and then board it
+	E - move to the nearest transport and board it
+	F - put a transport to sleep until it is full
+
+- Allied sides update each others views at the end of every turn.
+
+*** 5.2
+
+(There was never a 5.2, that I know of anyway.)

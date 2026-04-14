@@ -1,0 +1,149 @@
+Xconq 0 -+---- A period loosely based on the AH game about the Seven Years War.
+Period 0
+
+"1756" period-name
+
+"a" "army" "" utype
+"g" "general" "" utype
+"m" "marshal" "" utype
+"p" "prince" "" utype
+"k" "king" "" utype
+"D" "depot" "" utype
+"*" "town" "" utype
+"@" "fortress" "" utype
+
+"s" "stuff" "generic supplies" rtype
+"S" "soldiers" "raw material of armies" rtype
+
+"." "sea" "sky blue" ttype
+"," "river" "cyan" ttype
+"=" "swamp" "yellow green" ttype
+"%" "forest" "forest green" ttype
+"+" "countryside" "green" ttype
+"(" "hills" "khaki" ttype
+"^" "mountains" "sienna" ttype
+":" "outerspace" "black" ttype
+
+true outerspace dark
+
+[   0  20  30  70  20  90  95   0 ] t* min-alt
+[  20  30  31  90  90  95 100   0 ] t* max-alt
+[   0  50  50  50   0   0   0   0 ] t* min-wet
+[ 100 100 100 100 100 100 100 100 ] t* max-wet
+
+95 wet-roughness
+
+mountains edge-terrain
+
+[ river countryside ] "land" define
+[ a ] "inf" define
+[ g m p k ] "leader" define
+[ D * @ ] "bases" define
+
+"soldiers" a icon-name
+"flag" g icon-name
+"flag" m icon-name
+"flag" p icon-name
+"crown" k icon-name
+"walltown" D icon-name
+"town20" * icon-name
+"fortress" @ icon-name
+
+[ 0 2 1 1 1 0 5 1 ] u* in-country
+true [ * @ ] named
+100 countryside u* favored
+true u* already-seen
+a first-product
+
+1000 [ * @ ] surrender
+50 [ * @ ] siege
+
+1000 s bases produce
+10 S @ produce
+1000 s bases storage
+200 S @ storage
+
+1 a @ make
+10 D a make
+true @ maker
+50 S a to-make
+
+;; a turn is about a week in length.
+
+1 inf speed
+6 leader speed
+
+10 land inf moves
+0 land leader moves
+1 [ river hills ] leader moves
+0 land [ D * @ ] moves
+
+; 0 u* free-move
+
+; 6 u* attack_moves
+
+; 5 s supply-line
+
+;; Leaders "carry" infantry around, as well as leaders of lesser rank.
+
+6 inf leader capacity
+3 g [ m p k ] capacity
+1 m [ p k ] capacity
+1 p k capacity
+10 inf [ D * @ ] capacity
+10 leader [ D * @ ] capacity
+
+0 u* leader protect
+
+4 inf hp
+
+20 inf inf hit
+
+1 inf inf damage
+
+100 D inf capture
+1 [ * @ ] D capture
+25 inf inf capture
+
+5 @ territory
+1 * territory
+
+; how to do captured prisoners and prisoner exchange?
+
+clear-side-names
+
+"Austrian" sname "Prussian" sname "French" sname "Russian" sname
+"Swabian" sname "Hannoverian" sname "Saxon" sname "Swedish" sname
+
+begin{notes}
+This is a moderately crude rendition of AH's "Frederick the Great", which
+treats the Seven Years War in central Europe.  The number of unit types
+is very small, and there are only a few special characteristics.  The game
+is basically one of maneuvering for position, since combat is pretty
+ineffective.
+
+A number of items remain to be developed:
+
+Concentration of armies (since full concept of "parts" has been dropped).
+
+Slowing-down effect of army "passengers" on leaders.
+
+Austrian zones of control.
+
+Ranks of leaders (should affect who can "transport" who)
+
+Disable "free moves" and make combat cost high, to simulate the mutual
+consent to combat.
+
+Tweak hit effects to be closer to board game.
+
+Do supply path stuff (4 hexes Coalition, 5 hexes Prussian).
+
+Have river effect on movement and combat.
+
+Do something to simulate supply depots for sieges (city only surrenders to
+depots?)
+
+end{notes}
+
+end

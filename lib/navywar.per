@@ -1,0 +1,216 @@
+Xconq 0 -+---- Fleet to Fleet battle: are you an Admiral?
+Period 0
+
+"WW II, in the Pacific, aboard a carrier" period-name
+
+"f" "fighter" "Great at nailing other aircraft" utype
+"d" "dive bomber" "" utype
+"t" "torpedo bomber" "Great for nailing those troublesome ships" utype
+"p" "PBY" "Air recognissance plane" utype
+"D" "destroyer" "Launches torpedos!" utype
+"S" "submarine" "Launches torpedos!" utype
+"E" "escort carrier" "Light carrier, carries 1/2 as much" utype
+"r" "light cruiser" "" utype
+"R" "heavy cruiser" "" utype
+"C" "carrier" "Keep those planes here" utype
+"B" "battleship" "the most powerful ship" utype
+"A" "bigshell" "What a battleship shoots" utype
+"s" "shell" "What cruisers shoot" utype
+"/" "base" "Too bad you can't bring it with you" utype
+
+"o" "fuel" "how to get around" rtype
+"a" "ammo" "small stuff" rtype
+"b" "bomb" "iron bombs" rtype
+"!" "torps" "death to ships" rtype
+
+"." "sea" "sky blue" ttype
+"," "atoll" "cyan" ttype
+"+" "island" "forest green" ttype
+
+[   0  96  98 ] t* min-alt
+[  96  98 100 ] t* max-alt
+
+95 alt-roughness
+
+sea default-terrain
+sea edge-terrain
+
+"1e" f icon-name
+"1e" d icon-name
+"torpbombr" t icon-name
+"pby" p icon-name
+"dd" D icon-name
+"ca" r icon-name
+"sub" S icon-name
+"cv" E icon-name
+"cv" C icon-name
+"ca" R icon-name
+"bb" B icon-name
+"shell" A icon-name
+"shell" s icon-name
+"airbase" / icon-name
+
+
+[ f d t p ] "air" define
+[ r R B ] "heavy" define
+[ E C ] "carriers" define
+[ D S E r R C B ] "ships" define
+[ o a A b ! ] "stuff" define
+
+;  The following is supposed to simulate the shell-throwing capacity
+; of cruisers and battleships.  cruisers throw one type of shell
+; and battleships throw another.  Battleship shells have a longer
+; range, but use up more 'ammo'.
+; Each type of ship 'manufactures' one shell per round.  I REALLY
+; wanted BB's to produce 3, and heavy cruisers to produce 2
+; and light cruisers to produce 1 per round, but the minimum time
+; to produce something is 1 round.  
+;   Anyway, each type of ship has a very limited carrying capacity
+; of shells:  3 for BB etc...  Shells must be loaded into the guns,
+; and it takes a while to reload.
+
+true [ r R B / ] maker
+1 s r make
+1 s R make
+1 A B make
+1 [ A s ] / make
+
+2 s r capacity
+3 s R capacity
+3 A B capacity
+[ 10 20 ] A s / capacity
+
+0 s volume
+0 A volume
+
+3 s speed
+4 A speed
+3 a s storage
+4 a A storage
+1 a s to-move
+1 a A to-move
+1 a [ s A ] consume
+
+;;;  End of shell simulation definitions
+
+100 sea ships favored
+100 [ atoll island ] / favored
+
+4 country-size
+30 country-min-distance
+32 country-max-distance
+; f d t p D S E r R C B A s / ]
+
+[ 8 8 8 4 6 2 4 2 2 2 2 0 0 1 ] u* in-country
+
+true / always-seen
+
+500 [ fuel ammo ] ships storage
+20 fuel air storage
+40 fuel p storage
+2 a air storage
+0 a p storage
+2 b d storage
+2 ! t storage
+10 ! [ D S ] storage
+50 [ b ! ] C storage
+25 [ b ! ] E storage
+1000 r* / storage
+
+1 fuel air consume
+
+9 air speed
+6 p speed
+3 ships speed  ; gross simplification
+
+0 t* air moves
+0 t* p moves
+0 t* A moves
+0 t* s moves
+0 sea ships moves
+2 atoll ships moves
+
+1 fuel u* to-move
+0 fuel [ A s ] to-move 
+
+4 air E capacity
+8 air C capacity
+100 u* / capacity
+100 u* u* enter-time
+1 air volume
+4 E hold-volume
+8 C hold-volume
+100 / hold-volume
+
+10 S visibility
+
+; D S E r R   C  B ] "ships" define
+[ 5 3 7 7 10 15 15 ] ships hp
+100 / hp
+
+
+;Hit matrix:
+;  f  d  t  p  D  S  E  r  R  C  B  A  s  /
+[ 60 80 80 80 10 10 10 10 10 10 10  0  0  5 ] u* f hit
+[ 20 30 40 30 30 20 50 40 45 60 70  0  0 90 ] u* d hit
+[ 20 30 40 30 30 40 50 45 50 60 60  0  0  0 ] u* t hit
+[  5  5  5  5  0  0  0  0  0  0  0  0  0  0 ] u* p hit
+[ 50 50 50 50 20 40 30 25 30 40 40  0  0  0 ] u* D hit
+[  0  0  0  0 30 20 40 35 40 45 45  0  0  0 ] u* S hit
+[  5 15 50  5  5  5  5  5  5  5  5  0  0  0 ] u* E hit
+[ 10 20 50  5 40 30 40 50 50 60 60  0  0  0 ] u* r hit
+[ 10 20 50  5 43 25 45 55 50 65 60  0  0  0 ] u* R hit
+[ 10 20 60  5  5 20  5  5  5  5  5  0  0  0 ] u* C hit
+[ 20 25 50  5 60 20 80 70 75 90 90  0  0 95 ] u* B hit
+[  0  0  0  0 40 30 50 40 45 55 60  0  0 95 ] u* A hit
+[  0  0  0  0 45 35 55 45 50 60 65  0  0 95 ] u* s hit
+[ 30 35 70 10 40  5 60 50 55 70 55  0  0  0 ] u* / hit
+
+1 u* u* damage
+3 u* heavy damage
+4 ships [ t D S ] damage
+4 ships A damage
+2 ships s damage
+3 / s damage
+5 / A damage
+10 / B damage
+
+1 u* / repair
+
+1 a air hits-with
+1 a [ E C ] hits-with
+1 b d hits-with
+1 ! [ t D S ] hits-with
+2 a heavy hits-with
+true [ s A ] self-destruct
+
+1 [ b ! ] ships hit-by
+1 a air hit-by
+
+50 air carriers protect
+
+0 u* survival
+
+"sinks" ships destroy-message
+"shoots down" air destroy-message
+
+; 0 air control
+1 u* see-range
+
+3 air see-range
+2 heavy see-range
+2 carriers see-range
+
+begin{notes}
+This is a somewhat expanded version of the navy in the standard period.
+Each side commands a large fleet, and the sole objective is to wipe out
+the enemy's fleet.  There are different kinds of planes and ships, but
+nothing else.
+
+Speeds of ships are uniform, so that formations work better (don't want
+the carriers outstripping their escorts).
+
+
+end{notes}
+
+end

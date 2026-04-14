@@ -1,0 +1,24 @@
+Xconq 2 ---++- The battle of Beirut;
+Actually, this includes only a subset of the actual participants.
+They all fight each other here; there should actually be some alliances.
+.
+beirut.per
+lib/beirut.map
+Globals 0 100 0 0 1 0
+0 1 0 100 -1
+10 10 0 10 10 1000
+Sides 7 2 0
+Maronite
+0  0 0 0 0 0 0  -1 -1 -1 -1 -1 -1 -1
+Amal
+0  0 0 0 0 0 0  -1 -1 -1 -1 -1 -1 -1
+Hezbollah
+0  0 0 0 0 0 0  -1 -1 -1 -1 -1 -1 -1
+Druze
+0  0 0 0 0 0 0  -1 -1 -1 -1 -1 -1 -1
+Syrian
+0  0 0 0 0 0 0  -1 -1 -1 -1 -1 -1 -1
+Israeli
+0  0 0 0 0 0 0  -1 -1 -1 -1 -1 -1 -1
+PLO
+0  0 0 0 0 0 0  -1 -1 -1 -1 -1 -1 -1

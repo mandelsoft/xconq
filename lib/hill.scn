@@ -1,0 +1,51 @@
+Xconq 1 --++++ "King of the Hill", a children's game
+hill.per
+Map 30 21 0 1 0
+30+
+30+
+30+
+30+
+30+
+30+
+30+
+30+
+30+
+30+
+15+^14+
+30+
+30+
+30+
+30+
+30+
+30+
+30+
+30+
+30+
+30+
+Globals 0 50 0 0 1 0
+1 3 30 40 -1
+15 10 -1
+Sides 2 1 0
+GarbagePail
+Deadend
+Units 16 1 0
+k Tommy 7,10 0
+k Jenny 7,9 0
+k Stanley 7,11 0
+k Barry 6,10 0
+k Bruce 8,10 0
+k Mikey 6,11 0
+k Marty 8,9  0
+k Cathy 9,10 0
+k Joey 23,10 1
+k Leslie 24,9 1
+k Timmy 22,11 1
+k Harry 24,10 1
+k Bobby 22,10 1
+k Julie 23,11 1
+k Jimmy 23,9  1
+k Patti 21,10 1
+
+
+
+

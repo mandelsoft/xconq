@@ -1,0 +1,253 @@
+Xconq 0 -+---- Futuristic period from Jay Scott
+Period 0
+
+"around 2200 AD" period-name
+
+"h" "hovercar" "easily built, moves fast and captures cities" utype
+"g" "groundcar" "slow but tough, captures cities" utype
+"s" "saucer" "moves fast, easy to build, but short range" utype
+"d" "destroyer" "heavy aircraft that defeats subs and saucers" utype
+"c" "constructor" "builds bases anywhere" utype
+"m" "mother ship" "carries aircraft and ground units" utype
+"t" "transport sub" "quickly built, carries ground units" utype
+"a" "attack sub" "attacks cities and carries rockets" utype
+"R" "rocket" "missile that can kill most units and hit cities" utype
+"/" "base" "airstrip + port but no production" utype
+"*" "town" "produces but easily captured and may revolt" utype
+"@" "city" "metropolis - hard to capture" utype
+
+"F" "fuel" "used for both movement and combat" rtype
+
+"." "sea" "sky blue" ttype
+"," "shallows" "cyan" ttype
+"=" "swamp" "dark gray" ttype
+"+" "plains" "green" ttype
+"%" "forest" "forest green" ttype
+"~" "desert" "yellow" ttype
+"^" "mountains" "sienna" ttype
+"_" "ice" "white" ttype
+":" "vacuum" "black" ttype
+
+true [ swamp vacuum ] dark
+
+t* t* nuked  ; most terrain won't actually change
+desert [ plains forest ] nuked
+mountains ice nuked
+
+[   0  69  70  70  70  70  95  99   0 ] t* min-alt
+[  69  70  72  95  95  95  99 100   0 ] t* max-alt
+[   0   0  50  20  80   0   0   0   0 ] t* min-wet
+[ 100 100 100  80 100  20 100 100   0 ] t* max-wet
+
+ice edge-terrain
+
+[ / * @ ] "cities" define
+[ h g s d c m t a R ] "movers" define
+
+"hovcraft" h icon-name
+"tank" g icon-name
+"saucer" s icon-name
+"delta" d icon-name
+"builder" c icon-name
+"mothrship" m icon-name
+"sub" t icon-name
+"sub" a icon-name
+"rocket" R icon-name
+"saucerpad" / icon-name
+"town22" * icon-name
+"city22" @ icon-name
+
+[ 1 5 25 ] cities territory
+
+[ 0 2 1 ] cities in-country
+100 * density
+@ first-unit
+h first-product
+100 [ plains ] [ * @ ] favored
+
+[ 4 6 2 10 10 20 7 12 8 ] movers @ make
+[ 4 6 2 10 10 20 7 12 8 ] movers * make
+3 / c make
+true [ * @ ] maker
+20 u* startup
+50 [ d m ] startup
+100 c startup
+300 R startup
+
+10 fuel cities produce
+[ 30 40 16 16 30 40 200 150 30 500 1000 2000 ] fuel u* storage
+1 [ s d ] fuel consume
+1 u* fuel consume   ; not plausible, but helps machine players
+
+-1 u* movers out-length  ; so low-capacity units don't lose fuel
+
+100 t* cities productivity
+
+[ 3 1 8 4 3 6 2 3 10 ] movers speed
+
+0 plains h moves
+1 shallows h moves
+0 [ plains desert ] g moves
+0 t* [ s d c m ] moves
+0 [ sea shallows ] [ t a ] moves
+0 t* R moves
+0 t* / moves   ; allows base to be constructed on any terrain
+
+1 fuel movers to-move
+
+[ 6 4 10 2 1 ] [ h g s d c ] m capacity
+4 R a capacity
+[ 2 1 ] [ h g ] t capacity
+10 u* / capacity
+100 u* [ * @ ] capacity
+
+0 [ t a ] visibility
+true cities always-seen
+
+[ 1 1 1 2 2 5 2 2 1 10 20 40 ] u* hp
+
+[  65  60  40  50  50  50   5   5  50  99  99  99 ] u* h hit
+[  80  60  50  40  50  50  10  10  50  99  99  99 ] u* g hit
+[  50  40  70  10  70  90  10  10  99  99  99  99 ] u* s hit
+[  10  10  65  20  70  70  50  50  20  99  99  99 ] u* d hit
+[  20  20  10   5  20  10   0   0  20   0   0   0 ] u* c hit
+[  15  10  20   5  40  40   0   0  30   0   0   0 ] u* m hit
+[   0   0   0   0   0   0   0   0   0   0   0   0 ] u* t hit
+[  40  60  10  10  20  20  60  20   0  99  99  99 ] u* a hit
+[  99  99  60  80  90  90  70  70  20  99  99  99 ] u* R hit
+[  10  10  10  20   0   0   0  10   0   0   0   0 ] u* / hit
+[  30  30  30  40   0   0   0  20   0   0   0   0 ] u* / hit
+[  50  50  50  50   0   0   0  50   0   0   0   0 ] u* / hit
+
+1 u* u* damage
+3 cities a damage
+4 u* R damage
+10 cities R damage
+2 u* @ damage
+
+[ 80 70 20 ] cities h capture
+[ 90 80 30 ] cities g capture
+
+true R self-destruct
+
+1 fuel u* hits-with
+1 fuel u* hit-by
+
+true movers can-disband
+true / can-disband
+
+true cities neutral
+
+-50 neutrality
+
+begin{notes}
+A science fiction xconq period.
+It's weirder and wilder than the historical periods provided with the game.
+Lots of things happen faster, so the game is often shorter.
+
+This is in the public domain.
+
+ -----  -----  the units  -----  -----
+
+Hovercar.  A fast-moving ground unit that easily captures towns.  A
+hovercar floats on an antigravity field, so it can maneuver easily
+even in mountainous terrain or shallow water (though not deep ocean).
+Hovercars are invaluable in an invasion for their ability to take
+cities quickly, but they are easily destroyed by flying saucers or
+groundcars.
+
+Groundcar.  A slow-moving unit which travels on treads, like today's
+tanks.  It can afford to carry a large shield generator, which makes
+it tough to destroy.  It can negotiate forests by pushing down the
+trees, or burning them away with its gun, but it can't move in
+mountains.  Groundcars are ideal for defending your homeland from
+invasion.  If you have enough on hand, you can often bounce back even
+after many of your towns are captured.
+
+Saucer.  The flying saucer is a weak but fast-moving aircraft.  Saucers
+are very cheap to produce; one use is to overwhelm stronger units with
+mob attacks.  They can even bombard a city to rubble, unless there's
+a Defender around.  Saucers are also good for recon, within their limited
+range.
+
+Defender.  A heavy, delta-wing aircraft that's your only safe defense
+against the enemy's swarms of saucers.  It uses aerodynamic lift to 
+supplement its drive, allowing it to carry relatively massive
+antisubmarine equipment.  But it's an easy target for ground units.
+
+Constructor.  An automated airborn factory that can build a base from
+on-site materials in only one turn.  It can build a base anywhere, even
+on water or ice.  That means, for instance, that you can build bridges
+between islands for ground units.  The constructor is the only way
+to produce the sophisticated equipment needed for a twenty-second
+century base (you don't know how hard it is to refuel those saucers :-).
+But it's vulnerable to attack, especially from saucers.
+
+Mother ship.  Expensive to build, but the only way to mount a major
+invasion.  A mother ship can carry lots of saucers, lots of ground
+units, a couple Defenders and a constructor, all at once.  (The constructor
+is useful for building stepping stone bases toward the enemy.)
+A mass attack is sure to bring down a mother ship, so it deserves
+saucer patrols--but you may have to forego patrols if you're trying
+for a surprise invasion.
+
+Transport sub.  Carries only a few ground units, but much cheaper to
+produce than a mother ship.  This is how you get your troops to another
+island early in the game.  And since, like subs in the WWII period,
+it's invisible until bumped into, it's good for sneak raids on isolated
+outposts.  A transport submarine can't attack anything by itself.
+
+Attack sub.  Strong against transport subs, and, if they're on the coast,
+ground units and cities.  It stays underwater and pokes its weapons out,
+which makes it relatively invulnerable to counterattack.  It's faster
+than a transport sub, and good for wide-ranging exploration.  And to top
+it off, it can carry several rockets to within easy range of enemy cities.
+On the other hand, all submarines have to be careful of Defenders.
+
+Rocket.  Actually a remotely guided missile, which does a lot of damage
+to its target but vaporizes itself in the process.  One rocket is
+enough to take out most units--it's not quite enough by itself
+to down a mother ship.  Three rockets together are sufficient to pound
+a town back to a base.  Only occasionally will a rocket miss its target.
+Besides stomping cities, they're useful for eliminating enemy groundcars
+and Defenders just before an invasion.  Since rockets are easily
+shot down if spied in mid-flight, it's sensible to launch them from
+attack subs near their targets.  [Because of the way xconq works,
+messages about rockets don't always make sense.]
+
+ -----  -----  strategy  -----  -----
+
+The game is designed so you need to have at least a few of every
+kind of unit to do well in a full game.  (You may be able to get by
+without transport subs if you start out on a big continent.)  If
+anybody finds they can consistently do well without some kind of unit,
+I want to hear how so I can fix it!
+
+Every unit has at least one nemesis which can destroy it relatively
+easily.  Your goal should be to fight every battle at an advantage,
+pitting each unit against its natural prey--saucers against hovercars,
+defenders against saucers, hovercars against defenders.
+
+Rockets ensure that the game doesn't drag on too long.  Invasion is
+risky, but when it works the invader wins quickly.  Rockets by contrast
+are a slow but steady way to nibble at the enemy production base.
+
+Machine players are especially easy to defeat in this period.  If you're
+lucky enough to start near one, you can blitz it with hovercars and
+saucers and win in short order.  It takes longer if you're far from
+the robot.  Gaining air superiority is usually the first step.
+
+The game hasn't been played by enough people for me to tell what
+strategies are best in different circumstances.  If I've done my
+job well, the best plan will depend in detail on the opponent and
+the situation, and you'll have to think hard.
+
+I'd appreciate any comments.
+
+	Jay Scott, August 1987.
+	...bpa!swatsun!scott
+	   ...seismo!bpa!swatsun!scott
+end{notes}
+
+end
+

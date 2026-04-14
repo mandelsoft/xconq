@@ -1,0 +1,154 @@
+Xconq 0 -+---- Conquistadors
+Period 0
+
+"the age of discovery" period-name
+
+"c" "colonist" "peasants eager to make a new life" utype
+"s" "soldier" "soldiers to protect colonists and look for treasure" utype
+"E" "explorer" "should go with on expeditions" utype
+"P" "privateer" "leads expeditions to capture settlements" utype
+"C" "conquistador" "Spanish type" utype
+"M" "missionary" "should convert the natives" utype
+"v" "caravel" "a small ship" utype
+"r" "carrack" "a normal ship" utype
+"G" "galleon fleet" "a collection of large armed ships" utype
+"/" "settlement" "where colonists live" utype
+"*" "town" "more established places" utype
+"!" "treasure city" "obvious" utype
+"$" "gold mine" "a source of gold" utype
+"@" "city" "the capital city back home" utype
+
+"f" "food" "what everybody needs" rtype
+"g" "gold" "what everybody is looking for" rtype
+
+"." "sea" "sky blue" ttype
+"," "shallows" "cyan" ttype
+"+" "plains" "green" ttype
+"%" "forest" "forest green" ttype
+"~" "desert" "yellow" ttype
+"^" "mountains" "sienna" ttype
+"_" "ice" "white" ttype
+
+sea default-terrain
+
+[   0  70  70  70  70  95  99 ] t* min-alt
+[  70  71  95  95  95  99 100 ] t* max-alt
+[   0   0  20  80   0   0   0 ] t* min-wet
+[ 100 100  80 100  20 100 100 ] t* max-wet
+
+ice edge-terrain
+
+"soldiers" c icon-name
+"infantry" s icon-name
+"man" E icon-name
+"man" P icon-name
+"man" C icon-name
+"man" M icon-name
+"bireme" v icon-name
+"frigate" r icon-name
+"twodecker" G icon-name
+"walltown" * icon-name
+"pyramid" ! icon-name
+;"" $ icon-name
+"city" @ icon-name
+
+[ c s ] "ground" define
+[ E P C M ] "persons" define
+[ v r G ] "ships" define
+[ ! * @ ] "cities" define
+
+[ plains forest desert mountains ] "land" define
+[ sea shallows ] "water" define
+
+10 $ density
+2 ! density
+200 / density
+100 plains cities favored
+100 land [ / ! $ ] favored
+10 country-min-distance
+20 country-max-distance
+5 country-size
+1000 known-radius
+1 @ in-country
+6 * in-country
+@ first-unit
+s first-product
+0 gold u* stockpile
+10% gold [ * @ ] stockpile
+
+; 5000 * surrender
+
+
+;; land attrition rates are horrendous, ships only slightly better
+
+400 t* c attrition
+250 t* s attrition
+0 water ground attrition
+800 forest ground attrition
+1500 mountains ground attrition
+750 sea [ v r ] attrition
+1500 shallows [ v r ] attrition  ; seamanship wasn't the hottest back then
+
+"succumbs to disease" ground attrition-message
+"is damaged in a storm" [ v r ] attrition-message
+
+100 water [ v r ] accident
+
+"is lost at sea" [ v r ] accident-message
+
+1 u* [ * @ ] make
+; longer times for shipbuilding?
+6 G @ make
+24 * c make
+1 cities maker
+[ 4 4 8 40 ] gold [ s v r G ] to-make
+
+[ 0 1 5 ] gold cities produce
+[ 5 25 500 ] gold ships storage
+[ 500 50 200 ] gold cities storage
+
+; turn time is about one month
+
+[ 1 2 ] ground speed
+3 persons speed
+15 ships speed
+
+0 land ground moves
+-1 ice ground moves
+0 land persons moves
+0 water ships moves
+
+[ 1 1 ] ground caravel capacity
+[ 2 2 ] ground carrack capacity
+10 u* * capacity
+100 u* @ capacity
+[ 20 3 ] ground @ capacity
+[ 1 2 0 ] ships hold-volume
+100 cities hold-volume
+1 ground volume
+
+60 [ v r ] [ v r ] hit
+50 ground ground hit
+
+1 u* u* damage
+
+20 [ v r ] [ v r ] capture
+[ 1 10 1 ] cities s capture
+
+; 3 ships hit-time
+
+100 @ territory
+10 * territory
+
+; gold mines deplete randomly
+; can abandon mine to make neutral ('G')
+; "un-garrison" something to produce troops quickly?
+; hexes with colonists produce resources of food (and other things?)
+
+begin{notes}
+This period is similar to the AH game "Conquistador", but with the
+inevitable xconq distortions.
+end{notes}
+
+end
+

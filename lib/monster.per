@@ -1,0 +1,155 @@
+Xconq 0 -+---- Save Tokyo from the fire-breathing monsters!
+Period 0
+
+"Tokyo 1962" period-name
+
+"m" "monster" "breathes fire and stomps on buildings" utype
+"b" "fire breath" "burns things up" utype
+"f" "fire" "burns things up" utype
+"p" "panic-stricken mob" "helpless civilians, mostly just get in the way" utype
+"F" "fire department" "puts out fires" utype
+"g" "national guard" "does battle with the monster" utype
+"B" "building" "good for hiding out" utype
+
+"e" "energy" "required to make fires move" rtype
+
+; hostages rtype?
+
+"." "sea" "sky blue" ttype
+"," "beach" "yellow" ttype
+"+" "street" "light gray" ttype
+"^" "junkheap" "sienna" ttype
+"=" "fields" "green" ttype
+"%" "trees" "forest green" ttype
+
+true junkheap dark
+
+[   0  20  25  35  80  90 ] t* min-alt
+[  20  25  35  80  90 100 ] t* max-alt
+
+"monster" m icon-name
+"breath" b icon-name
+"fire" f icon-name
+"man" p icon-name
+"fireman" F icon-name
+"soldiers" g icon-name
+"city20" B icon-name
+
+
+[ m b f p F g ] "movers" define
+[ sea ] "water" define
+[ beach street junkheap fields trees ] "land" define
+
+[ b f ] "fires" define
+
+1 B territory
+100 m territory
+
+[ 1 0 0 10 3 3 10 ] u* in-country
+100 street movers favored
+100 junkheap B favored
+
+; 100 t* u* favored
+
+5 country-size
+5 country-min-distance
+;10 country-max-distance
+
+; 100 B revolt
+
+3000 t* fires attrition
+5000 street fires attrition
+2000 junkheap fires attrition
+
+1 fires attrition-damage
+"" fires attrition-message
+
+1 e m produce
+100 t* m productivity
+1 e m storage
+1 e b storage
+1 f b make
+100 t* f productivity
+5 b m make
+true b maker
+true m maker
+
+[ 1 1 1 1 2 2 ] movers speed
+
+0 land movers moves
+-1 t* F moves
+0 street F moves
+1 e b to-move
+
+1 [ p F g ] B capacity
+2 f b capacity
+2 b m capacity
+
+true B already-seen
+true all-seen
+
+[ 100 5 5 1 2 5 6 ] u* hp
+
+[ 50 50 50 50 100 80 100 ] u* m hit
+[  0  0  0 40 40 40 90 ] u* b hit
+[  0  0  0 40  0 40 90 ] u* f hit
+[  0 10 10  0  0  0  0 ] u* p hit
+[  0 90 90  0  0  0  0 ] u* F hit
+[ 80 40 40  0  0  0  0 ] u* g hit
+[ 10 20 20  0  0  0  0 ] u* B hit
+
+1 u* u* damage
+4 m g damage
+5 f F damage
+2 b F damage
+3 B m damage
+6 B b damage
+3 B f damage
+
+
+"extinguishes" fires destroy-message
+"massacres" p destroy-message
+"wipes out" g destroy-message
+"wipes out" F destroy-message
+"flattens" B destroy-message
+
+[ 05 0 90 50 20 ] movers retreat
+
+0 p control
+0 f control
+
+50 [ p F g ] B protect
+
+; this doesn't work
+; false f free-move
+
+2 [ m B ] named   ; special hack to display names only
+
+clear-unit-names
+"Godzilla" uname
+"Rodan" uname
+"Mothra" uname
+"Megalon" uname
+"Gajira" uname
+"Aspidra" uname
+"Reptilicus" uname
+"Gamera" uname
+
+begin{notes} 
+
+Typically, one would set up a scenario with one or more monsters on
+one side, and mobs, fire departments, and national guards on the
+other.  The machine players work best if buildings are neutral.  Note
+that the monster can easily defeat national guards one after another,
+and that the most successful strategy for the "human" side is to
+attack the monster with several units at once.  The monster can use
+fires as a barricade to keep the national guards from getting close
+enough to attack.  Destroying buildings is fun but not very useful.
+
+Note that the bitmaps are defined in X11 format and won't work in X10.
+
+Sandra Loosemore (sandra@cs.utah.edu) is the person to blame for this
+piece of silliness (well, Stan aided and abetted).
+
+end{notes}
+end

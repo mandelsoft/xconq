@@ -1,0 +1,59 @@
+To move a unit, use the mouse or [hlyubn]
+[HLYUBN] moves unit repeatedly in that direction
+Mousing unit makes it sit, mousing enemy unit attacks
+  
+s  put a unit on sentry duty
+w  wake units up from whatever they were doing
+   (Space Bar) make unit be on sentry this turn only
+r  return unit to nearest city/transport
+d  delay unit's move until later in turn
+f  follow a designated leader
+m  move to given location
+z  toggle between survey and move modes
+a  look at the occupants
+e  embark units onto transport occupying same unit
+x  mark unit for later reference
+g  give supplies to the transport
+t  take supplies from the transport
+c  designate current location as center of action
+o  set various options
+   Change (D)isplay Mode, (G)raph, Win (H)eight,
+   (I)nverse Video, (M)onochrome, (N)otice Buffer
+   (R)obot, Start (B)eep Time, Win (W)idth
+p  put various data into files for printing
+v  highlight current position
+   
+P  set/change unit production
+I  set unit to not produce anything
+W  wake ALL units in area, including occupants
+D  disband a unit and send it home
+F  follow a coastline
+Z  go on a patrol
+O  set standing orders for occupants
+G  turn unit over to another side
+M  send a message to other sides
+X  resign from the game
+Q  kill game for all players
+S  save the game into a file
+   
+  SEE NEXT PAGE FOR MORE COMMANDS
+To move a unit, use the mouse or [hlyubn]
+[HLYUBN] moves unit repeatedly in that direction
+Mousing unit makes it sit, mousing enemy unit attacks
+  
+C  call a unit or side by a name
+T  find a unit type, (arg gives unit number)
+^T find next unit, (arg gives unit number)
+^D Show next dead unit.
+?  display help info
+/  identify things on screen
+=  display details about a type of unit
+V  display program version
+\  build a new unit (Build mode only)
+^A Turn unit over to machine control
+^P set next product
+^R redraw screen erase very old views
+^L redraw screen
+^F look at action point when not your turn
+.  center the screen around current location
+#  measure the distance from the current point

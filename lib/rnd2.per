@@ -1,0 +1,753 @@
+Xconq 0 -+---- Auconq-type period
+Period 0
+
+; Should armor, etc out-length be -1 ?
+; radar should not be able to carry radar
+; guided missles should have hit chance of 200%
+; possibly radar should get no moves - you have to embark it explicitly ?
+; Spy shouldnt move 2 in desert (makes exploration too easy) (??)
+
+"before the invention of weapons..." period-name
+
+"standard" font-name
+
+; 100 scale 	; What did this do?  5.4 wont take it.
+
+"i" "infantry" "marches around and captures things" utype
+"a" "armor" "faster than infantry, limited to open terrain" utype
+"e" "spy" "invisible scout and base-builder" utype
+"r" "radar" "small device that sees far" utype
+"A" "bi-plane" "first aircraft, slow, fragile, cheap to build" utype
+"f" "fighter" "interceptor to get those nasty bombers" utype
+"b" "bomber" "long range aircraft, carries infantry and bombs" utype
+"d" "destroyer" "fast, cheap, and sinks subs" utype
+"s" "submarine" "sneaks around and sinks ships" utype
+"u" "underwater transport" "submarine - carries infantry and bombs" utype
+"t" "troop transport" "carries infantry and armor across the water" utype
+"h" "hovercraft" "fast, fragile troop transport" utype
+"C" "carrier" "carries aircraft around" utype
+"B" "battleship" "the most powerful ship" utype
+"G" "guided missle" "powerful explosive, does not miss" utype
+"N" "atomic bomb" "leveler of cities (and anything else)" utype
+"v" "village-maker" "produces villages" utype
+"/" "base" "airstrip plus port" utype
+"V" "village" "small town" utype
+"*" "town" "smaller than a city" utype
+"@" "city" "capital of a side" utype
+
+"P" "fuel" "basic motive power" rtype
+"M" "ammo" "generic hitting capability" rtype
+
+"." "sea" "sky blue" ttype
+"," "shallows" "cyan" ttype
+"=" "swamp" "yellowgreen" ttype
+"~" "desert" "yellow" ttype
+"+" "plains" "green" ttype
+"%" "forest" "forest green" ttype
+"^" "mountains" "sienna" ttype
+"_" "ice" "white" ttype
+":" "vacuum" "black" ttype
+
+
+"spy" e icon-name
+"radar" r icon-name
+"bi-plane" A icon-name
+"isub" u icon-name
+"hovercraft" h icon-name
+"missle" G icon-name
+"village-maker" v icon-name
+"village" V icon-name
+
+true [ vacuum ] dark
+
+0 spy-chance
+
+t* t* nuked  ; most terrain won't actually change
+desert [ plains forest ] nuked
+mountains ice nuked
+
+
+; storm with alt:0-33 wet:50-100 seemed a bit too much
+[   0  68  69  70  70  70  93  99  0 ] t* min-alt
+[  68  69  71  93  93  93  99 100  0 ] t* max-alt
+[   0   0  50   0  20  80   0   0  0 ] t* min-wet
+[ 100 100 100  20  80 100 100 100  0 ] t* max-wet
+
+ice edge-terrain
+
+[ / V * @ ] "cities" define
+[ V * @ ] "makers" define
+[ i a e v ] "ground" define
+[ A f b ] "aircraft" define
+[ d s u t h C B ] "ship" define
+[ i a e r A f b d s u t h C B G N v ] "movers" define
+[ sea shallows ] "water" define
+[ plains forest desert mountains ] "land" define
+[ i a e r A f b ] "u1" define
+[ d s u t h C B G N v / V * @ ] "u2" define
+
+true cities named
+true [ C B N v ] named
+[ 1 4 5 25 ] [ / V * @ ] territory
+
+1 @ in-country
+; 4 * in-country
+; 1 V in-country
+5 * in-country
+80 * density
+20 V density
+; @ first-unit
+nothing first-unit
+; i first-product
+nothing first-product
+20 land [ V * ] favored
+40 plains [ V * ] favored
+100 plains @ favored
+16 country-min-distance
+48 country-max-distance
+
+; disasters
+; [ 700 1400 800 800 400 700 700 ] storm [ e A f b d t h ] attrition
+60 t* e attrition
+"has mysteriously disappeared" e attrition-message
+
+[  0 11 14  9  9 12 24 15 21 24 18 24 45 60 11 30 30 ] movers V make
+[  4  7  9  6  6  8 16 10 14 16 12 16 30 40  7 20 20 ] movers * make
+[  4  7  9  6  6  8 15  9 13 15 11 15 27 36  7 18 18 ] movers @ make
+					; big cities produce a tad faster
+; research+startup times are:
+; [ 10  14  14  32  20  Airplane+10  Airplane+20  10  16  sub+6  10  
+;   transport+20    10  10  Bomber+Radar+18  70  50 ]
+20 u* startup
+; does all prod time calcs using integer arith.
+[ 250 163 130 443 272 389 227 67 88 174 58 206 12 5 1463 275 192 ] movers research
+434 A f research-contrib
+434 A b research-contrib
+388 b G research-contrib
+634 r G research-contrib
+215 s u research-contrib
+184 t h research-contrib
+
+; 389 f research	; total A time(26) + f res time(9) = 35.  f startup=1.
+		; (res 36 8) = 389
+; 434 A f research-contrib  ; ceiling(100 * total A time(26) / A prod time(6))
+
+[ 3 5 10 3 ] / ground make
+17 V v make
+true [ V * @ ] maker
+
+; no special resources to make
+1 u* [ * @ ] repair
+2 u* V repair
+3 u* / repair
+10 [ C B ] [ C B ] repair
+10 [ * @ ] i repair
+1 cities v repair
+4 V i repair
+1 / i repair
+
+1 fuel ground produce
+2 fuel a produce ; this is less realistic, but problems otherwise
+0 fuel [ e v ] produce ; these dont use fuel
+[ 10 15 20 50 ] fuel cities produce
+[  5  8 10 20 ] ammo cities produce
+
+100 t* aircraft productivity
+100 [ plains forest ] i productivity
+100 plains a productivity   ; in this case "plains" = "gas stations"
+[ 100 50 20 20 ] land / productivity ; one arg must be a scalar...
+[ 100 50 20 20 ] land V productivity
+[ 100 50 20 20 ] land * productivity
+[ 100 50 20 20 ] land @ productivity
+100 water [ V * @ ] productivity ; 1987.map has some cities in water.
+
+[ 6 10 0 0 20 18 36 ] fuel u1 storage
+[ 100 100 100 200 200 240 200 4 1 0 200 300 500 900 ] fuel u2 storage
+[ 6  4 4 0  3  3  3 ] ammo u1 storage
+[  20  10  10  20  20  40  40 1 1 6 100 150 200 400 ] ammo u2 storage
+1 fuel i consume
+; 1 fuel ship consume
+3 fuel f consume   ; this causes problems for carriers
+2 fuel b consume
+2 fuel A consume
+4 fuel G consume
+0 aircraft consume-as-occupant
+0 G consume-as-occupant
+
+-1 r* [ i f G N ] out-length
+-1 r* G in-length	; missle cant refuel
+
+[ 1 2 2 1 4 9 6 3 3 3 2 4 4 4 4 1 1 ] movers speed
+
+0 land [ i v ] moves
+0 [ plains desert ] a moves
+1 t* e moves
+0 [ plains desert ] e moves
+; radar cannot move, except onto other units
+0 t* aircraft moves
+-1 ice A moves
+0 water ship moves
+2 shallows [ C B ] moves
+0 t* G moves
+0 t* N moves  ; team of scientists can take bomb anywhere
+0 land cities moves  ; looks strange, but needed to define allowable places
+
+1 fuel movers to-move
+0 fuel [ e r ] to-move ; spy steals vehicles.  radar is carried
+0 fuel [ N v ] to-move   
+	; infantry doesn't need extra to move, but cause other problems
+
+1 r u* capacity
+0 r [ e s u ] capacity ; radar gives away position
+1 [ i e N ] b capacity
+1 e ship capacity
+[ 6 6 6 1 ] ground t capacity
+[ 4 4 4 0 ] ground h capacity
+1 G [ b u B ] capacity
+1 [ i N ] u capacity
+1 ship [ t h ] capacity
+[ 6 6 2 ] [ A f b ] C capacity
+2 u* / capacity
+4 aircraft / capacity
+5 u* V capacity
+10 u* * capacity
+20 u* @ capacity
+0 cities cities capacity
+1 u* volume
+1 ground volume
+0 [ r G ] volume	; nothing else can ride in missle tube
+4 [ d s u h ] volume
+6 [ t C B ] volume
+2 b volume
+6 v volume
+1 b hold-volume
+1 ship hold-volume
+6 t hold-volume
+4 h hold-volume
+10 C hold-volume
+20 / hold-volume
+30 V hold-volume
+40 * hold-volume
+80 @ hold-volume
+50 ship t alter-mobility
+25 ship h alter-mobility
+4 u* A enter-time
+9 u* f enter-time  ; aircraft can't sortie again until next turn
+6 u* b enter-time
+0 u* ship enter-time
+
+0 [ e s u ] visibility
+10 N visibility
+true [ V * @ ] always-seen
+3 @ see-range
+4 r see-range
+
+[ 1 1 1 1 1 1 2 3 2 2 3 2 4 8 1 1 1 10 12 20 40 ] u* hp
+[ 0 0 0 0 0 0 1 1 1 1 2 2 2 4 0 0 0  5  6 10 20 ] u* crippled
+				; crippled is < test, not <=
+
+[  50  40  65  40  60  20  15 ] u1 i hit
+[  60  50  55  60  50  30  30 ] u1 a hit
+[   5   4  50  40  10   0   0 ] u1 e hit
+[   0   0   0   0   0   0   0 ] u1 r hit
+[  10   0  15  40  25   5   5 ] u1 A hit
+[  15  25  15  40  80  60  70 ] u1 f hit
+[  20  20  25  60  40  10   9 ] u1 b hit
+[   5   5  70  40  60  10   5 ] u1 d hit
+[   0   0  60  60  60  10   5 ] u1 s hit
+[   0   0  60  60  60  10   5 ] u1 u hit
+[  20   5  50  40  60  10   5 ] u1 t hit
+[  20   5  50  40  60  10   5 ] u1 h hit
+[  30  20  50  60  70  40  10 ] u1 C hit
+[  50  50  90  60  75  50  20 ] u1 B hit
+[ 100 100 100 100 100 100 100 ] u1 G hit
+[ 200 200 200 200 200 200 200 ] u1 N hit
+[  50  40  65  40  60  20  15 ] u1 v hit
+[  10  10  15  40  60  20  20 ] u1 / hit
+[  25  15  30  40  60  45  35 ] u1 V hit
+[  30  20  35  40  75  50  40 ] u1 * hit
+[  50  40  55  40  85  70  60 ] u1 @ hit
+
+[  20  20  20  30  30  20   9  40  40  50  80  70  60  40 ] u2 i hit
+[  30  20  20  30  30  20  20  50  50  60  90  80  70  50 ] u2 a hit
+[   4   0   0   4   1   4   4  30  30   5   0   0   0   0 ] u2 e hit
+[   0   0   0   0   0   0   0   0   0   0   0   0   0   0 ] u2 r hit
+[   5   0   0   5   5   0   0   0   0  10  30  35  40  50 ] u2 A hit
+[  20  30  30  20  20  50  40  80  80  15 100 100 100 100 ] u2 f hit
+[  30  50  50  50  40  70  60  50  50  20  90  90  95  99 ] u2 b hit
+[  60  70  70  70  70  40  20   0   0   5  99  90  90  80 ] u2 d hit
+[  40  10  10  60  65  40  50   0   0   0   0   0   0   0 ] u2 s hit
+[  40  10  10  60  65  40  50   0   0   0   0   0   0   0 ] u2 u hit
+[  40  40  40  40  40  30   9   0   0  20   0   0   0   0 ] u2 t hit
+[  40  40  40  40  45  30   9   0   0  20   0   0   0   0 ] u2 h hit
+[  30  30  30  40  40  20  20   0   0  30   0   0   0   0 ] u2 C hit
+[  70  50  50  90  90  50  90   0   0  50 100 100 100 100 ] u2 B hit
+[ 100 100 100 100 100 100 100 100 100 100 100 100 100 100 ] u2 G hit
+[ 200 200 200 200 200 200 200   0   0 200 200 200 200 200 ] u2 N hit
+[  20  20  20  30  30  20   9  40  40  50  80  70  60  40 ] u2 v hit
+[  20  20  20  30  30  20  20   0   0  10   0   0   0   0 ] u2 / hit
+[  35   0   0  30  30  20  20   0   0  25   0   0   0   0 ] u2 V hit
+[  40   0   0  30  30  20  20   0   0  30   0   0   0   0 ] u2 * hit
+[  50   0   0  30  30  20  50   0   0  50   0   0   0   0 ] u2 @ hit
+
+1 u* u* damage
+2 cities a damage
+2 ship b damage
+2 [ / V * ] b damage
+1 [ s u ] b damage
+3 @ b damage
+2 [ s u ] d damage
+3 ship [ s u ] damage
+4 B [ s u ] damage
+2 u* B damage
+[ 3 3 4 ] [ V * @ ] B damage
+4 u* G damage
+[ 5 5 6 ] [ V * @ ] G damage
+60 u* N damage
+
+-50 neutrality
+
+false N can-counter
+
+true [ G N ] self-destruct
+
+[ 70 55 50 30 ] cities i capture
+[ 90 75 70 50 ] cities a capture
+true i cities bridge  ; infantry can capture cities even on water.
+
+50 movers cities protect  ; cities offer some protection to occupants
+10 cities a protect        ; armor protect the cities housing them.
+			  ; can't make this too large or city can be
+			  ; invulnerable.
+5 cities i protect	  ; same for infantry.
+25 / a protect
+15 / i protect
+
+true u* changes-side  ; equipment is indifferent to its fate
+false [ i e ] changes-side  ; but armies have some loyalty
+			; Should N, v change sides? (gives away research)
+true u* neutral
+false i neutral
+
+1 ammo u* hits-with
+1 ammo u* hit-by
+
+"kills" e destroy-message
+"defeats" ground destroy-message
+"sinks" ship destroy-message
+"shoots down" aircraft destroy-message
+"flattens" cities destroy-message
+
+true movers can-disband
+true [ / V ] can-disband
+
+; help for machine strategy
+[ 200 150  0  0   0 100 100 10  8 25 40 60 1 10 0 0 0  50 0 500 500 ] u* attack-worth
+[ 200  80  0 40   0 200 130 20 15  0  0  0 0 10 0 0 0  50 0 500 500 ] u* defense-worth
+[ 200  50 40  0 150 100 100 20  0  0 40  0 0 10 0 0 0 100 0 500 500 ] u* explore-worth
+[   1  4   0   0   0  100 200 100 2000 400 0 0 ] movers min-region-size
+
+
+begin{notes}
+Your country, having been peaceful and peace-loving for
+unremembered millenia, suddenly finds itself at war with all its
+neighbors.  But you have no weapons!  Fortunately, you have many very
+smart people who can build almost any weapon you can think of - if
+they are given enough time to work on it.  (Your neighbors are all in
+the same situation.)
+
+The trick is to build enough units early to explore your environment
+and take the neighboring neutrals while investing enough time into
+research to live through the later stages of the war.  But the optimal
+units to build will partly depend upon what your neighbors decide to
+build - and you wont know that until its too late.
+
+Here are the available units to build.  The expression "[n R+D, m prod]" 
+means the first unit of that type will take n+m turns to build, and
+each additional unit of that type takes m turns to build.  The
+expression "[unit1+unit2+n, m prod]" means you had better not start
+working on that unit type until you've built unit1 and unit2 (at least
+one of each), or else the R+D time will be much longer.
+
+Infantry.  [10 R+D, 4 Prod].  Same as WWII period.
+
+Armor.  [14 R+D, 7 Prod].  Same as WWII period.
+
+Spy.  [14 R+D, 9 Prod].  Invisible scout.  Moves 1 hex/turn on any
+terrain, 2 hex/turn on plains and desert.  Very poor offense, defense just
+worse than infantry.  Builds base in 12 turns.  Fits on most boats.
+
+Radar.  [32 R+D, 6 Prod].  Small device that sees far.  Cannot move,
+except onto transports, but almost any unit can carry one.
+
+Bi-Plane.  [20 R+D, 6 Prod].  Your first airplane.  Goes 4 hex/turn over
+anything but ice mountains.  Poor offense and defense.  Good fuel
+supply.
+
+Fighter.  [Airplane+10 R+D, 8 Prod].  Same as WWII period.
+
+Bomber.  [Airplane+20 R+D, 16 Prod].  Same as WWII period.
+
+Destroyer.  [10 R+D, 10 Prod].  Same as WWII period, but a tad better
+against transports.
+
+Submarine.  [16 R+D, 14 Prod].  Same as WWII period.
+
+Underwater transport.  [Submarine+6 R+D, 16 Prod].  Same as submarine,
+except this can carry an infantry.
+
+Troop transport.  [10 R+D, 12 Prod].  Same as WWII period.
+
+Hovercraft.  [Troop transport+20 R+D, 16 Prod].  Fast, fragile troop
+transport.  Carries 4 armor/infantry at 4 hex/turn, but a bomber can take
+it out in one shot.
+
+Carrier.  [10 R+D, 30 Prod].  Same as WWII period.
+
+Battleship.  [10 R+D, 40 Prod].  Same as WWII period.
+
+Guided Missle.  [Bomber+Radar+18 R+D, 7 Prod].  Powerful bomb that doesnt miss.
+
+Atomic Bomb.  [70 R+D, 20 Prod].  Same as WWII period - but notice it
+takes a little less time to build.
+
+Village-Maker.  [50 R+D, 20 Prod].  Produces villages.  Can get you 
+exponentially increasing production rates, if you live long enough to use it.
+
+Village.  Small town.  Takes about 50% longer to produce things than a town,
+and doesnt have the manpower to produce infantry.  Fairly vulnerable, but 
+stronger than a base.
+
+Bases; Towns; Cities.  Same as WWII period.
+
+end{notes}
+
+clear-side-names
+
+; The more significant countries of the modern world
+
+"American" sname "Canadian" sname "Mexican" sname "Guatemalan" sname
+"Honduran" sname "Sandinista" sname "Costa Rican" sname "Panamanian" sname
+"Colombian" sname "Ecuadorean" sname  "Peruvian" sname "Chilean" sname
+"Argentinian" sname "Uruguayan" sname "Paraguayan" sname "Brazilian" sname
+"Bolivian" sname "Guyanan" sname "Venezuelan" sname "Cuban" sname
+"Haitian" sname "Jamaican" sname "Irish" sname "British" sname
+"Portuguese" sname "Spanish" sname "French" sname "Italian" sname
+"Albanian" sname "Greek" sname "Turk" sname "Bulgarian" sname
+"Cypriot" sname "Maltese" sname "Icelander" sname
+"Rumanian" sname "Soviet" sname "Finnish" sname "Swedish" sname
+"Polish" sname "Czech" sname "Hungarian" sname "Austrian" sname
+"German" sname "Swiss" sname "Belgian" sname "Dutch" sname
+"Danish" sname "Norwegian" sname "Moroccan" sname "Mauritanian" sname
+"Senegalese" sname "Guinean" sname "Liberian" sname "Ghanan" sname
+"Nigerian" sname "Cameroon" sname "Gabonese" sname "Zairean" sname
+"Angolan" sname "Namibian" sname "South African" sname "Botswanan" sname
+"Mozambiquan" sname "Zimbabwean" sname "Zambian" sname "Tanzanian" sname
+"Rwandan" sname "Djiboutian" sname "Madagascaran" sname
+"Kenyan" sname "Ugandan" sname "Somalian" sname "Ethiopian" sname
+"Sudanese" sname "Egyptian" sname "Libyan" sname "Tunisian" sname
+"Algerian" sname "Syrian" sname "Lebanese" sname "Israeli" sname
+"Jordanian" sname "Saudi" sname "Yemeni" sname "Omani" sname
+"Kuwaiti" sname "Iraqi" sname "Iranian" sname "Afghan" sname
+"Pakistani" sname "Indian" sname "Nepalese" sname "Burmese" sname
+"Vietnamese" sname "Kampuchean" sname "Laotian" sname
+"Siamese" sname "Malaysian" sname "Indonesian" sname "Australian" sname
+"Micronesian" sname "Fijian" sname "Tongan" sname "Samoan" sname
+"Tahitian" sname "New Zealander" sname
+"Papuan" sname "Polynesian" sname "Filipino" sname "Japanese" sname
+"Korean" sname "Chinese" sname "Mongolian" sname "Tibetan" sname
+
+; The following names are derived from the Rand-McNally International Atlas
+; and from their US road atlas.  Although nominally these could end up on
+; any sort of unit, they are likely to be attached to city-like units only.
+
+clear-unit-names
+
+; Soviet Union  
+"Uglegorsk" uname "Taganrog" uname "Kuzemino" uname "Igodovo" uname 
+"Izhevsk" uname "Leninskoye" uname "Zvenigorod" uname "Faustovo" uname 
+"Tokma" uname "Bolotnoje" uname "Pudino" uname "Predivinsk" uname 
+"Gotoputovo" uname "Stupino" uname 
+; Japan  
+"Toyooka" uname "Kobayashi" uname "Kamiyahagi" uname "Fukude" uname 
+; China  
+"Dandong" uname "Xingtai" uname "Xiaojiagang" uname "Wushu" uname 
+"Wutangjie" uname "Qingfeng" uname "Dushikou" uname "Huilong" uname 
+"Linyi" uname "Miaoyang" uname "Xinbo" uname "Bugt" uname 
+; Indochina  
+"Tan-an" uname "Ban Khlong Kua" uname "Bo Phloi" uname "Thot-not" uname
+"Herbertabad" uname "Mong Pawn" uname "Roi Et" uname
+; Indonesia  
+"Butong" uname "Lubukbertubung" uname "Moutong" uname "Gimpu" uname 
+"Waingapu" uname "Sindangbarang" uname "Kualakapuas" uname "Bongka" uname 
+"Salimbatu" uname "Bonggaw" uname "Baing" uname "Grokgak" uname 
+; India  
+"Bap" uname "Meerut" uname "Harda" uname "Garwa" uname 
+"Digboi" uname "Kurnool" uname "Nirmal" uname "Coondapoor" uname 
+"Tetulbaria" uname "Maheshwar" uname "Paramagudi" uname "Bhakkar" uname 
+"Mungaoli" uname "Shorapur" uname "Channapatna" uname "Chilaw" uname 
+; Middle East and Central Asia  
+"Bajandalaj" uname "Cogt-Ovoo" uname "Un't" uname "Ich-Uul" uname 
+"Yazd" uname "Samarkand" uname "Mashhad" uname "Chah Bahar" uname 
+"Jubbah" uname "Al-'Awsajiyah" uname "Kifri" uname "Kashgar" uname 
+"Chundzha" uname "Ushtobe" uname "Dzaamar" uname "Wadi Musa" uname 
+"Bogustan" uname "Gakuch" uname 
+; Africa  
+"Pibor Post" uname "Umm Digulgulaya" uname "Umm Shalil" uname "Buzaymah" uname 
+"Gedo" uname "North Horr" uname "Todenyang" uname "Madadi" uname 
+"Ngetera" uname "Ouadda" uname "Mazoula" uname "Tiglit" uname 
+"Gummi" uname "Gbarnga" uname "Burutu" uname "Bafwabalinga" uname 
+"Goonda" uname "Ankoroka" uname "Vryburg" uname "Matuba" uname 
+"Bakouma" uname "El Idrissia" uname "Agadir" uname "Nungwe" uname 
+"Bunianga" uname "Ngali" uname "Nguiroungou" uname "Otukpa" uname 
+"Hell-Ville" uname "Morafenobe" uname "Tongobory" uname "Farafangana" uname 
+"Mungbere" uname "Haco" uname "Barbar" uname "Oulessebougou" uname
+; Australia  
+"Nookawarra" uname "Bunbury" uname "Buckleboo" uname "Breeza Plains" uname 
+"Mistake Creek" uname "Boolaloo" uname "Yarloop" uname "Dubbo" uname 
+"Bushy Park" uname "Old Cork" uname "Cessnock" uname "Wagga Wagga" uname 
+"Mungar Junction" uname "Koolywirtie" uname "Wonthaggi" uname
+"Oatlands" uname "Bindebango" uname "Alice Springs" uname
+; New Guinea  
+"Kwatisore" uname "Finschhafen" uname "Yobi" uname "Rumahtinggih" uname 
+; USA  
+; AL  
+"New Hope" uname "Hackleburg" uname 
+; AK  
+"Kaktovik" uname "Fort Yukon" uname 
+; AZ  
+"Benson" uname "Gila Bend" uname "Turkey Flat" uname "Tuba City" uname  
+"Wide Ruins" uname 
+; AR  
+"Metalton" uname "Oil Trough" uname "Hackett" uname
+; CA  
+"Burnt Ranch" uname "Calexico" uname "Eel Rock" uname "Gilroy" uname 
+"Joshua Tree" uname "Milpitas" uname "Mormon Bar" uname "Pumpkin Center" uname 
+"Death Valley Junction" uname "Toms Place" uname
+"Pinole" uname "Petaluma" uname 
+"Scotts Valley" uname "Whiskeytown" uname "Leucadia" uname "Lompoc" uname
+"Granada Hills" uname
+; CO  
+"Las Animas" uname "Silver Plume" uname 
+; CT  
+"Upper Stepney" uname "Moosup" uname "Danbury" uname
+; FL  
+"Yeehaw Junction" uname "Big Pine Key" uname 
+"Panacea" uname "Wewahitchka" uname "Estiffanulga" uname 
+; GA  
+"Dixie Unameion" uname "Fowlstown" uname "Dacula" uname "Americus" uname 
+; HW  
+"Laupahoehoe" uname 
+; ID  
+"Malad City" uname "Kootenai" uname 
+; IL  
+"Farmer City" uname "Aroma Park" uname "Goreville" uname "Illiopolis" uname  
+"Mascoutah" uname "Metamora" uname "Metropolis" uname "New Boston" uname  
+"Pontoon Beach" uname "Romeoville" uname "Teutopolis" uname  
+; IN  
+"Etan Green" uname "French Lick" uname "Loogootee" uname "Needmore" uname  
+"Ogden Dunes" uname "Oolitic" uname "Star City" uname  
+; IA  
+"Coon Rapids" uname "Correctionville" uname "Grundy Center" uname
+"Lost Nation" uname "Ossian" uname "Sac City" uname  
+; KA  
+"Countryside" uname "Mankato" uname "Pretty Prairie" uname  "Greeley" uname
+"Grouse Creek" uname
+; KY  
+"Big Clifty" uname "Cloverport" uname "Druid Hills" uname "Fancy Farm" uname 
+"Hardburly" uname "Hardshell" uname "Horse Cave" uname "Pleasureville" uname 
+"Science Hill" uname "Sublimity City" uname "Watergap" uname 
+; LA  
+"Bayou Goula" uname "Cut Off" uname "Hackberry" uname "Lutcher" uname 
+"Waggaman" uname 
+; ME  
+"Veazie" uname "Madawaska" uname 
+; MD  
+"Bestgate" uname "College Park" uname "Frostburg" uname "Pocomoke City" uname 
+"Port Deposit" uname "Pumphrey" uname "Tammany Manor" uname
+"Weems Creek" uname "Whiskey Bottom" uname "Hack Point" uname
+; MA  
+"Assinippi" uname "Buzzards Bay" uname "Dorothy Pond" uname "Hopkinton" uname 
+"Housatonic" uname "Pigeon Cove" uname "Swampscott" uname "Gloucester" uname
+"Hyannis Port" uname "Ipswich" uname "Boxford" uname
+; MI  
+"Bad Axe" uname "Brown City" uname "Cassopolis" uname "New Buffalo" uname 
+"Petoskey" uname "Ishpeming" uname "Ypsilanti" uname "Saugatuck" uname 
+; Michigan UP (from Sandra Loosemore)  
+"Skanee" uname "Bruce Crossing" uname "Baraga" uname "Germfask" uname 
+"Assinins" uname "Tapiola" uname "Gaastra" uname "Bete Grise" uname 
+; MN  
+"Ada" uname "Blue Earth" uname "Brainerd" uname "Eden Valley" uname  
+"Lino Lakes" uname "New Prague" uname "Sleepy Eye" uname "Waconia" uname  
+; MS  
+"Bogue Chitto" uname "Buckatunna" uname "Guntown" uname "Picayune" uname 
+"Red Lick" uname "Senatobia" uname "Tie Plant" uname "Yazoo City" uname  
+; MO  
+"Bourbon" uname "Doe Run" uname "Hayti" uname "Humansville" uname 
+"Lutesville" uname "Moberly" uname "New Madrid" uname "Peculiar" uname 
+"Sappington" uname "Vandalia" uname  
+; MT  
+"Big Sandy" uname "Hungry Horse" uname 
+"Kalispell" uname  "East Missoula" uname
+; NE
+"Hershey" uname "Loup City" uname 
+"Minatare" uname "Wahoo" uname  "Grainfield" uname
+; NV  
+"Winnemucca" uname "Tonopah" uname "Jackpot" uname  
+; NH  
+"Littleton" uname "Winnisquam" uname  
+; NJ  
+"Cheesequake" uname "Freewood Acres" uname
+"Forked River" uname "Hoboken" uname "Succasunna" uname  
+"Maple Shade" uname "New Egypt" uname "Parsippany" uname "Ship Bottom" uname  
+; NM  
+"Adobe Acres" uname "Cloudcroft" uname "Ruidoso" uname "Toadlena" uname  
+"Los Padillos" uname "Ojo Caliente" uname 
+; NY  
+"Angola on the Lake" uname "Podunk" uname "Chili Center" uname
+"Aquebogue" uname "Muttontown" uname "Hicksville" uname 
+"Hoosick Falls" uname "Nyack" uname
+"Painted Post" uname "Peekskill" uname "Portville" uname  
+"Ronkonkoma" uname "Wappingers Falls" uname 
+"Sparrow Bush" uname "Swan Lake" uname
+; NC  
+"Altamahaw" uname
+"Biltmore Forest" uname "Boger City" uname "Granite Quarry" uname  
+"High Shoals" uname "Lake Toxaway" uname
+"Scotland Neck" uname "Hiddenite" uname 
+"Mocksville" uname "Yadkinville" uname "Nags Head" uname 
+"Kill Devil Hills" uname "Rural Hall" uname  
+; ND  
+"Cannon Ball" uname "Hoople" uname "Zap" uname  
+; OH  
+"Academia" uname "Arcanum" uname "Blacklick Estates" uname "Blue Ball" uname  
+"Crooksville" uname "Dry Run" uname "Flushing" uname "Gratis" uname  
+"Lithopolis" uname "Mingo Junction" uname "Newton Falls" uname
+"New Straitsville" uname "Painesville" uname "Pepper Pike" uname 
+"Possum Woods" uname "Sahara Sands" uname  
+; OK  
+"Bowlegs" uname "Broken Arrow" uname "Fort Supply" uname "Drumright" uname 
+"Dill City" uname "Okay" uname "Hooker" uname  
+; OR  
+"Condon" uname "Happy Valley" uname "Drain" uname "Junction City" uname 
+"Molalla" uname "Philomath" uname "Tillamook" uname "Wankers Corner" uname
+; PA  
+"Atlasburg" uname "Beaver Meadows" uname "Birdsboro" uname "Daisytown" uname 
+"Fairless Hills" uname "Fairchance" uname "Kutztown" uname "Erdenheim" uname 
+"Hyndman" uname "Pringle" uname "Scalp Level" uname "Slickville" uname 
+"Zelienople" uname "Sugar Notch" uname "Toughkenamon" uname "Throop" uname 
+"Tire Hill" uname "Wormleysburg" uname "Oleopolis" uname
+; RI  
+"Woonsocket" uname "Pawtucket" uname
+; SC  
+"Due West" uname "Ninety Six" uname 
+"Travelers Rest" uname "Ware Shoals" uname  
+; SD  
+"Deadwood" uname "Lower Brule" uname 
+"New Underwood" uname "Pickstown" uname 
+"Plankinton" uname "Tea" uname "Yankton" uname  
+; TN  
+"Berry's Chapel" uname "Bulls Gap" uname "Cornersville" uname "Counce" uname 
+"Gilt Edge" uname "Grimsley" uname "Malesus" uname "Soddy-Daisy" uname  
+; TX  
+"Bastrop" uname "New Braunfels" uname "Harlingen" uname "Dimock" uname 
+"Devils Elbow" uname "North Zulch" uname "Llano" uname "Fort Recovery" uname 
+"Arp" uname "Bovina" uname "Cut and Shoot" uname "College Station" uname 
+"Grurer" uname "Iraan" uname "Leming" uname "Harlingen" uname 
+"Muleshoe" uname "Munday" uname "Kermit" uname "La Grange" uname 
+"Ropesville" uname "Wink" uname "Yoakum" uname "Sourlake" uname  
+; UT  
+"Delta" uname "Moab" uname "Nephi" uname "Loa" uname 
+"Moroni" uname "Orem" uname "Tooele" uname "Sigurd" uname 
+; VT  
+"Bellows Falls" uname "Chester Depot" uname "Winooski" uname  
+; VA  
+"Accotink" uname "Ben Hur" uname "Ferry Farms" uname "Disputanta" uname 
+"Dooms" uname "Sleepy Hollow" uname "Max Meadows" uname "Goochland" uname 
+"Rural Retreat" uname "Sandston" uname "Stanleytown" uname
+"Willis Wharf" uname "Stuarts Draft" uname 
+; WA  
+"Black Diamond" uname "Carnation" uname "Cle Elum" uname "Cosmopolis" uname 
+"Darrington" uname "Enumclaw" uname "Forks" uname "Goose Prairie" uname 
+"Navy Yard City" uname "La Push" uname "Soap Lake" uname "Walla Walla" uname 
+"Sedro Woolley" uname "Pe Ell" uname "Ruston" uname  
+; WV  
+"Barrackville" uname "Pocatalico" uname "Fort Gay" uname "Big Chimney" uname 
+"Nutter Fort" uname "Hometown" uname "Nitro" uname "Triadelphia" uname 
+"Star City" uname  
+; WI  
+"Combined Lock" uname "Coon Valley" uname "Black Earth" uname
+"New Holstein" uname "Little Chute" uname "Wisconsin Dells" uname
+"Random Lake" uname "Sheboygan" uname "Nauwatosa" uname  
+; WY  
+"East Thermopolis" uname "Fort Washakie" uname "Paradise Valley" uname 
+; Canada  
+"Sexsmith" uname "Squamish" uname "Fort Qu'Appelle" uname "Flin Flon" uname 
+"Moose Jaw" uname "Grand-Mere" uname "Great Village" uname "Pugwash" uname 
+"Chiliwack" uname "Cranbery Portage" uname  
+"Moosonee" uname "Joe Batt's Arm" uname "St.-Polycarpe" uname
+"Crabtree Mills" uname "Copper Cliff" uname "Uxbridge" uname 
+"Penetanguishene" uname "Boger City" uname "Drumheller" uname 
+"Port Blandford" uname "Hamtramck" uname
+; USA?
+"Hackensack" uname "North Middleboro" uname "Fannettsburg" uname 
+"Corkscrew" uname "Boynton Beach" uname 
+"Belchertown" uname
+; South America  
+"Huatabampo" uname "Zapotiltic" uname "Ipiranga" uname "Perseverancia" uname 
+"Bilwaskarma" uname "Aguadulce" uname
+"Albert Town" uname "Fuente de Oro" uname 
+"Pedras de Fogo" uname "Maxaranguape" uname "Comodoro Rivadavia" uname
+"Coribe" uname "Rossell y Rius" uname "General Alvear" uname
+"Ushaia" uname "Los Antiguos" uname "Puerto Alegre" uname "Quevedo" uname 
+; Eastern Europe  
+"Kannonkoski" uname "Uusikaupunki" uname "Ulfborg" uname "Wloszczowa" uname 
+"Drohiczyn" uname "Vrchlabi" uname "Oroshaza" uname "Klagenfurt" uname 
+"Pisz" uname "Krokowa" uname "Partizanske" uname "Ozd" uname 
+"Jimbolia" uname "Peshkopi" uname "Galaxidhion" uname "Naxos" uname 
+; Iceland
+"Thingvellir" uname "Honningsvag" uname "Vikna" uname "Jokkmokk" uname
+; Scandinavia
+"Rimbo" uname "Kukkola" uname "Viitasaari" uname
+"Guderup" uname "Grindsted" uname "Store Andst" uname "Odder" uname 
+"Vrigstad" uname "Trollhaetten" uname "Kinsarvik" uname "Grimstad" uname 
+; Ireland
+"Ballybunion" uname "Banagher" uname "Carncastle" uname
+; Belgium
+"Lisp" uname "Knokke" uname "Bialy" uname "Bor" uname
+"Hel" uname "Puck" uname
+; Germany
+"Diepholz" uname "Sangerhausen" uname "Biedenkopf" uname 
+"Mosbach" uname "Butzbach" uname "Goslar" uname "Studenka" uname
+"Slavonice" uname "Gouda" uname "Dokkum" uname "Oss" uname
+"Bad Bramstedt" uname "Dinkelsbuehl" uname "Hoogezand" uname 
+"Schoensee" uname "Fuerstenfeldbruck" uname 
+"Pfaffenhausen" uname "Namlos" uname "Bad Hall" uname
+"Consdorf" uname "Cloppenburg" uname "Bad Muskau" uname "Exing" uname
+; France
+"Bois-d'Arcy" uname
+"Presles-en-Brie" uname "Silly-le-Long" uname "Saint-Witz" uname 
+"Limoux" uname "Crozon" uname "Guilvinec" uname "Poggibonsi" uname 
+"Pignans" uname "La Tour-du-Pin" uname "Roquefort" uname "Saint-Quentin" uname 
+; Italy
+"Bobbio" uname "Viareggio" uname "Siderno" uname "Cortona" uname 
+; Spain
+"Pedrogao Grande" uname "Villarcayo" uname "Alosno" uname "La Bisbal" uname 
+; UK 
+"Cold Norton" uname "Potten End" uname "Battlesbridge" uname 
+"Fawkham Green" uname "Ysbyty Ystwyth" uname "Bletchley" uname
+"Llanbrynmair" uname "St Keverne" uname "Foxholes" uname 
+"Whitby" uname "Sutton-on-Sea" uname "Tweedmouth" uname "Wrexham" uname
+"Kirkwall" uname "Blair Atholl" uname "Inchbare" uname "Blackwaterfoot" uname 
+"Ramsgate" uname "Llantwit Major" uname "Minehead" uname "Buckfastleigh" uname 
+"Pocklington" uname "Robin Hood's Bay" uname "West Kilbride" uname
+"Inchnadamph" uname "North Tolsta" uname "Oykel Bridge" uname
+"Pangbourne" uname "Moreton-in-Marsh" uname "Wye" uname "Congresbury" uname
+
+; (defun res (res prod)
+;	(setq res (- res (floor (* prod .2))))
+;	(ceiling (* (/ res (floor (* prod 1.2))) 100)))
+
+; (defun restime (prod res) (floor (/ (* (floor (* prod 1.2)) (+ res 100)) 100)))
+
+end

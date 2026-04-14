@@ -1,0 +1,3 @@
+if you define a unit as a maker when it can't make anything, xconq
+	goes into an endless loop trying to make it do something:
+	Always non-idle, and always producing

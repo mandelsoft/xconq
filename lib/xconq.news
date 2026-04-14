@@ -1,0 +1,13 @@
+                              XCONQ NEWS
+
+This is release 5.5 of XConq.  Mail bug/questions/problems to
+
+Emergency-saves are now performed again, when the game crashes.
+You can 'S'ave the current game without terminating it.
+Tiny bugfix in command.c, checking reference of NIL-Pointer
+
+New functionalities: - Max. Round-Time settable via -T <minutes>
+                     - ^W wake units of specified type only.
+
+(Mail caronni@nessie.cs.id.ethz.ch for bugreports)
+<xconq@uunet.uu.net>.

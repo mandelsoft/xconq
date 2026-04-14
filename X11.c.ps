@@ -1,0 +1,2047 @@
+%!PS-Adobe-
+%%Creator: wolf
+%%CreationDate: Fri Jul  8 10:51:13 1994
+%%DocumentFonts: (atend)
+%%Pages: (atend)
+%%EndComments
+/showuline {
+	/CurPointSize exch def
+	dup stringwidth pop
+	gsave
+	currentfont /FontInfo get dup
+	/UnderlinePosition get CurPointSize mul 1000 div 0 exch rmoveto exch 0 rlineto
+	/UnderlineThickness get CurPointSize mul 1000 div setlinewidth stroke
+	grestore
+	show
+} def
+/mv {moveto} def
+%%EndProlog
+0 statusdict /setoutputtray get exec
+%%Page: ? 1
+/pg save def
+0.46886 0.47472 scale
+/Courier findfont 12 scalefont setfont
+0 886 translate
+gsave 634 886 moveto
+634 -886 lineto
+0 0 moveto
+1268 0 lineto
+stroke grestore
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (/* Copyright \(c\) 1987, 1988, 1991  Stanley T. Shebs. */)show
+39 826 mv (/* Copyright 1988 by Chris D. Peterson, MIT. */)show
+39 814 mv (/* Many improvements by Tim Moore, University of Utah. */)show
+39 802 mv (/* This program may be used, copied, modified, and redistributed freely */)show
+39 790 mv (/* for noncommercial purposes, so long as this notice remains intact.  */)show
+39 766 mv (/* Interface implementations for the X11 version of xconq. */)show
+39 742 mv (#include "config.h")show
+39 730 mv (#include "misc.h")show
+39 718 mv (#include "period.h")show
+39 706 mv (#include "side.h")show
+39 694 mv (#include "unit.h")show
+39 682 mv (#include "map.h")show
+39 670 mv (#include "global.h")show
+39 646 mv (/* careful of the path of the X header files. */)show
+39 622 mv (#ifdef UNIX)show
+39 610 mv (#include <X11/Xos.h>)show
+39 598 mv (#undef SIGCHLD)show
+39 586 mv (#include <signal.h>   /* needed for ^C disabling */)show
+39 574 mv (#include <errno.h>    /* needed to detect interrupted selects */)show
+39 562 mv (#include <X11/Xlib.h>)show
+39 550 mv (#include <X11/Xutil.h>)show
+39 538 mv (#include <X11/Xresource.h>)show
+39 526 mv (#include <X11/Intrinsic.h>)show
+39 514 mv (#include <ctype.h>)show
+39 502 mv (#endif /* UNIX */)show
+39 478 mv (#ifndef XAPPLRESDIR)show
+39 466 mv (#define XAPPLRESDIR "/local/lib/x11r4/app-defaults")show
+39 454 mv (#endif)show
+39 430 mv (/* various bitmap definitions. */)show
+39 406 mv (#include "xconqlogo.icon")show
+39 382 mv (#define dots_width 16)show
+39 370 mv (#define dots_height 16)show
+39 358 mv (static char dots_bits[] = {)show
+39 346 mv (   0x01, 0x01,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 334 mv (   0x10, 0x10,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 322 mv (   0x01, 0x01,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 310 mv (   0x10, 0x10,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00};)show
+39 286 mv (#define mask_width 16)show
+39 274 mv (#define mask_height 16)show
+39 262 mv (static char mask_bits[] = {)show
+39 250 mv (   0xe0, 0x03,  0xd8, 0x0f,  0xb4, 0x19,  0x8a, 0x21, )show
+39 238 mv (   0x86, 0x61,  0x85, 0x41,  0x83, 0xc1,  0xff, 0xff, )show
+39 226 mv (   0xff, 0xff,  0x83, 0xc1,  0x82, 0xa1,  0x86, 0x61, )show
+39 214 mv (   0x84, 0x51,  0x98, 0x2d,  0xf0, 0x1b,  0xc0, 0x07};)show
+39 190 mv (#define curs_width 16)show
+39 178 mv (#define curs_height 16)show
+39 166 mv (static char curs_bits[] = {)show
+39 154 mv (   0xe0, 0x03,  0x98, 0x0c,  0x84, 0x10,  0x82, 0x20, )show
+39 142 mv (   0x82, 0x20,  0x81, 0x40,  0x81, 0x40,  0xff, 0x7f, )show
+39 130 mv (   0x81, 0x40,  0x81, 0x40,  0x82, 0x20,  0x82, 0x20, )show
+39 118 mv (   0x84, 0x10,  0x98, 0x0c,  0xe0, 0x03,  0x00, 0x00};)show
+39 94 mv (#define bomb1_width 32)show
+39 82 mv (#define bomb1_height 32)show
+39 70 mv (static char bomb1_bits[] = {)show
+39 58 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 46 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 826 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 814 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 802 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 790 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 778 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 766 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 754 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 742 mv (   0x00, 0xc0,  0x01, 0x00,  0x00, 0xf0,  0x07, 0x00, )show
+39 730 mv (   0x00, 0xf0,  0x07, 0x00,  0x00, 0xf8,  0x0f, 0x00, )show
+39 718 mv (   0x00, 0xf8,  0x0f, 0x00,  0x00, 0xfc,  0x0f, 0x00, )show
+39 706 mv (   0x00, 0xfe,  0x1f, 0x00,  0x00, 0xfe,  0x3f, 0x00, )show
+39 694 mv (   0x00, 0xfe,  0x3f, 0x00,  0x00, 0xfc,  0x1f, 0x00, )show
+39 682 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00};)show
+39 658 mv (#define bomb2_width 32)show
+39 646 mv (#define bomb2_height 32)show
+39 634 mv (static char bomb2_bits[] = {)show
+39 622 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 610 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 598 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 586 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 574 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0xf8,  0x01, 0x00, )show
+39 562 mv (   0x00, 0xf8,  0x07, 0x00,  0x00, 0xfc,  0x0f, 0x00, )show
+39 550 mv (   0x00, 0xfc,  0x1f, 0x00,  0x00, 0xfe,  0x1f, 0x00, )show
+39 538 mv (   0x00, 0xfe,  0x3f, 0x00,  0x00, 0xfc,  0x1f, 0x00, )show
+39 526 mv (   0x00, 0xfc,  0x0f, 0x00,  0x00, 0xf0,  0x07, 0x00, )show
+39 514 mv (   0x00, 0xf0,  0x03, 0x00,  0x00, 0xe0,  0x03, 0x00, )show
+39 502 mv (   0x00, 0xf0,  0x07, 0x00,  0x00, 0xf0,  0x07, 0x00, )show
+39 490 mv (   0x00, 0xf0,  0x0f, 0x00,  0x00, 0xf0,  0x0f, 0x00, )show
+39 478 mv (   0x00, 0xf8,  0x0f, 0x00,  0x00, 0xf8,  0x1f, 0x00, )show
+39 466 mv (   0x00, 0xf8,  0x1f, 0x00,  0x00, 0xfc,  0x1f, 0x00, )show
+39 454 mv (   0x00, 0xff,  0x7f, 0x00,  0xc0, 0xff,  0xff, 0x03, )show
+39 442 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00};)show
+39 418 mv (#define bomb3_width 32)show
+39 406 mv (#define bomb3_height 32)show
+39 394 mv (static char bomb3_bits[] = {)show
+39 382 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 370 mv (   0x00, 0x00,  0x00, 0x00,  0xfe, 0xe2,  0xa3, 0x3f, )show
+39 358 mv (   0x00, 0xfc,  0x1f, 0x00,  0x3c, 0xff,  0x7f, 0x7c, )show
+39 346 mv (   0x80, 0xff,  0xff, 0x00,  0xc0, 0xff,  0xff, 0x01, )show
+39 334 mv (   0xc0, 0xff,  0xff, 0x01,  0xe0, 0xff,  0xff, 0x03, )show
+39 322 mv (   0xe0, 0xff,  0xff, 0x03,  0xe0, 0xff,  0xff, 0x03, )show
+39 310 mv (   0xe0, 0xff,  0xff, 0x01,  0xe0, 0xff,  0xff, 0x49, )show
+39 298 mv (   0x82, 0xff,  0xff, 0x34,  0x14, 0xfe,  0x3f, 0x42, )show
+39 286 mv (   0xe2, 0xff,  0x9f, 0x34,  0x40, 0xfe,  0x3f, 0x41, )show
+39 274 mv (   0xbe, 0xfd,  0xdf, 0x1e,  0x00, 0xf8,  0x1f, 0x01, )show
+39 262 mv (   0xfe, 0xfd,  0xdf, 0x7f,  0x00, 0xfc,  0x1f, 0x00, )show
+39 250 mv (   0x00, 0xfc,  0x1f, 0x00,  0x00, 0xfc,  0x3f, 0x00, )show
+39 238 mv (   0x00, 0xfe,  0x1f, 0x00,  0x00, 0xfe,  0x3f, 0x00, )show
+39 226 mv (   0x00, 0xff,  0x3f, 0x00,  0xc0, 0xff,  0xff, 0x00, )show
+39 214 mv (   0xfc, 0xff,  0xff, 0x3f,  0xfe, 0xff,  0xff, 0x7f, )show
+39 202 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00};)show
+39 178 mv (#define bomb4_width 32)show
+39 166 mv (#define bomb4_height 32)show
+39 154 mv (static char bomb4_bits[] = {)show
+39 142 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 130 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0xc0,  0x07, 0x00, )show
+39 118 mv (   0x00, 0x78,  0x10, 0x00,  0x00, 0x0f,  0x46, 0x00, )show
+39 106 mv (   0x80, 0x61,  0x81, 0x00,  0xc0, 0x1c,  0x00, 0x01, )show
+39 94 mv (   0x40, 0x02,  0x00, 0x00,  0x20, 0x01,  0x00, 0x00, )show
+39 82 mv (   0x20, 0x01,  0x00, 0x00,  0x20, 0x00,  0x00, 0x00, )show
+39 70 mv (   0x20, 0x00,  0x00, 0x00,  0x40, 0x00,  0x00, 0x00, )show
+39 58 mv (   0x80, 0x00,  0x00, 0x00,  0x00, 0x02,  0x00, 0x00, )show
+39 46 mv (   0x00, 0x02,  0x00, 0x00,  0x00, 0x04,  0x00, 0x00, )show
+grestore
+-634 -886 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (   0x00, 0x04,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 826 mv (   0x00, 0x04,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 814 mv (   0x00, 0x04,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 802 mv (   0x00, 0x04,  0x00, 0x00,  0x00, 0x02,  0x00, 0x00, )show
+39 790 mv (   0x00, 0x01,  0x00, 0x00,  0xc0, 0x00,  0x00, 0x00, )show
+39 778 mv (   0x2c, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00, )show
+39 766 mv (   0x00, 0x00,  0x00, 0x00,  0x00, 0x00,  0x00, 0x00};)show
+39 742 mv (/* This is the name of a family of programs, so argv[0] inadequate. */)show
+39 718 mv (#define PROGRAMNAME "xconq")show
+39 706 mv (#define PROGRAMCLASS "XConq")show
+39 682 mv (/* Name of default font - why is this wired in? */)show
+39 658 mv (#define STANDARD "standard")show
+39 634 mv (/* Magic number meaning that this pixmap intentionally left blank. */)show
+39 610 mv (#define NOPIXMAP 17)show
+39 586 mv (#define INFOLINES 5)show
+39 562 mv (#define BH 32)show
+39 538 mv (/* Don't use all of really big displays. */)show
+39 514 mv (#define MAXDISPLAYWIDTH 900)show
+39 502 mv (#define MAXDISPLAYHEIGHT 800)show
+39 478 mv (/* Use with caution - variable name "side" embedded! */)show
+39 454 mv (#define sd\(\) \(\(Screeno *\) side->display\))show
+39 430 mv (#define sdd\(\) \(sd\(\)->disp\))show
+39 406 mv (#define sdds\(\) DefaultScreen\(sdd\(\)\))show
+39 382 mv (typedef unsigned int unint;)show
+39 346 mv (/* GC rules are for different fonts etc, but not colors or bitmaps. */)show
+39 322 mv (typedef struct a_screen {)show
+39 310 mv (    Display *disp;)show
+39 298 mv (    GC gc;                      /* a tmp graphics context for this display */)show
+39 286 mv (    GC flashgc;                 /* The gc for drawing the flash lines. */)show
+39 274 mv (    GC textgc;                  /* foreground on background text */)show
+39 262 mv (    GC helpgc;                  /* foreground on background help text */)show
+39 250 mv (    GC icongc;                  /* icon graphics context */)show
+39 238 mv (    GC invicongc;               /* icon gc inverted colors. */)show
+39 226 mv (    GC varicongc;               /* This is an icon gc with variable fgcolor. */)show
+39 214 mv (    GC unitgc;                  /* unit bitmap printing gc. */)show
+39 202 mv (    GC unittextgc;              /* unit text printing gc. */)show
+39 190 mv (    GC cleargc;                 /* The gc to use for clearing areas. */)show
+39 178 mv (    GC clearbitgc;              /* gc for clearing bitmaps */)show
+39 166 mv (    XFontStruct *textfont;      /* font for text display */)show
+39 154 mv (    XFontStruct *iconfont;      /* utility font with assorted icons */)show
+39 142 mv (    XFontStruct *unitfont;      /* font for unit characters */)show
+39 130 mv (    XFontStruct *helpfont;      /* font for help window */)show
+39 118 mv (    Pixmap bombpics[4];         /* mushroom clouds */)show
+39 106 mv (    Pixmap unitpics[MAXUTYPES]; /* used instead of font sometimes */)show
+39 94 mv (    Pixmap wbdots, bwdots;      /* blue border and dotted backgrounds */)show
+39 82 mv (    Pixmap logostipple,logopmap;/* the XConq logo bitmap and pixmaps */)show
+39 70 mv (    long logocolor;             /* the color for the logopixmap */)show
+39 58 mv (    Cursor curs;                /* the cursor object itself */)show
+39 46 mv (} Screeno;)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 826 mv (/* resources to retrieve */)show
+39 802 mv (#define sideoffset\(field\) XtOffset\(Side*, field\))show
+39 790 mv (#define displayoffset\(field\) XtOffset\(Screeno*, field\))show
+39 754 mv (static XtResource SideRes[] = {)show
+39 742 mv (  {"map.%s.hexDisplayMode", "Map.Period.HexDisplayMode", "HexDisplayMode",)show
+39 730 mv (     TRUE, sideoffset\(showmode\), 0, "BorderHex"},)show
+39 718 mv (  {NULL})show
+39 706 mv (},)show
+39 694 mv (ColorRes[] = {)show
+39 682 mv (  {"map.%s.ownColor", "Map.Period.Background", "Pixel",)show
+39 670 mv (     FALSE, sideoffset\(owncolor\), 0, "black"},)show
+39 658 mv (  {"map.%s.alternateColor", "Map.Period.Background", "Pixel",)show
+39 646 mv (     FALSE, sideoffset\(altcolor\), 0, "blue"},)show
+39 634 mv (  {"map.%s.differentColor", "Map.Period.Background", "Pixel",)show
+39 622 mv (     FALSE, sideoffset\(diffcolor\), 0, "maroon"},)show
+39 610 mv (  {"map.%s.borderColor", "Map.Period.Foreground", "Pixel",)show
+39 598 mv (     FALSE, sideoffset\(bdcolor\), 0, "blue"},)show
+39 586 mv (  {"map.%s.grayColor", "Map.Period.Foreground", "Pixel",)show
+39 574 mv (     FALSE, sideoffset\(graycolor\), 0, "light gray"},)show
+39 562 mv (  {"map.%s.enemyColor", "Map.Period.Foreground", "Pixel",)show
+39 550 mv (     FALSE, sideoffset\(enemycolor\), 0, "red"},)show
+39 538 mv (  {"map.%s.neutralColor", "Map.Period.Foreground", "Pixel",)show
+39 526 mv (     FALSE, sideoffset\(neutcolor\), 0, "light gray"},)show
+39 514 mv (  {"map.%s.goodColor", "Map.Period.Foreground", "Pixel",)show
+39 502 mv (     FALSE, sideoffset\(goodcolor\), 0, "green"},)show
+39 490 mv (  {"map.%s.badColor", "Map.Period.Foreground", "Pixel",)show
+39 478 mv (     FALSE, sideoffset\(badcolor\), 0, "red"},)show
+39 466 mv (  {NULL})show
+39 454 mv (},)show
+39 442 mv (DpyRes[] = {)show
+39 430 mv (  {"textFont", "Font", "Font", TRUE,)show
+39 418 mv (     displayoffset\(textfont\), 0, TEXTFONT},)show
+39 406 mv (  {"helpFont", "Font", "Font", TRUE,)show
+39 394 mv (     displayoffset\(helpfont\), 0, HELPFONT},)show
+39 382 mv (  {"iconFont", "Font", "Font", TRUE,)show
+39 370 mv (     displayoffset\(iconfont\), 0, ICONFONT},)show
+39 358 mv (  {NULL})show
+39 346 mv (};)show
+39 322 mv (/* Random function declarations. */)show
+39 298 mv (XFontStruct * open_font\(\);)show
+39 286 mv (Pixmap load_bitmap\(\);)show
+39 274 mv (void get_font_size\(\);)show
+39 262 mv (Cursor make_cursor\(\);)show
+39 250 mv (void program_crash\(\);)show
+39 226 mv (/* The array of screen objects. */)show
+39 202 mv (Screeno screens[MAXSIDES];      /* All the "screen objects" */)show
+39 178 mv (/* Values of parameters generally tied to fonts and the like. */)show
+39 154 mv (int hw = 20;)show
+39 142 mv (int hh = 22;)show
+39 130 mv (int hch = 17;)show
+39 118 mv (int margin = 2;)show
+39 106 mv (int bd = 1;)show
+39 82 mv (int helpwinlines = 1;           /* size of help window */)show
+39 58 mv (bool rootcursor;                /* true if using parent window's cursor */)show
+39 46 mv (bool windows_up = FALSE;         /* Try to handle initial exposes. */)show
+grestore
+showpage pg restore
+%%Page: ? 2
+/pg save def
+0.46886 0.47472 scale
+/Courier findfont 12 scalefont setfont
+0 886 translate
+gsave 634 886 moveto
+634 -886 lineto
+0 0 moveto
+1268 0 lineto
+stroke grestore
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 826 mv (char *routine_executing = "Program Start";)show
+39 802 mv (/* Put in a default player, probably the invoker of the program. */)show
+39 790 mv (/* An empty host name will confuse everybody. */)show
+39 766 mv (add_default_player\(\))show
+39 754 mv ({)show
+39 742 mv (#ifdef UNIX)show
+39 730 mv (    char * default_display = getenv\("DISPLAY"\);)show
+39 706 mv (    if \(default_display != NULL\){)show
+39 694 mv (        add_player\(TRUE, default_display\);)show
+39 682 mv (    } else {)show
+39 670 mv (        printf\("I don't know what display you're on!\\n"\);)show
+39 658 mv (        exit\(1\);)show
+39 646 mv (    })show
+39 634 mv (#endif /* UNIX */)show
+39 622 mv (})show
+39 598 mv (#ifndef DEBUG)show
+39 574 mv (/* Function to print debugging info when a segmentation violation or */)show
+39 562 mv (/* bus error occurs. */)show
+39 538 mv (void program_crash\(sig, code, scp, addr\))show
+39 526 mv (int sig, code;)show
+39 514 mv (struct sigcontext *scp;)show
+39 502 mv (char *addr;     )show
+39 490 mv ({)show
+39 478 mv (  int i;)show
+39 466 mv (  static bool already_been_here = FALSE;)show
+39 442 mv (  close_displays\(\);  )show
+39 430 mv (  printf\("Fatal error encountered. Signal %d code %d\\n", sig, code\);)show
+39 418 mv (  printf\("Routine executing %s\\n", routine_executing\);)show
+39 406 mv (  printf\("Procedure stack \(incomplete\): \\n"\);)show
+39 394 mv (  for \(i = 0; i <= procedure_stack_ptr; i++\))show
+39 382 mv (    printf\(" %s\\n", procedure_executing[i]\);)show
+39 370 mv (  if \(already_been_here\) exit\(1\);)show
+39 358 mv (  else {)show
+39 346 mv (    already_been_here = TRUE;)show
+39 334 mv (    write_savefile\("emergency.save.xconq"\);)show
+39 322 mv (    if \(sig != 2\))show
+39 310 mv (      abort\(1\);)show
+39 298 mv (    else exit\(1\);)show
+39 286 mv (  })show
+39 274 mv (})show
+39 250 mv (#endif)show
+39 226 mv (void hang_up\(sig, code, scp, addr\))show
+39 214 mv (int sig, code;)show
+39 202 mv (struct sigcontext *scp;)show
+39 190 mv (char *addr;     )show
+39 178 mv ({)show
+39 166 mv (  static bool already_been_here = FALSE;)show
+39 142 mv (  close_displays\(\);  )show
+39 130 mv (  if \(already_been_here\) exit\(1\);)show
+39 118 mv (  else {)show
+39 106 mv (    already_been_here = TRUE;)show
+39 94 mv (    write_savefile\(SAVEFILE2\);)show
+39 82 mv (    exit\(1\);)show
+39 70 mv (  })show
+39 58 mv (})show
+39 46 mv (/* Handlers for X catastrophes attempt to do a save first. */)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (/* Could be more friendly and check success of save, but can't do anything */)show
+39 826 mv (/* about it anyway... */)show
+39 802 mv (static int)show
+39 790 mv (handle_x_error \(disp, evt\))show
+39 778 mv (Display *disp;)show
+39 766 mv (XErrorEvent *evt;)show
+39 754 mv ({)show
+39 742 mv (    static int num_errors = 0;)show
+39 730 mv (    char buf[BUFSIZE];)show
+39 706 mv (    XGetErrorText\(disp, evt->error_code, buf, BUFSIZE\);)show
+39 694 mv (    printf\("\\nX error on display %s: %s\\n", DisplayString\(disp\), buf\);)show
+39 682 mv (    if \(++num_errors >= 10\) {)show
+39 670 mv (        printf\("\\nX error: trying emergency save!\\n"\);)show
+39 658 mv (        write_savefile\(SAVEFILE\);)show
+39 646 mv (        exit\(1\);)show
+39 634 mv (    })show
+39 622 mv (})show
+39 598 mv (static int)show
+39 586 mv (handle_xio_error \(disp\))show
+39 574 mv (Display *disp;)show
+39 562 mv ({)show
+39 550 mv (    printf\("\\nX IO error on display %s: trying emergency save!\\n",)show
+39 538 mv (         DisplayString\(disp\)\);)show
+39 526 mv (    write_savefile\(SAVEFILE\);)show
+39 514 mv (    exit\(1\);)show
+39 502 mv (})show
+39 478 mv (/* Ignore ^C if humans in the game, do it otherwise, including when the */)show
+39 466 mv (/* last human player turns into a machine \(this is called by option cmd\). */)show
+39 454 mv (/* Attempts to be more clever seem to be bad news. */)show
+39 430 mv (init_sighandlers\(\))show
+39 418 mv ({)show
+39 406 mv (#ifdef UNIX)show
+39 394 mv (    if \(numhumans > 0 && !Debug\) {)show
+39 382 mv (        signal\(SIGINT, SIG_IGN\);)show
+39 370 mv (    })show
+39 358 mv (#if 0)show
+39 346 mv (    else {)show
+39 334 mv (/*      signal\(SIGINT, SIG_DFL\);*/)show
+39 322 mv (      signal\(SIGINT, program_crash\);)show
+39 310 mv (    })show
+39 298 mv (    signal\(1, program_crash\);)show
+39 286 mv (    signal\(SIGINT, program_crash\);)show
+39 274 mv (#endif)show
+39 262 mv (    signal\(SIGHUP, hang_up\);)show
+39 250 mv (#ifndef DEBUG)show
+39 238 mv (    signal\(SIGBUS, program_crash\);)show
+39 226 mv (    signal\(SIGSEGV, program_crash\);)show
+39 214 mv (    signal\(SIGFPE, program_crash\);)show
+39 202 mv (    signal\(SIGILL, program_crash\);)show
+39 190 mv (    signal\(SIGSYS, program_crash\);)show
+39 178 mv (    signal\(SIGINT, program_crash\);)show
+39 166 mv (    signal\(SIGQUIT, program_crash\);)show
+39 154 mv (    signal\(SIGTERM, program_crash\);)show
+39 142 mv (#endif)show
+39 130 mv (#endif /* UNIX */)show
+39 118 mv (    XSetIOErrorHandler\(handle_xio_error\);)show
+39 106 mv (    XSetErrorHandler\(handle_x_error\);)show
+39 94 mv (})show
+39 70 mv (#ifdef XFONTDIR)show
+39 58 mv (static void append_font_path\(side, path\))show
+39 46 mv (Side *side;)show
+grestore
+-634 -886 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (char *path;)show
+39 826 mv ({)show
+39 814 mv (    char        **font_path, **new_path;)show
+39 802 mv (    int         npaths, ii;)show
+39 778 mv (    font_path = XGetFontPath\(sdd\(\), &npaths\);)show
+39 754 mv (    for \(ii = 0; ii < npaths; ii++\) {)show
+39 742 mv (        if \(!strcmp\(font_path[ii], path\)\) break;)show
+39 730 mv (    })show
+39 706 mv (    /* I know this looks weird but that's X. */)show
+39 694 mv (    if \(ii == npaths\) {)show
+39 682 mv (        new_path = \(char**\)malloc\(\(npaths+1\)*sizeof\(char*\)\);)show
+39 670 mv (        /*if \(!new_path\) *****************************************/)show
+39 658 mv (        for \(ii=0; ii < npaths; ii++\) {)show
+39 646 mv (            new_path[ii] = font_path[ii];)show
+39 634 mv (        })show
+39 622 mv (        new_path[npaths] = path;)show
+39 610 mv (        XSetFontPath\(sdd\(\), new_path, npaths+1\);)show
+39 598 mv (        free\(new_path\);)show
+39 586 mv (    })show
+39 574 mv (    XFreeFontPath\(font_path\);)show
+39 562 mv (    return;)show
+39 550 mv (})show
+39 538 mv (#endif /* XFONTDIR */)show
+39 514 mv (/* Note that the open_display function syncronizes the X server when the */)show
+39 502 mv (/* Debug flag is set. */)show
+39 478 mv (open_display\(side\))show
+39 466 mv (Side *side;)show
+39 454 mv ({)show
+39 442 mv (  side->display = \(long\) &\(screens[side_number\(side\)]\);)show
+39 430 mv (  sdd\(\) = XOpenDisplay\(side->host\);)show
+39 418 mv (  if \(sdd\(\)==NULL\) {)show
+39 406 mv (    fprintf\(stderr,"Error opening display %s\\n", side->host\);)show
+39 394 mv (    exit\(1\);)show
+39 382 mv (  })show
+39 358 mv (  if \(Debug\) {)show
+39 346 mv (    XSynchronize\(sdd\(\), TRUE\);)show
+39 334 mv (    printf\("Synching the X server.\\n"\);)show
+39 322 mv (  })show
+39 298 mv (  {)show
+39 286 mv (    XrmDatabase temp;)show
+39 274 mv (    char        *database;)show
+39 262 mv (    char        path[200];)show
+39 238 mv (    XrmInitialize\(\);)show
+39 226 mv (    sprintf\(path, "%s/%s", XAPPLRESDIR, PROGRAMCLASS\);)show
+39 214 mv (    side->rmdatabase = \(long\)XrmGetFileDatabase\(path\);)show
+39 202 mv (    if \(side->rmdatabase==NULL\) {)show
+39 190 mv (      fprintf\(stderr,)show
+39 178 mv (              "Warning: couldn't open app-defaults file \\"%s\\", ignoring it\\n",)show
+39 166 mv (              path\);)show
+39 154 mv (      side->rmdatabase = \(long\)XrmGetStringDatabase\(""\);)show
+39 142 mv (    })show
+39 118 mv (#ifdef XFONTDIR)show
+39 106 mv (    append_font_path\(side, XFONTDIR\);)show
+39 94 mv (#endif)show
+39 70 mv (    database = XResourceManagerString\(sdd\(\)\); /* grab property off)show
+39 58 mv (                                                 root window */)show
+39 46 mv (    if \(database==NULL\) { /* if it's not there then go for $HOME/.Xdefaults */)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (      char      *home=getenv\("HOME"\);)show
+39 826 mv (      if \(home==NULL\) {)show
+39 814 mv (        fprintf\(stderr,"No HOME?  you lose all around buddy.\\n"\);)show
+39 802 mv (      } else {)show
+39 790 mv (        sprintf\(path,"%s/.Xdefaults", home\);)show
+39 778 mv (        temp = XrmGetFileDatabase\(path\);)show
+39 766 mv (        if \(temp==NULL\) {)show
+39 754 mv (          fprintf\(stderr,)show
+39 742 mv (                  "Warning: couldn't open X defaults file \\"%s\\", ignoring it\\n",)show
+39 730 mv (                  path\);)show
+39 718 mv (        } else {)show
+39 706 mv (          XrmMergeDatabases\(temp,\(XrmDatabase *\)&side->rmdatabase\);)show
+39 694 mv (        })show
+39 682 mv (      })show
+39 670 mv (    } else { /* otherwise use the property */)show
+39 658 mv (      XrmMergeDatabases\(XrmGetStringDatabase\(database\),)show
+39 646 mv (                        \(XrmDatabase *\)&side->rmdatabase\);)show
+39 634 mv (    })show
+39 622 mv (  })show
+39 610 mv (  side->main = XCreateSimpleWindow\(sdd\(\), DefaultRootWindow\(sdd\(\)\),)show
+39 598 mv (                                   50, 3,)show
+39 586 mv (                                   display_width\(side\), display_height\(side\),)show
+39 574 mv (                                   3, white_color\(side\), black_color\(side\)\);)show
+39 550 mv (  return 1;)show
+39 538 mv (})show
+39 514 mv (/* A predicate that tests whether our display can safely be written to. */)show
+39 490 mv (active_display\(side\))show
+39 478 mv (Side *side;)show
+39 466 mv ({)show
+39 454 mv (    return \(side && side->host && !side->lost && side->display\);)show
+39 442 mv (})show
+39 418 mv (display_width\(side\))show
+39 406 mv (Side *side;)show
+39 394 mv ({)show
+39 382 mv (    return min\(MAXDISPLAYWIDTH,)show
+39 370 mv (               \(\(19 * XDisplayWidth\(sdd\(\), sdds\(\)\)\) / 20\)\);)show
+39 358 mv (})show
+39 334 mv (display_height\(side\))show
+39 322 mv (Side *side;)show
+39 310 mv ({)show
+39 298 mv (    return min\(MAXDISPLAYHEIGHT,)show
+39 286 mv (               \(\(19 * XDisplayHeight\(sdd\(\), sdds\(\)\)\) / 20\)\);)show
+39 274 mv (})show
+39 250 mv (/* Most X displays have enough screen to do a world map. */)show
+39 226 mv (world_display\(side\) Side *side; {  return TRUE;  })show
+39 202 mv (/* utterly frivolous procedure to create the logo stipple and pixmap */)show
+39 190 mv (static void)show
+39 178 mv (create_logo\(side, gc\))show
+39 166 mv (     Side *side;)show
+39 154 mv (     GC gc;     /* so we don't have to create one */)show
+39 142 mv ({)show
+39 130 mv (    XColor      xc;)show
+39 118 mv (    sd\(\)->logostipple = XCreateBitmapFromData\(sdd\(\), side->main,)show
+39 106 mv (        xconqlogo_bits, xconqlogo_width, xconqlogo_height\);)show
+39 94 mv (    XSetStipple\(sdd\(\), gc, sd\(\)->logostipple\);)show
+39 82 mv (    XSetFillStyle\(sdd\(\), gc, FillOpaqueStippled\);)show
+39 70 mv (    xc.red = 0x4000;)show
+39 58 mv (    xc.blue = xc.green = 0x2800;)show
+39 46 mv (    xc.flags = DoRed|DoGreen|DoBlue;)show
+grestore
+showpage pg restore
+%%Page: ? 3
+/pg save def
+0.46886 0.47472 scale
+/Courier findfont 12 scalefont setfont
+0 886 translate
+gsave 634 886 moveto
+634 -886 lineto
+0 0 moveto
+1268 0 lineto
+stroke grestore
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    XAllocColor\(sdd\(\), DefaultColormap\(sdd\(\), sdds\(\)\), &xc\);)show
+39 826 mv (    XSetForeground\(sdd\(\), gc, xc.pixel\);)show
+39 814 mv (    XSetBackground\(sdd\(\), gc, side->bgcolor\);)show
+39 802 mv (    sd\(\)->logopmap = XCreatePixmap\(sdd\(\), side->main, xconqlogo_width,)show
+39 790 mv (                                   xconqlogo_height,)show
+39 778 mv (                                   DefaultDepth\(sdd\(\), sdds\(\)\)\);)show
+39 766 mv (    XFillRectangle\(sdd\(\), sd\(\)->logopmap, gc, 0, 0, xconqlogo_width,)show
+39 754 mv (                                   xconqlogo_height\);)show
+39 742 mv (})show
+39 718 mv (/* this is our fake version of a resource conversion routine.)show
+39 706 mv (   it converts the String in <value> and turns it into an object of)show
+39 694 mv (   type <type> and places it in <dest>.  We assume <dest> points to)show
+39 682 mv (   enough space to hold the object, otherwise why give it to us?)show
+39 670 mv (   The currently supported types are:)show
+39 658 mv (     Pixel:     a string that is either a colorname or a #xxx code)show
+39 646 mv (                is allocated in the colormap and the pixel number)show
+39 634 mv (                is returned in dest.)show
+39 622 mv (     Font:      a font name is turned into a font struct and the)show
+39 610 mv (                pointer to the XFontStruct is returned in dest.)show
+39 598 mv (     HexDispMode: the string is compared to "fullhex"/"borderhex"/)show
+39 586 mv (                "terricons"/"bothicons" with total case insensitivity)show
+39 574 mv (                and converted to one of the corresponding integers)show
+39 562 mv (                from side.h)show
+39 538 mv (   If other types become necessary it will be trivial to add them.)show
+39 526 mv (   */)show
+39 502 mv (convert_thing\(side, type, value, dest\))show
+39 490 mv (     Side       *side;)show
+39 478 mv (     char       *type, *value, *dest;)show
+39 466 mv ({)show
+39 454 mv (  if \(Debug\) {)show
+39 442 mv (    printf\("converting %s into a %s for %s\\n", value, type, side->name\);)show
+39 430 mv (  })show
+39 418 mv (  if \(0==strcmp\(type, "Pixel"\)\) {)show
+39 406 mv (    XColor      xc;)show
+39 394 mv (    if \(Debug\) printf\("Allocating %s\\n", value\);)show
+39 382 mv (    if \(!XParseColor\(sdd\(\), DefaultColormap\(sdd\(\), sdds\(\)\), value, &xc\)\) {)show
+39 370 mv (      fprintf\(stderr, "%s: invalid color spec %s\\n", side->host, value\);)show
+39 358 mv (      return;)show
+39 346 mv (    })show
+39 334 mv (    if \(!XAllocColor\(sdd\(\), DefaultColormap\(sdd\(\), sdds\(\)\), &xc\)\) {)show
+39 322 mv (      fprintf\(stderr, "%s: unable to allocate color %s\\n", side->host, value\);)show
+39 310 mv (      return;)show
+39 298 mv (    })show
+39 286 mv (    *\(long*\)dest = xc.pixel;)show
+39 274 mv (  } else if \(0==strcmp\(type, "Font"\)\) {)show
+39 262 mv (    XFontStruct **font = \(XFontStruct **\)dest;)show
+39 250 mv (    *font = XLoadQueryFont\(sdd\(\), value\);)show
+39 238 mv (    if \(*font == NULL\) {)show
+39 226 mv (      fprintf\(stderr, "%s: Can't open font %s, ", side->host, value\);)show
+39 214 mv (      if \(font == &\(sd\(\)->textfont\)\) {)show
+39 202 mv (        fprintf\(stderr, "you're hosed\\n"\);)show
+39 190 mv (        exit\(1\);)show
+39 178 mv (      } else {)show
+39 166 mv (        fprintf\(stderr, "trying to substitute text font\\n"\);)show
+39 154 mv (        *font = sd\(\)->textfont;)show
+39 142 mv (      })show
+39 130 mv (    })show
+39 118 mv (    if \(Debug\) printf\("Opened font \\"%s\\" ...\\n", value\);)show
+39 106 mv (  } else if \(0==strcmp\(type, "HexDisplayMode"\)\) {)show
+39 94 mv (    static char *hexdispmodes[] = {)show
+39 82 mv (      "FullHex", "BorderHex", "TerrIcons", "BothIcons", NULL };)show
+39 70 mv (    int i;)show
+39 58 mv (    for \(i=0; hexdispmodes[i] != NULL; i++\) {)show
+39 46 mv (      if \(0==strcasecmp\(value, hexdispmodes[i]\)\))show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (        break;)show
+39 826 mv (    })show
+39 814 mv (    if \(hexdispmodes[i]!=NULL\) {)show
+39 802 mv (      *\(short*\)dest = i;)show
+39 790 mv (    })show
+39 778 mv (  } else {)show
+39 766 mv (    fprintf\(stderr, "What the heck kind of resource is %s?!\\n", type\);)show
+39 754 mv (    exit\(1\);)show
+39 742 mv (  })show
+39 730 mv (})show
+39 706 mv (/* src1 contains a prefix, usually the name or class \(xconq or XConq\).)show
+39 694 mv (   src2 contains a resource path like Map.Period.AltColor or map.%s.altColor.)show
+39 682 mv (   The %s allows us to insert the period name into a resource.)show
+39 670 mv (   dest must have enough space to hold the final string, however)show
+39 658 mv (   big that is >:\) */)show
+39 646 mv (format_resource_string\(src1, src2, dest\))show
+39 634 mv (     char       *src1, *src2, *dest;)show
+39 622 mv ({)show
+39 610 mv (  static char   buf[200],*p;)show
+39 598 mv (  sprintf\(buf, "%s.%s", src1, src2\);)show
+39 586 mv (  sprintf\(dest, buf, period.name\);)show
+39 574 mv (  for \(p=dest; *p; p++\))show
+39 562 mv (    if \(*p==' '\))show
+39 550 mv (      *p = '_';)show
+39 538 mv (})show
+39 514 mv (/* this procedure gets resources from the display's resource database.)show
+39 502 mv (   It uses the toolkit's XtResource structure because it seems to have)show
+39 490 mv (   all the structure memebers we need and looks familiar, but we do)show
+39 478 mv (   use it slightly differently.)show
+39 466 mv (   We retrieve resources that go in the Side structure from the SideRes)show
+39 454 mv (   list.  We retrieve resources that go in the Screeno structure from)show
+39 442 mv (   the DpyRes list */)show
+39 430 mv (get_resources\(side, resources, base\))show
+39 418 mv (     Side       *side;)show
+39 406 mv (     XtResource *resources;)show
+39 394 mv (     char       *base;)show
+39 382 mv ({)show
+39 370 mv (  XtResource    *res;)show
+39 358 mv (  static char   rmName[200], rmClass[200];)show
+39 346 mv (  char  *rtype, *resval;)show
+39 334 mv (  XrmValue      rval;)show
+39 310 mv (  for \(res = resources; res->resource_name!=NULL; res++\) {)show
+39 298 mv (    if \(side->monochrome && !res->resource_size\) {)show
+39 286 mv (      /* goofy hack to avoid setting colors on monochrome */)show
+39 274 mv (      continue;)show
+39 262 mv (    })show
+39 250 mv (    format_resource_string\(PROGRAMNAME, res->resource_name, rmName\);)show
+39 238 mv (    format_resource_string\(PROGRAMCLASS, res->resource_class, rmClass\);)show
+39 226 mv (    XrmGetResource\(\(XrmDatabase\)side->rmdatabase, rmName,)show
+39 214 mv (                   rmClass, &rtype, &rval\);)show
+39 202 mv (    if \(rtype==NULL\) {)show
+39 190 mv (      resval = res->default_addr;)show
+39 178 mv (    } else if \(0!=strcmp\(rtype, "String"\)\) {)show
+39 166 mv (      fprintf\(stderr, "Whoa!, funky resource type %s for %s\\n",)show
+39 154 mv (              rtype, rmName\);)show
+39 142 mv (      resval = res->default_addr;)show
+39 130 mv (    } else {)show
+39 118 mv (      resval = rval.addr;)show
+39 106 mv (    })show
+39 94 mv (    convert_thing\(side, res->resource_type, resval,)show
+39 82 mv (                  base + \(res->resource_offset\)\);)show
+39 70 mv (  })show
+39 58 mv (})show
+grestore
+-634 -886 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (get_color_resources\(side\))show
+39 826 mv (     Side       *side;)show
+39 814 mv ({)show
+39 802 mv (  get_resources\(side, ColorRes, side\);)show
+39 790 mv (})show
+39 766 mv (/* Could use handlers for X failures... */)show
+39 742 mv (/* Do misc setup thingies. */)show
+39 718 mv (/* Do the rigmarole to convert all those short arrays into X-approved */)show
+39 706 mv (/* Bitmaps.  Note that this has to be for *each* display separately \(!\) */)show
+39 694 mv (/* Also get the cursor shape.  If the hardware can't hack the desired */)show
+39 682 mv (/* cursor size, warn about it and just use the root window's cursor. */)show
+39 670 mv (/* 0x0 cursor specs seem to be don't cares - machine can handle any size */)show
+39 658 mv (/* X11 also needs gazillions of GCs, since we've got so many fonts and */)show
+39 646 mv (/* colors and bitmaps. */)show
+39 622 mv (init_misc\(side\))show
+39 610 mv (Side *side;)show
+39 598 mv ({)show
+39 586 mv (    int u;)show
+39 574 mv (    unsigned int w, h;)show
+39 562 mv (    unsigned long mask;)show
+39 550 mv (    XGCValues values;)show
+39 538 mv (    Pixmap mmask, mcurs, dots;)show
+39 526 mv (    GC gc;)show
+39 514 mv (    char *name;)show
+39 490 mv (    side->margin = margin;)show
+39 478 mv (    side->bd = bd;)show
+39 466 mv (    side->hw = hw;)show
+39 454 mv (    side->hh = hh;)show
+39 442 mv (    side->hch = hch;)show
+39 430 mv (    /* get the name from the display unless the game is being restored from a )show
+39 418 mv (       save file. */)show
+39 406 mv (    if \(!midturnrestore &&)show
+39 394 mv (        \(name = XGetDefault\(sdd\(\), PROGRAMNAME, "SideName"\)\) != NULL\))show
+39 382 mv (      side->name = name;)show
+39 370 mv (    mask = GCForeground | GCBackground;)show
+39 358 mv (    values.foreground = side->fgcolor;)show
+39 346 mv (    values.background = side->bgcolor;)show
+39 334 mv (    gc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 322 mv (    sd\(\)->gc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 310 mv (    sd\(\)->flashgc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 298 mv (    sd\(\)->textgc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 286 mv (    sd\(\)->helpgc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 274 mv (    sd\(\)->icongc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 262 mv (    sd\(\)->varicongc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 250 mv (    sd\(\)->unitgc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 238 mv (    sd\(\)->unittextgc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 226 mv (    values.foreground = side->bgcolor;)show
+39 214 mv (    values.background = side->fgcolor;)show
+39 202 mv (    sd\(\)->invicongc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 190 mv (    values.function = GXclear;)show
+39 178 mv (    mask = GCFunction;)show
+39 166 mv (    sd\(\)->cleargc = XCreateGC\(sdd\(\), side->main, mask, &values\);)show
+39 154 mv (#if 1)show
+39 142 mv (    get_resources\(side, SideRes, side\);)show
+39 130 mv (    get_resources\(side, DpyRes, sd\(\)\);)show
+39 118 mv (    /* ginit retrieves the colors */)show
+39 106 mv (#else)show
+39 94 mv (    sd\(\)->textfont = open_font\(side, TEXTFONT, "TextFont", NULL\);)show
+39 82 mv (    sd\(\)->helpfont = open_font\(side, HELPFONT, "HelpFont", sd\(\)->textfont\);)show
+39 70 mv (    sd\(\)->iconfont = open_font\(side, ICONFONT, "IconFont", sd\(\)->textfont\);)show
+39 58 mv (#endif)show
+39 46 mv (    get_font_size\(sd\(\)->textfont, &\(side->fw\), &\(side->fh\) \);)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    get_font_size\(sd\(\)->helpfont, &\(side->hfw\), &\(side->hfh\) \);)show
+39 826 mv (    get_font_size\(sd\(\)->iconfont, &\(side->hw\), &\(side->hh\) \);)show
+39 814 mv (    if \(period.fontname != NULL && strlen\(period.fontname\) > 0\) {)show
+39 802 mv (        sd\(\)->unitfont = )show
+39 790 mv (            open_font\(side, period.fontname, "UnitFont", sd\(\)->textfont\);)show
+39 778 mv (        get_font_size\(sd\(\)->unitfont, &\(side->uw\), &\(side->uh\) \);)show
+39 766 mv (    } else {)show
+39 754 mv (        sd\(\)->unitfont = )show
+39 742 mv (            open_font\(side, STANDARD, "UnitFont", sd\(\)->textfont\);)show
+39 730 mv (        get_font_size\(sd\(\)->unitfont, &\(side->uw\), &\(side->uh\) \);)show
+39 718 mv (    })show
+39 706 mv (    if \(Debug\) printf\("doing textgc...\\n"\);)show
+39 694 mv (    XSetFont\(sdd\(\), sd\(\)->textgc, sd\(\)->textfont->fid\);)show
+39 682 mv (    if \(Debug\) printf\("doing helpfont ...\\n"\);)show
+39 670 mv (    XSetFont\(sdd\(\), sd\(\)->helpgc, sd\(\)->helpfont->fid\);)show
+39 658 mv (    if \(Debug\) printf\("doing icongc ...\\n"\);)show
+39 646 mv (    XSetFont\(sdd\(\), sd\(\)->icongc, sd\(\)->iconfont->fid\);)show
+39 634 mv (    if \(Debug\) printf\("done fonts ...\\n"\);)show
+39 622 mv (    mask = GCFillStyle | GCGraphicsExposures;)show
+39 610 mv (    values.fill_style = FillSolid;)show
+39 598 mv (    values.graphics_exposures = FALSE;)show
+39 586 mv (    XChangeGC\(sdd\(\), sd\(\)->unitgc, mask, &values\);)show
+39 574 mv (    XSetFont\(sdd\(\), sd\(\)->unittextgc, sd\(\)->unitfont->fid\);)show
+39 562 mv (    XSetFont\(sdd\(\), sd\(\)->invicongc, sd\(\)->iconfont->fid\);)show
+39 550 mv (    XSetFont\(sdd\(\), sd\(\)->varicongc, sd\(\)->iconfont->fid\);)show
+39 538 mv (    XSetFunction\(sdd\(\), sd\(\)->flashgc, GXinvert\);)show
+39 514 mv (    mmask = XCreateBitmapFromData\(sdd\(\), side->main,)show
+39 502 mv (                                        mask_bits, mask_width, mask_height\);)show
+39 490 mv (    mcurs = XCreateBitmapFromData\(sdd\(\), side->main,)show
+39 478 mv (                                        curs_bits, curs_width, curs_height\);)show
+39 454 mv (    dots  = XCreateBitmapFromData\(sdd\(\), side->main, )show
+39 442 mv (                                  dots_bits, dots_width, dots_height\);)show
+39 418 mv (    sd\(\)->bombpics[0] = XCreateBitmapFromData\(sdd\(\), side->main,)show
+39 406 mv (        bomb1_bits, bomb1_width, bomb1_height\);)show
+39 394 mv (    sd\(\)->bombpics[1] = XCreateBitmapFromData\(sdd\(\), side->main,)show
+39 382 mv (        bomb2_bits, bomb2_width, bomb2_height\);)show
+39 370 mv (    sd\(\)->bombpics[2] = XCreateBitmapFromData\(sdd\(\), side->main,)show
+39 358 mv (        bomb3_bits, bomb3_width, bomb3_height\);)show
+39 346 mv (    sd\(\)->bombpics[3] = XCreateBitmapFromData\(sdd\(\), side->main,)show
+39 334 mv (        bomb4_bits, bomb4_width, bomb4_height\);)show
+39 322 mv (    for_all_unit_types\(u\) {)show
+39 310 mv (        if \(utypes[u].bitmapname && \(strlen\(utypes[u].bitmapname\) > 0\)\) {)show
+39 298 mv (            sd\(\)->unitpics[u] = load_bitmap\(side, utypes[u].bitmapname\);)show
+39 286 mv (        } else {)show
+39 274 mv (            utypes[u].bitmapname = NULL;)show
+39 262 mv (        })show
+39 250 mv (    })show
+39 238 mv (    if \(Debug\) printf\("Bitmaps stored ...\\n"\);)show
+39 214 mv (    sd\(\)->wbdots = XCreatePixmap\(sdd\(\), side->main, dots_width, dots_height,)show
+39 202 mv (                                 DefaultDepth\(sdd\(\), sdds\(\)\)\);)show
+39 190 mv (    sd\(\)->bwdots = XCreatePixmap\(sdd\(\), side->main, dots_width, dots_height,)show
+39 178 mv (                                 DefaultDepth\(sdd\(\), sdds\(\)\)\);)show
+39 154 mv (    /* Since clearbitgc has to have a depth of 1 we'll */)show
+39 142 mv (    /* hang it off bombpics[0] */)show
+39 130 mv (    mask = GCFunction;)show
+39 118 mv (    values.function = GXclear;)show
+39 106 mv (    sd\(\)->clearbitgc = XCreateGC\(sdd\(\), sd\(\)->bombpics[0], mask, &values\);)show
+39 82 mv (    XSetForeground\(sdd\(\), gc, side->fgcolor\);)show
+39 70 mv (    XSetBackground\(sdd\(\), gc, side->bgcolor\);)show
+39 58 mv (    XSetStipple\(sdd\(\), gc, dots\);)show
+39 46 mv (    XSetFillStyle\(sdd\(\), gc, FillOpaqueStippled\);)show
+grestore
+showpage pg restore
+%%Page: ? 4
+/pg save def
+0.46886 0.47472 scale
+/Courier findfont 12 scalefont setfont
+0 886 translate
+gsave 634 886 moveto
+634 -886 lineto
+0 0 moveto
+1268 0 lineto
+stroke grestore
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    XFillRectangle\(sdd\(\), sd\(\)->wbdots, gc, 0, 0, dots_width, dots_height\);)show
+39 814 mv (    XSetForeground\(sdd\(\), gc, side->bgcolor\);)show
+39 802 mv (    XSetBackground\(sdd\(\), gc, side->fgcolor\);)show
+39 790 mv (    XFillRectangle\(sdd\(\), sd\(\)->bwdots, gc, 0, 0, dots_width, dots_height\);)show
+39 766 mv (    create_logo\(side,gc\); /* this procedure changes the GC rather radically */)show
+39 754 mv (    if \(Debug\) printf\("Tiles stored ...\\n"\);)show
+39 730 mv (    rootcursor = FALSE;)show
+39 718 mv (    XQueryBestCursor\(sdd\(\), side->main, curs_width, curs_height, &w, &h\);)show
+39 706 mv (    if \(Debug\) printf\("Best cursor size is %dx%d\\n", w, h\);)show
+39 694 mv (    if \(w >= curs_width && h >= curs_height\) {)show
+39 682 mv (        sd\(\)->curs =)show
+39 670 mv (          make_cursor\(sdd\(\), mcurs, mmask, white_color\(side\),)show
+39 658 mv (                      black_color\(side\), 7, 7\);)show
+39 646 mv (           )show
+39 634 mv (    } else {)show
+39 622 mv (        fprintf\(stderr, "Warning: Can't have %dx%d cursors on \\"%s\\"!\\n",)show
+39 610 mv (                curs_width, curs_height, side->host\);)show
+39 598 mv (        fprintf\(stderr, "Using default cursor...\\n"\);)show
+39 586 mv (        rootcursor = TRUE;)show
+39 574 mv (    })show
+39 562 mv (    if \(Debug\) printf\("Cursor stored ...\\n"\);)show
+39 550 mv (    XFreeGC\(sdd\(\), gc\);)show
+39 538 mv (    XFreePixmap\(sdd\(\), dots\);)show
+39 526 mv (    XFreePixmap\(sdd\(\), mmask\);)show
+39 514 mv (    XFreePixmap\(sdd\(\), mcurs\);)show
+39 502 mv (})show
+39 478 mv (/* Since XCreatePixmapCursor\(\) takes XColors and not pixel values we */)show
+39 466 mv (/* have to look the colors associated with the foreground and */)show
+39 454 mv (/* background pixel values up in the color table and pass them to */)show
+39 442 mv (/* XCreatePixmapCursor\(\). */)show
+39 430 mv (   )show
+39 418 mv (Cursor make_cursor\(dpy, curs, mask, foreground, background, x, y\))show
+39 406 mv (Display *dpy;)show
+39 394 mv (Pixmap curs, mask;)show
+39 382 mv (unsigned long foreground, background;)show
+39 370 mv (unsigned int x, y;)show
+39 358 mv ({)show
+39 346 mv (    XColor defs[2];)show
+39 322 mv (    defs[0].pixel = foreground;)show
+39 310 mv (    defs[1].pixel = background;)show
+39 298 mv (    XQueryColors\(dpy, DefaultColormap\(dpy, DefaultScreen\(dpy\)\), defs, 2\);)show
+39 286 mv (    return  XCreatePixmapCursor\(dpy, curs, mask, &defs[0], &defs[1], x, y\);)show
+39 274 mv (})show
+39 250 mv (/* Open a font, possibly substituting another font if our desired one is */)show
+39 238 mv (/* missing for some reason. */)show
+39 214 mv (XFontStruct *)show
+39 202 mv (open_font\(side, name, xdefault, altfont\))show
+39 190 mv (Side *side;)show
+39 178 mv (char *name, *xdefault;)show
+39 166 mv (XFontStruct * altfont;)show
+39 154 mv ({)show
+39 142 mv (  char *altname;)show
+39 130 mv (  XFontStruct * font;)show
+39 106 mv (  if \(\(altname = XGetDefault\(sdd\(\), PROGRAMNAME, xdefault\)\) != NULL\))show
+39 94 mv (    name = altname;)show
+39 82 mv (  if \(\(font = XLoadQueryFont\(sdd\(\), name\)\) == NULL\) {)show
+39 70 mv (    fprintf\(stderr, "Can't open font \\"%s\\" on \\"%s\\"\\n", name, side->host\);)show
+39 58 mv (    if \(altfont != NULL\) {)show
+39 46 mv (      /* ought to display the name... */)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (      fprintf\(stderr, "Substituting another font...\\n"\);)show
+39 826 mv (      return altfont;)show
+39 814 mv (    } else {)show
+39 802 mv (      fprintf\(stderr, "No font to substitute!!\\n"\);)show
+39 790 mv (      exit\(1\);)show
+39 778 mv (    })show
+39 766 mv (  })show
+39 754 mv (  if \(Debug\) printf\("Opened font \\"%s\\" ...\\n", name\);)show
+39 742 mv (  return font;)show
+39 730 mv (})show
+39 706 mv (/* Force X11 font fanciness into semblance of X10 font plainness. */)show
+39 682 mv (void)show
+39 670 mv (get_font_size\(font, width, height\))show
+39 658 mv (XFontStruct * font;)show
+39 646 mv (short *width, *height;)show
+39 634 mv ({)show
+39 622 mv (    *width = font->max_bounds.width;)show
+39 610 mv (    *height = font->max_bounds.ascent + font->max_bounds.descent;)show
+39 598 mv (    if \(Debug\) {)show
+39 586 mv (        printf\("returning font size %d %d\\n", \(int\)*width, \(int\)*height\);)show
+39 574 mv (    })show
+39 562 mv (})show
+39 538 mv (/* Try to load a bitmap of the given name, looking in both the current dir */)show
+39 526 mv (/* and the library dir. */)show
+39 502 mv (Pixmap)show
+39 490 mv (load_bitmap\(side, name\))show
+39 478 mv (Side *side;)show
+39 466 mv (char *name;)show
+39 454 mv ({)show
+39 442 mv (    int hotx, hoty;)show
+39 430 mv (    unsigned int w, h, a;)show
+39 418 mv (    Pixmap rslt;)show
+39 394 mv (    make_pathname\(NULL, name, "b", spbuf\);)show
+39 382 mv (    a = XReadBitmapFile\(sdd\(\), side->main, spbuf, &w, &h, &rslt, &hotx, &hoty\);)show
+39 370 mv (    if \(a == BitmapSuccess\) return rslt;)show
+39 358 mv (    make_pathname\(xconqlib, name, "b", spbuf\);)show
+39 346 mv (    a = XReadBitmapFile\(sdd\(\), side->main, spbuf, &w, &h, &rslt, &hotx, &hoty\);)show
+39 334 mv (    if \(a == BitmapSuccess\) return rslt;)show
+39 322 mv (    fprintf\(stderr, "Bitmap name \\"%s\\" not found here or in \\"%s\\"!\\n",)show
+39 310 mv (            name, xconqlib\);)show
+39 298 mv (    return \(-1\);)show
+39 286 mv (})show
+39 262 mv (/* This routine has to be able to cope with window managers constraining */)show
+39 250 mv (/* size.  Actually, the main window was already opened when the display */)show
+39 238 mv (/* was opened, so the name is not quite accurate! */)show
+39 214 mv (create_main_window\(side\))show
+39 202 mv (Side *side;)show
+39 190 mv ({)show
+39 178 mv (    Pixmap dots;)show
+39 166 mv (    XSizeHints hints;)show
+39 154 mv (    XWMHints    wmhints;)show
+39 142 mv (                  )show
+39 130 mv (    XStoreName\(sdd\(\), side->main, PROGRAMNAME\);)show
+39 118 mv (    dots = \(side->bonw ? sd\(\)->bwdots : sd\(\)->wbdots\); )show
+39 106 mv (    XSetWindowBackgroundPixmap\(sdd\(\), side->main, dots\);)show
+39 82 mv (    hints.width = side->mw;)show
+39 70 mv (    hints.height = side->mh;)show
+39 58 mv (    hints.min_width = side->mw/4;)show
+39 46 mv (    hints.min_height = side->mh/4;)show
+grestore
+-634 -886 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    hints.flags = PSize|PMinSize;)show
+39 826 mv (    XSetNormalHints\(sdd\(\), side->main, &hints\);)show
+39 814 mv (    wmhints.flags = InputHint|IconPixmapHint|WindowGroupHint;)show
+39 802 mv (    wmhints.input = True;)show
+39 790 mv (    wmhints.icon_pixmap = sd\(\)->logostipple;)show
+39 778 mv (    wmhints.window_group = side->main;)show
+39 766 mv (    XSetWMHints\(sdd\(\), side->main, &wmhints\);)show
+39 754 mv (})show
+39 730 mv (/* Help window is not necessarily a subwindow, though it might be sometimes. */)show
+39 706 mv (create_help_window\(side\))show
+39 694 mv (Side *side;)show
+39 682 mv ({)show
+39 670 mv (    XWMHints    wmhints;)show
+39 658 mv (    helpwinlines =)show
+39 646 mv (        max\(55, \(24 + period.numrtypes + period.numttypes + period.numutypes\)\);)show
+39 622 mv (    side->help = XCreateSimpleWindow\(sdd\(\), DefaultRootWindow\(sdd\(\)\),)show
+39 610 mv (                                     0, 0, 80*side->hfw+1,)show
+39 598 mv (                                     helpwinlines*side->hfh+1,)show
+39 586 mv (                                     1, side->fgcolor, side->bgcolor\);)show
+39 574 mv (#if 0)show
+39 562 mv (    /* This is fun but makes the help window hard to read, even in )show
+39 550 mv (       muted color. */)show
+39 538 mv (    XSetWindowBackgroundPixmap\(sdd\(\), side->help, sd\(\)->logopmap\);)show
+39 526 mv (#endif)show
+39 514 mv (    XStoreName\(sdd\(\), side->help, "xconq-help"\);)show
+39 490 mv (    wmhints.flags = IconPixmapHint|WindowGroupHint;)show
+39 478 mv (    wmhints.icon_pixmap = sd\(\)->logostipple;)show
+39 466 mv (    wmhints.window_group = side->main;)show
+39 454 mv (    XSetWMHints\(sdd\(\), side->help, &wmhints\);)show
+39 442 mv (})show
+39 418 mv (/* Subwindow creator. */)show
+39 394 mv (create_window\(side, x, y, w, h\))show
+39 382 mv (Side *side;)show
+39 370 mv (int x, y, w, h;)show
+39 358 mv ({)show
+39 346 mv (    return XCreateSimpleWindow\(sdd\(\), side->main, x, y, w, h,)show
+39 334 mv (                               1, side->fgcolor, side->bgcolor\);)show
+39 322 mv (})show
+39 298 mv (/* force x to retain this window. */)show
+39 286 mv (set_retain\(side, window\))show
+39 274 mv (Side *side;)show
+39 262 mv (long window;)show
+39 250 mv ({)show
+39 238 mv (  XSetWindowAttributes foo;)show
+39 226 mv (  char *retain;)show
+39 202 mv (  if \(\(retain = XGetDefault\(sdd\(\), PROGRAMNAME, "Retain"\)\) == NULL ||)show
+39 190 mv (      0!=strcasecmp\(retain, "no"\)\) {)show
+39 178 mv (    foo.backing_store = WhenMapped;)show
+39 166 mv (    XChangeWindowAttributes\(sdd\(\), window, CWBackingStore, &foo\);)show
+39 154 mv (  })show
+39 142 mv (})show
+39 106 mv (/* Do little things necesary to make it all go, in this case mapping all */)show
+39 94 mv (/* the windows \(except help win\). */)show
+39 70 mv (fixup_windows\(side\))show
+39 58 mv (Side *side;)show
+39 46 mv ({)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    XMapWindow\(sdd\(\), side->main\);)show
+39 826 mv (    XMapSubwindows\(sdd\(\), side->main\);)show
+39 814 mv (    /* if \(!global.giventime\) XUnmapWindow\(sdd\(\), side->clock\); */)show
+39 802 mv (    if \(!rootcursor\) XDefineCursor\(sdd\(\), side->map, sd\(\)->curs\);)show
+39 790 mv (})show
+39 766 mv (/* Specify the sorts of input that will be allowed - main window needs to */)show
+39 754 mv (/* see mouse buttons so unit type selection works right. */)show
+39 730 mv (enable_input\(side\))show
+39 718 mv (Side *side;)show
+39 706 mv ({)show
+39 694 mv (    XSelectInput\(sdd\(\), side->main, /* ExposureMask|*/)show
+39 682 mv (                 KeyPressMask|StructureNotifyMask\);)show
+39 670 mv (    XSelectInput\(sdd\(\), side->map, ButtonPressMask|ExposureMask\);)show
+39 658 mv (    XSelectInput\(sdd\(\), side->state, ButtonPressMask|ExposureMask\);)show
+39 646 mv (    XSelectInput\(sdd\(\), side->msg, ButtonPressMask|ExposureMask\);)show
+39 634 mv (    XSelectInput\(sdd\(\), side->help, KeyPressMask|ExposureMask\);)show
+39 622 mv (    XSelectInput\(sdd\(\), side->info, ExposureMask\);)show
+39 610 mv (    XSelectInput\(sdd\(\), side->prompt, ExposureMask\);)show
+39 598 mv (    XSelectInput\(sdd\(\), side->world, ButtonPressMask|ExposureMask\);)show
+39 586 mv (    XSelectInput\(sdd\(\), side->sides, ExposureMask\);)show
+39 574 mv (    XSelectInput\(sdd\(\), side->timemode, ExposureMask\);)show
+39 562 mv (/*    XSelectInput\(sdd\(\), side->clock, ExposureMask\); */)show
+39 550 mv (})show
+39 526 mv (/* Move windows and change their sizes to correspond with the new sizes of */)show
+39 514 mv (/* viewports, etc */)show
+39 490 mv (reset_misc\(side\))show
+39 478 mv (Side *side;)show
+39 466 mv ({)show
+39 454 mv (    Pixmap dots;)show
+39 442 mv (    XSizeHints hints;)show
+39 430 mv (    XGCValues values;)show
+39 418 mv (    unsigned long gcmask;)show
+39 394 mv (    dots = \(side->bonw ? sd\(\)->bwdots : sd\(\)->wbdots\); )show
+39 370 mv (    XResizeWindow\(sdd\(\), side->main, side->mw, side->mh\);)show
+39 358 mv (    hints.width = side->mw;  hints.height = side->mh;)show
+39 346 mv (    hints.min_width = side->mw/4;  hints.min_height = side->mh/4;)show
+39 334 mv (    hints.flags = PSize|PMinSize;)show
+39 322 mv (    XSetNormalHints\(sdd\(\), side->main, &hints\);)show
+39 310 mv (    if \(Debug\))show
+39 298 mv (      printf\("hinting for %dx%d window\\n", side->mw, side->mh\);)show
+39 274 mv (    XSetWindowBackgroundPixmap\(sdd\(\), side->main, dots\);)show
+39 262 mv (    XSetWindowBackground\(sdd\(\), side->msg, side->bgcolor\);)show
+39 250 mv (    XSetWindowBackground\(sdd\(\), side->info, side->bgcolor\); )show
+39 238 mv (    XSetWindowBackground\(sdd\(\), side->prompt, side->bgcolor\); )show
+39 226 mv (    XSetWindowBackground\(sdd\(\), side->map, side->bgcolor\);)show
+39 214 mv (    XSetWindowBackground\(sdd\(\), side->timemode, side->bgcolor\);)show
+39 202 mv (    XSetWindowBackground\(sdd\(\), side->clock, side->bgcolor\);)show
+39 190 mv (    XSetWindowBackground\(sdd\(\), side->state, side->bgcolor\);)show
+39 178 mv (    XSetWindowBackground\(sdd\(\), side->help, side->bgcolor\);)show
+39 166 mv (    XSetWindowBackground\(sdd\(\), side->sides, side->bgcolor\);)show
+39 154 mv (    XSetWindowBackground\(sdd\(\), side->world, side->bgcolor\);)show
+39 142 mv (    XSetWindowBorder\(sdd\(\), side->msg, side->fgcolor\);)show
+39 130 mv (    XSetWindowBorder\(sdd\(\), side->info, side->fgcolor\); )show
+39 118 mv (    XSetWindowBorder\(sdd\(\), side->prompt, side->fgcolor\); )show
+39 106 mv (    XSetWindowBorder\(sdd\(\), side->map, side->fgcolor\);)show
+39 94 mv (    XSetWindowBorder\(sdd\(\), side->timemode, side->fgcolor\);)show
+39 82 mv (    XSetWindowBorder\(sdd\(\), side->clock, side->fgcolor\);)show
+39 70 mv (    XSetWindowBorder\(sdd\(\), side->state, side->fgcolor\);)show
+39 58 mv (    XSetWindowBorder\(sdd\(\), side->help, side->fgcolor\);)show
+39 46 mv (    XSetWindowBorder\(sdd\(\), side->sides, side->fgcolor\);)show
+grestore
+showpage pg restore
+%%Page: ? 5
+/pg save def
+0.46886 0.47472 scale
+/Courier findfont 12 scalefont setfont
+0 886 translate
+gsave 634 886 moveto
+634 -886 lineto
+0 0 moveto
+1268 0 lineto
+stroke grestore
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    XSetWindowBorder\(sdd\(\), side->world, side->fgcolor\);)show
+39 814 mv (    gcmask = GCForeground | GCBackground;)show
+39 802 mv (    values.foreground = side->fgcolor;)show
+39 790 mv (    values.background = side->bgcolor;)show
+39 778 mv (    XChangeGC\(sdd\(\), sd\(\)->gc, gcmask, &values\);)show
+39 766 mv (    XChangeGC\(sdd\(\), sd\(\)->flashgc, gcmask, &values\);)show
+39 754 mv (    XChangeGC\(sdd\(\), sd\(\)->textgc, gcmask, &values\);)show
+39 742 mv (    XChangeGC\(sdd\(\), sd\(\)->helpgc, gcmask, &values\);)show
+39 730 mv (    XChangeGC\(sdd\(\), sd\(\)->icongc, gcmask, &values\);)show
+39 718 mv (    XChangeGC\(sdd\(\), sd\(\)->unitgc, gcmask, &values\);)show
+39 706 mv (    values.foreground = side->bgcolor;)show
+39 694 mv (    values.background = side->fgcolor;)show
+39 682 mv (    XChangeGC\(sdd\(\), sd\(\)->invicongc, gcmask, &values\);)show
+39 670 mv (})show
+39 646 mv (/* Alter the size and position of a window. */)show
+39 622 mv (change_window\(side, win, x, y, w, h\))show
+39 610 mv (Side *side;)show
+39 598 mv (Window win;)show
+39 586 mv (int x, y, w, h;)show
+39 574 mv ({)show
+39 562 mv (    unsigned int mask;)show
+39 550 mv (    XWindowChanges changes;)show
+39 526 mv (    if \(active_display\(side\)\) {)show
+39 514 mv (        if \(x >= 0\) {)show
+39 502 mv (            if \(w >= 0\) {)show
+39 490 mv (                mask = CWX | CWY | CWWidth | CWHeight;)show
+39 478 mv (                changes.x = x;  changes.y = y;)show
+39 466 mv (                changes.width = w;  changes.height = h;)show
+39 454 mv (            } else {)show
+39 442 mv (                mask = CWX | CWY;)show
+39 430 mv (                changes.x = x;  changes.y = y;)show
+39 418 mv (            })show
+39 406 mv (        } else {)show
+39 394 mv (            mask = CWWidth | CWHeight;)show
+39 382 mv (            changes.width = w;  changes.height = h;)show
+39 370 mv (        })show
+39 358 mv (    })show
+39 346 mv (    XConfigureWindow\(sdd\(\), win, mask, &changes\);)show
+39 334 mv (})show
+39 310 mv (/* Return the number of colors - this is used to guess about monochromeness. */)show
+39 286 mv (display_colors\(side\))show
+39 274 mv (Side *side;)show
+39 262 mv ({)show
+39 250 mv (    return XDisplayCells\(sdd\(\), sdds\(\)\);)show
+39 238 mv (})show
+39 214 mv (white_color\(side\))show
+39 202 mv (Side *side;)show
+39 190 mv ({)show
+39 178 mv (    return WhitePixel\(sdd\(\), sdds\(\)\);)show
+39 166 mv (})show
+39 142 mv (black_color\(side\))show
+39 130 mv (Side *side;)show
+39 118 mv ({)show
+39 106 mv (    return BlackPixel\(sdd\(\), sdds\(\)\);)show
+39 94 mv (})show
+39 70 mv (/* Get a color set up and warn if not getting what was asked for.  We can */)show
+39 58 mv (/* tolerate being off somewhat.  \(Note X rgb value range is 0-65535.\) */)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (#define CLOSE_ENOUGH\(X,Y\) \(abs\(\(\(int\) X\) - \(\(int\) Y\)\) < 2000\))show
+39 814 mv (long)show
+39 802 mv (request_color\(side, name, class, fallback\))show
+39 790 mv (Side *side;)show
+39 778 mv (char *name, *class, *fallback;)show
+39 766 mv ({)show
+39 754 mv (    XColor c, avail;)show
+39 742 mv (    static char rmName[200], rmClass[200];)show
+39 730 mv (    char        *rtype;)show
+39 718 mv (    XrmValue    rval;)show
+39 706 mv (    char        *colorname;)show
+39 682 mv (    if \(class!=NULL && name!=NULL\) {)show
+39 670 mv (      sprintf\(rmName, "%s.%s", PROGRAMNAME, name\);)show
+39 658 mv (      sprintf\(rmClass,"%s.%s", PROGRAMCLASS, class\);)show
+39 646 mv (      XrmGetResource\(\(XrmDatabase\)side->rmdatabase, rmName,)show
+39 634 mv (                     rmClass, &rtype, &rval\);)show
+39 622 mv (      if \(rtype==NULL\) {)show
+39 610 mv (        colorname = fallback;)show
+39 598 mv (      } else if \(0!=strcmp\(rtype, "String"\)\) {)show
+39 586 mv (        fprintf\(stderr, "Whoa!, funky resource type %s for %s\\n",)show
+39 574 mv (                rtype, rmName\);)show
+39 562 mv (        colorname = fallback;)show
+39 550 mv (      } else {)show
+39 538 mv (        colorname = rval.addr;)show
+39 526 mv (      })show
+39 514 mv (    } else {)show
+39 502 mv (      colorname = fallback;)show
+39 490 mv (    })show
+39 466 mv (    if \(Debug\) printf\("Allocating %s\\n", colorname\);)show
+39 454 mv (    if \(!XAllocNamedColor\(sdd\(\), DefaultColormap\(sdd\(\), sdds\(\)\),)show
+39 442 mv (                          colorname, &avail, &c\)\) {)show
+39 430 mv (      fprintf\(stderr, "Error: Couldn't allocate color %s!", colorname\);)show
+39 418 mv (      return white_color\(side\);)show
+39 406 mv (    })show
+39 394 mv (    if \(!\(CLOSE_ENOUGH\(c.red, avail.red\) &&)show
+39 382 mv (          CLOSE_ENOUGH\(c.green, avail.green\) &&)show
+39 370 mv (          CLOSE_ENOUGH\(c.blue, avail.blue\)\)\) {)show
+39 358 mv (        fprintf\(stderr, "Warning: %s color is way off on \\"%s\\"! ",)show
+39 346 mv (                name, side->host\);)show
+39 334 mv (        fprintf\(stderr, "\(%d %d %d instead of %d %d %d\)\\n",)show
+39 322 mv (                avail.red, avail.green, avail.blue, c.red, c.green, c.blue\);)show
+39 310 mv (    })show
+39 298 mv (    return avail.pixel;)show
+39 286 mv (})show
+39 262 mv (/* Main funnel for input returns both mouse and keyboard events, and maybe */)show
+39 250 mv (/* other kinds eventually.  Some events like window exposure are handled */)show
+39 238 mv (/* strictly locally. */)show
+39 226 mv (/*)show
+39 214 mv (  Timeout needed to make it play smooth while still being fair.)show
+39 202 mv ( */)show
+39 190 mv (/*struct timeval { )show
+39 178 mv (        long    tv_sec;         /* seconds * /)show
+39 166 mv (        long    tv_usec;        /* and microseconds * /)show
+39 154 mv (}; */)show
+39 130 mv (struct timeval timeout = {0, 500000};)show
+39 106 mv (get_input\(\))show
+39 94 mv ({)show
+39 82 mv (#ifdef SELECT2)show
+39 70 mv (    int i, mask;)show
+39 58 mv (    Side *side, *asides[32];)show
+39 46 mv (    bool waiters = FALSE;)show
+grestore
+-634 -886 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 826 mv (    mask = 0;)show
+39 814 mv (    for_all_sides\(side\) {)show
+39 802 mv (        if \(active_display\(side\)\) {)show
+39 790 mv (            side->redisplay_ok = TRUE;)show
+39 778 mv (            mask |= \(1 << ConnectionNumber\(sdd\(\)\)\);)show
+39 766 mv (            asides[ConnectionNumber\(sdd\(\)\)] = side;)show
+39 754 mv (            while \(XPending\(sdd\(\)\) > 0\) {)show
+39 742 mv (                process_events\(side\);)show
+39 730 mv (                waiters = TRUE;)show
+39 718 mv (            } )show
+39 706 mv (            )show
+39 694 mv (        })show
+39 682 mv (    })show
+39 670 mv (    if \(waiters\) {)show
+39 658 mv (      if \(Debug\) printf\("Handled pending events, so didn't need to wait\\n"\);)show
+39 646 mv (      return;)show
+39 634 mv (    })show
+39 622 mv (    if \(Debug\) {)show
+39 610 mv (        printf\("Waiting for input from "\);)show
+39 598 mv (        for_all_sides\(side\))show
+39 586 mv (            if \(active_display\(side\)\) printf\("%s ", side->host\);)show
+39 574 mv (        printf\("\\n"\);)show
+39 562 mv (    })show
+39 550 mv (    if \(select\(32, &mask, 0, 0, &timeout\) < 0\) {)show
+39 538 mv (      if \(errno!=EINTR\) {)show
+39 526 mv (        fprintf\(stderr, "error in select!\\n"\);)show
+39 514 mv (        abort\(\);)show
+39 502 mv (      })show
+39 490 mv (    } else {)show
+39 478 mv (        for \(i = 0; i < 32; ++i\) {)show
+39 466 mv (            if \(mask & \(1 << i\)\) {)show
+39 454 mv (                process_events\(asides[i]\);)show
+39 442 mv (              })show
+39 430 mv (        })show
+39 418 mv (        for_all_sides\(side\) {)show
+39 406 mv (          int delta_time = \(time\(0\) - side->lasttime\);)show
+39 382 mv (          side->lasttime = time\(0\);)show
+39 370 mv (          if \(side->more_units\) {)show
+39 358 mv (            side->timeleft -= delta_time;)show
+39 346 mv (            side->timetaken += delta_time;)show
+39 334 mv (            update_clock\(side\);)show
+39 322 mv (          })show
+39 310 mv (        })show
+39 298 mv (    })show
+39 286 mv (#else)show
+39 274 mv (#if 0)show
+39 262 mv (#ifdef BOGUS)show
+39 250 mv (    /* this doesn't work anymore */)show
+39 238 mv (    extern Side *curside;)show
+39 214 mv (    /* No simultaneity, but there's no portable way to do it, sigh */)show
+39 202 mv (    if \(active_display\(curside\) && humanside\(curside\)\) {)show
+39 190 mv (        if \(Debug\) printf\("Waiting for input from %s\\n", curside->host\);)show
+39 178 mv (        process_events\(curside\);)show
+39 166 mv (    })show
+39 154 mv (#endif)show
+39 142 mv (#endif)show
+39 130 mv (#endif /* SELECT2 */)show
+39 118 mv (})show
+39 94 mv (/* Look at a single event and fill the request structure appropriately. */)show
+39 70 mv (process_events\(side\))show
+39 58 mv (Side *side;)show
+39 46 mv ({)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    XEvent evt;)show
+39 826 mv (    char buf[BUFSIZE];)show
+39 814 mv (    int nchar, rawx, rawy;)show
+39 790 mv (    side->reqtype = GARBAGE;)show
+39 778 mv (    XNextEvent\(sdd\(\), &evt\);)show
+39 766 mv (    switch \(evt.type\) {)show
+39 754 mv (    case KeyPress:)show
+39 742 mv (        if \(evt.xkey.window != side->main && evt.xkey.window != side->help\) )show
+39 730 mv (            return;)show
+39 718 mv (        nchar = XLookupString\(&\(evt.xkey\), buf, BUFSIZE, NULL, NULL\);)show
+39 706 mv (        if \(nchar > 0\) {)show
+39 694 mv (            side->reqtype = KEYBOARD;)show
+39 682 mv (            side->reqch = *buf;)show
+39 670 mv (            if \(Debug\) printf\(isprint\(toascii\(side->reqch\)\) ?)show
+39 658 mv (                              "Host %s returns key '%c'\\n" :)show
+39 646 mv (                              "Host %s returns key '\\\\%03o'\\n" ,)show
+39 634 mv (                              side->host, side->reqch\);)show
+39 622 mv (            if \(evt.xkey.window==side->help\) {)show
+39 610 mv (              x_help\(side\);)show
+39 598 mv (              /* this little help handler might be a bad idea.)show
+39 586 mv (                 The entire xconq event loop is hacked.  That's)show
+39 574 mv (                 why Stan's redoing it */)show
+39 562 mv (            } else if \(side->reqch == '\\014'\) { /* control l */)show
+39 550 mv (              redraw\(side\);)show
+39 538 mv (              side->reqtype = GARBAGE;)show
+39 526 mv (            })show
+39 514 mv (          })show
+39 502 mv (        break;)show
+39 490 mv (    case ButtonPress:)show
+39 478 mv (        if \(evt.xbutton.window == side->map\) {)show
+39 466 mv (            rawx = evt.xbutton.x;  rawy = evt.xbutton.y; )show
+39 454 mv (            side->reqtype = MAPPOS;)show
+39 442 mv (            side->reqch = \(evt.xbutton.state & ShiftMask\) ? 1 : 0;)show
+39 430 mv (            /* the modifier is used by x_command */)show
+39 418 mv (            deform\(side, rawx, rawy, &\(side->reqx\), &\(side->reqy\)\);)show
+39 406 mv (            if \(Debug\) printf\("Host %s returns map %d %d\\n",)show
+39 394 mv (                              side->host, side->reqx, side->reqy\);)show
+39 382 mv (        } else if \(evt.xbutton.window == side->world\) {)show
+39 370 mv (            rawx = evt.xbutton.x;  rawy = evt.xbutton.y; )show
+39 358 mv (            side->reqtype = MAPPOS;)show
+39 346 mv (            w_deform\(side, rawx, rawy, &\(side->reqx\), &\(side->reqy\)\);)show
+39 334 mv (            if \(Debug\) printf\("Host %s returns world %d %d\\n",)show
+39 322 mv (                              side->host, side->reqx, side->reqy\);)show
+39 310 mv (        } else if \(evt.xbutton.window == side->state\) {)show
+39 298 mv (            rawx = evt.xbutton.x;  rawy = evt.xbutton.y; )show
+39 286 mv (            side->reqtype = UNITTYPE;)show
+39 274 mv (            side->requtype = rawy / max\(side->hh, side->fh\);)show
+39 262 mv (            if \(Debug\) printf\("Host %s returns unit type %d\\n",)show
+39 250 mv (                              side->host, side->requtype\);)show
+39 238 mv (        } else if \(evt.xbutton.window == side->msg\) {)show
+39 226 mv (          if \(evt.xbutton.y < side->nh * side->fh / 2\))show
+39 214 mv (            side->reqtype = SCROLLUP;)show
+39 202 mv (          else side->reqtype = SCROLLDOWN;)show
+39 190 mv (        })show
+39 178 mv (        break;)show
+39 166 mv (    /*case MapNotify:*/)show
+39 154 mv (    case Expose:)show
+39 142 mv (#if 0)show
+39 130 mv (        do {)show
+39 118 mv (#endif)show
+39 106 mv (          /* Prevent multiple redisplays in exit robot check */)show
+39 94 mv (          if \(side->redisplay_ok)show
+39 82 mv (#if 0)show
+39 70 mv (              && evt.xexpose.count == 0)show
+39 58 mv (#endif)show
+39 46 mv (              \) {)show
+grestore
+showpage pg restore
+%%Page: ? 6
+/pg save def
+0.46886 0.47472 scale
+/Courier findfont 12 scalefont setfont
+0 886 translate
+gsave 634 886 moveto
+634 -886 lineto
+0 0 moveto
+1268 0 lineto
+stroke grestore
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (            int count;)show
+39 826 mv (            Region      reg;)show
+39 814 mv (            reg = XCreateRegion\(\);)show
+39 802 mv (            count=0;)show
+39 790 mv (            do { /* burn all expose events for this window.)show
+39 778 mv (                    ideally we'd collect a region and just redraw that)show
+39 766 mv (                    part, but we aren't that sophisticated yet */)show
+39 754 mv (              XRectangle        rect;)show
+39 730 mv (              /*count++;)show
+39 718 mv (              printf\("0x%x %dx%d+%d+%d", evt.xexpose.window,)show
+39 706 mv (                     evt.xexpose.width,evt.xexpose.width,)show
+39 694 mv (                     evt.xexpose.x,evt.xexpose.y\); */)show
+39 682 mv (              rect.x = evt.xexpose.x;)show
+39 670 mv (              rect.y = evt.xexpose.y;)show
+39 658 mv (              rect.width = evt.xexpose.width;)show
+39 646 mv (              rect.height = evt.xexpose.height;)show
+39 634 mv (              XUnionRectWithRegion\(&rect,reg, reg\);)show
+39 622 mv (            } while \(XCheckWindowEvent\(sdd\(\), evt.xexpose.window,)show
+39 610 mv (                                       ExposureMask, &evt\)\);)show
+39 598 mv (            XSetRegion\(sdd\(\), sd\(\)->textgc, reg\);)show
+39 586 mv (            /* printf\("%d expose events for window 0x%x burned\\n",count,)show
+39 574 mv (                   evt.xexpose.window\); */)show
+39 562 mv (            if \(evt.xexpose.window == side->map\) {)show
+39 550 mv (              erase_cursor\(side\);)show
+39 538 mv (              show_map\(side\);)show
+39 526 mv (            } else if \(evt.xexpose.window == side->msg\) {)show
+39 514 mv (              show_note\(side,FALSE\);)show
+39 502 mv (            } else if \(evt.xexpose.window == side->world\) {)show
+39 490 mv (              show_world\(side\);)show
+39 478 mv (            } else if \(evt.xexpose.window == side->info\) {)show
+39 466 mv (              show_info\(side\);)show
+39 454 mv (            } else if \(evt.xexpose.window == side->prompt\) {)show
+39 442 mv (              XSetClipMask\(sdd\(\), sd\(\)->textgc, None\);)show
+39 430 mv (              show_prompt\(side\);)show
+39 418 mv (            } else if \(evt.xexpose.window == side->sides\) {)show
+39 406 mv (              show_all_sides\(side,FALSE\);)show
+39 394 mv (            } else if \(evt.xexpose.window == side->timemode\) {)show
+39 382 mv (              show_timemode\(side,FALSE\);)show
+39 370 mv (            } else if \(evt.xexpose.window == side->clock\) {)show
+39 358 mv (              /*        show_clock\(side\); */)show
+39 346 mv (            } else if \(evt.xexpose.window == side->state\) {)show
+39 334 mv (              XSetRegion\(sdd\(\), sd\(\)->varicongc, reg\);)show
+39 322 mv (              XSetRegion\(sdd\(\), sd\(\)->unitgc, reg\);)show
+39 310 mv (              XSetRegion\(sdd\(\), sd\(\)->unittextgc, reg\);)show
+39 298 mv (              show_state\(side,FALSE\);)show
+39 286 mv (              XSetClipMask\(sdd\(\), sd\(\)->varicongc, None\);)show
+39 274 mv (              XSetClipMask\(sdd\(\), sd\(\)->unitgc, None\);)show
+39 262 mv (              XSetClipMask\(sdd\(\), sd\(\)->unittextgc, None\);)show
+39 250 mv (            }  else if \(evt.xexpose.window == side->help\) {)show
+39 238 mv (              side->reqtype = KEYBOARD; /* hoo boy :\( */)show
+39 226 mv (              side->reqch = '\\014';)show
+39 214 mv (              x_help\(side\);)show
+39 202 mv (            } else if \(evt.xexpose.window == side->main\) {)show
+39 190 mv (            } else {)show
+39 178 mv (              printf\("WARNING: Unknown window being redisplayed. \\n"\);)show
+39 166 mv (              redraw\(side\);)show
+39 154 mv (            })show
+39 142 mv (            XSetClipMask\(sdd\(\), sd\(\)->textgc, None\);)show
+39 130 mv (            XDestroyRegion\(reg\);)show
+39 118 mv (          })show
+39 106 mv (#if 0)show
+39 94 mv (        } while \(XCheckMaskEvent\(sdd\(\), ExposureMask, &evt\)\);)show
+39 82 mv (        side->redisplay_ok = FALSE;)show
+39 70 mv (        /* flush_input\(side\); */)show
+39 58 mv (        if \(Debug\) printf\("Host %s exposes itself\\n", side->host\);)show
+39 46 mv (        if \(!humanside\(side\)\))show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (          while \(XPending\(sdd\(\)\) > 0\) {)show
+39 826 mv (            process_events\(side\);)show
+39 814 mv (#define ESCAPE '\\033'           /* standard abort character */)show
+39 802 mv (            if \(!humanside\(side\) && side->reqtype == KEYBOARD &&)show
+39 790 mv (                side->reqch == ESCAPE\) {)show
+39 778 mv (              side->humanp = TRUE;)show
+39 766 mv (              numhumans++;)show
+39 754 mv (              init_sighandlers\(\);)show
+39 742 mv (              return;)show
+39 730 mv (            })show
+39 718 mv (          })show
+39 706 mv (#endif)show
+39 694 mv (        break;)show
+39 682 mv (    case ConfigureNotify:)show
+39 670 mv (        if \(Debug\) {)show
+39 658 mv (          printf\("Want a %dx%d window\\n", evt.xconfigure.width,)show
+39 646 mv (                 evt.xconfigure.height\);)show
+39 634 mv (        })show
+39 622 mv (        if \(evt.xconfigure.width != side->mw ||)show
+39 610 mv (            evt.xconfigure.height != side->mh\) {)show
+39 598 mv (          resize_display\(side, evt.xconfigure.width, evt.xconfigure.height\);)show
+39 586 mv (          /* set_sizes has been called already */)show
+39 574 mv (          reconfigure_display\(side,False\);)show
+39 562 mv (        } else if \(Debug\) {)show
+39 550 mv (          printf\(" already got one. \(must be stacking or relocation event\)\\n"\);)show
+39 538 mv (        })show
+39 526 mv (        break;)show
+39 514 mv (      case ClientMessage:)show
+39 502 mv (        break;)show
+39 490 mv (    default:)show
+39 478 mv (        /* shouldn't this be left in? */)show
+39 466 mv (#if 0)show
+39 454 mv (        case_panic\("event type", evt.type\);)show
+39 442 mv (#endif)show
+39 430 mv (        break;)show
+39 418 mv (    })show
+39 406 mv (})show
+39 382 mv (#define ESCAPE '\\033'           /* standard abort character */)show
+39 358 mv (/* Allow a player to exit robot mode, even if he is the only player. */)show
+39 346 mv (exit_robot_check\(\))show
+39 334 mv ({)show
+39 322 mv (  Side *side;)show
+39 310 mv (  )show
+39 298 mv (  for_all_sides\(side\) {)show
+39 286 mv (    if \(active_display\(side\)\) {)show
+39 274 mv (      side->redisplay_ok = TRUE;)show
+39 262 mv (      while \(XPending\(sdd\(\)\) > 0\) {)show
+39 250 mv (        process_events\(side\);)show
+39 238 mv (        if \(!humanside\(side\) && side->reqtype == KEYBOARD &&)show
+39 226 mv (            side->reqch == ESCAPE\) {)show
+39 214 mv (          side->humanp = TRUE;)show
+39 202 mv (          numhumans++;)show
+39 190 mv (          init_sighandlers\(\);)show
+39 178 mv (          return;)show
+39 166 mv (        })show
+39 154 mv (      } )show
+39 142 mv (    })show
+39 130 mv (  })show
+39 118 mv (})show
+39 94 mv (/* Freese everything until given side supplies input, use sparingly. */)show
+39 70 mv (freeze_wait\(side\))show
+39 58 mv (Side *side;)show
+39 46 mv ({)show
+grestore
+-634 -886 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    XEvent evt;)show
+39 826 mv (    char buf[BUFSIZE];)show
+39 814 mv (    int nchar;)show
+39 790 mv (    if \(Debug\) printf\("Waiting for a %s event\\n", side->host\);)show
+39 778 mv (    flush_input\(side\);)show
+39 766 mv (    while\(TRUE\) {)show
+39 754 mv (        XNextEvent\(sdd\(\), &evt\);)show
+39 742 mv (        if \(evt.type == KeyPress\) {)show
+39 730 mv (            nchar = XLookupString\(&\(evt.xkey\), buf, BUFSIZE, NULL, NULL\);)show
+39 718 mv (            if \(nchar > 0\) )show
+39 706 mv (                return *buf;)show
+39 694 mv (            else)show
+39 682 mv (                return '\\0';)show
+39 670 mv (        })show
+39 658 mv (    }  )show
+39 646 mv (})show
+39 622 mv (/* Get rid of extra key/mouse clicks *only*. */)show
+39 598 mv (flush_input\(side\))show
+39 586 mv (Side *side;)show
+39 574 mv ({)show
+39 562 mv (    if \(!windows_up\) {)show
+39 550 mv (        windows_up = TRUE;)show
+39 538 mv (        get_input\(\);)show
+39 526 mv (        /* fetch initial expose event */)show
+39 514 mv (    })show
+39 502 mv (    /* mxconq: display is sometimes not active in single player mode! */)show
+39 490 mv (    if \(humanside\(side\) && active_display\(side\) \) {)show
+39 478 mv (        XEvent evt;)show
+39 454 mv (        /* discard all pending mouse and keyboard events. */)show
+39 442 mv (        while \(XCheckMaskEvent\(sdd\(\), KeyPressMask|ButtonPressMask, &evt\)\);)show
+39 430 mv (        side->reqtype = GARBAGE;)show
+39 418 mv (    })show
+39 406 mv (    side->reqchange = TRUE;)show
+39 394 mv (})show
+39 370 mv (/* Trivial abstraction - sometimes other routines like to ensure all output */)show
+39 358 mv (/* actually on the screen. */)show
+39 334 mv (flush_output\(side\) )show
+39 322 mv (Side *side; )show
+39 310 mv ({  )show
+39 298 mv (    /* mxconq: check for active_display first */)show
+39 286 mv (    if \(humanside\(side\) && active_display\(side\) \) XFlush\(sdd\(\)\);  )show
+39 274 mv (    side->reqchange = TRUE;)show
+39 262 mv (})show
+39 238 mv (/* General window clearing. */)show
+39 214 mv (clear_window\(side, win\))show
+39 202 mv (Side *side;)show
+39 190 mv (Window win;)show
+39 178 mv ({)show
+39 166 mv (    XClearArea\(sdd\(\), win, 0,0, 0,0, False\);)show
+39 154 mv (})show
+39 130 mv (/* Draw a single horizontal constant-color bar on the world map.  If part */)show
+39 118 mv (/* would not be drawn because of the map's obliqueness, cut it in two and */)show
+39 106 mv (/* wrap one of the pieces around. */)show
+39 82 mv (draw_bar\(side, x, y, len, color\))show
+39 70 mv (Side *side;)show
+39 58 mv (int x, y, len, color;)show
+39 46 mv ({)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    int sx1, sx2, sy, sww;)show
+39 814 mv (    w_xform\(side, x, y, &sx1, &sy\);)show
+39 802 mv (    w_xform\(side, x + len, y, &sx2, &sy\);)show
+39 790 mv (    sww = side->mm * world.width;)show
+39 778 mv (    XSetFillStyle\(sdd\(\), sd\(\)->gc, FillSolid\);)show
+39 766 mv (    XSetForeground\(sdd\(\), sd\(\)->gc, color\);)show
+39 754 mv (    if \(sx1 < sww && sx2 >= sww\) {)show
+39 742 mv (        XFillRectangle\(sdd\(\), side->world, sd\(\)->gc,)show
+39 730 mv (                       sx1, sy, \(unint\) sww - sx1, \(unint\) side->mm\);)show
+39 718 mv (        XFillRectangle\(sdd\(\), side->world, sd\(\)->gc,)show
+39 706 mv (                       0, sy, \(unint\) sx2 - sww, \(unint\) side->mm\);)show
+39 694 mv (    } else {)show
+39 682 mv (        sx1 %= sww;)show
+39 670 mv (        sx2 %= sww;)show
+39 658 mv (        XFillRectangle\(sdd\(\), side->world, sd\(\)->gc,)show
+39 646 mv (                       sx1, sy, \(unint\) sx2 - sx1, \(unint\) side->mm\);)show
+39 634 mv (    })show
+39 622 mv (#ifdef STUPIDFLUSH)show
+39 610 mv (    XFlush\(sdd\(\)\);)show
+39 598 mv (#endif /* STUPIDFLUSH */)show
+39 586 mv (})show
+39 562 mv (/* Invert the outline box on the world map.  This is a little tricky, */)show
+39 550 mv (/* because we want the lines to run through the middle of the world's */)show
+39 538 mv (/* hexes, and because the line drawn should not overlap \(or the overlaps */)show
+39 526 mv (/* will be doubly inverted and look strange\). */)show
+39 502 mv (invert_box\(side, vcx, vcy\))show
+39 490 mv (Side *side;)show
+39 478 mv (int vcx, vcy;)show
+39 466 mv ({)show
+39 454 mv (    int x1, y1, x2, y2, sx1, sy1, sx2, sy2, mm2 = side->mm/2;)show
+39 430 mv (    x1 = vcx - side->vw2 + side->vh2/2;  y1 = vcy - side->vh2;)show
+39 418 mv (    x2 = vcx + side->vw2 - side->vh2/2;  y2 = vcy + side->vh2;)show
+39 406 mv (    w_xform\(side, x1, y1, &sx1, &sy1\);)show
+39 394 mv (    w_xform\(side, x2, y2, &sx2, &sy2\);)show
+39 382 mv (    sx1 += mm2;  sy1 -= mm2;  sx2 += mm2;  sy2 += mm2;)show
+39 370 mv (    XSetFunction\(sdd\(\), sd\(\)->gc, GXinvert\);)show
+39 358 mv (    /* is this next call really necessary? */)show
+39 346 mv (    XSetLineAttributes\(sdd\(\), sd\(\)->gc, 1, LineSolid, CapButt, JoinMiter\);)show
+39 334 mv (    XDrawLine\(sdd\(\), side->world, sd\(\)->gc, sx1, sy1, sx2, sy1\);)show
+39 322 mv (    XDrawLine\(sdd\(\), side->world, sd\(\)->gc, sx2, sy1-1, sx2, sy2+1\);)show
+39 310 mv (    XDrawLine\(sdd\(\), side->world, sd\(\)->gc, sx2, sy2, sx1, sy2\);)show
+39 298 mv (    XDrawLine\(sdd\(\), side->world, sd\(\)->gc, sx1, sy2+1, sx1, sy1-1\);)show
+39 286 mv (    XSetFunction\(sdd\(\), sd\(\)->gc, GXcopy\);)show
+39 274 mv (})show
+39 250 mv (/* This interfaces higher-level drawing decisions to the rendition of */)show
+39 238 mv (/* individual pieces of display. */)show
+39 214 mv (draw_terrain_row\(side, sx, sy, buf, len, color\))show
+39 202 mv (Side *side;)show
+39 190 mv (int sx, sy, len, color;)show
+39 178 mv (char *buf;)show
+39 166 mv ({)show
+39 154 mv (    sy += sd\(\)->iconfont->max_bounds.ascent;)show
+39 142 mv (    XSetForeground\(sdd\(\), sd\(\)->icongc, color\);)show
+39 130 mv (    XDrawString\(sdd\(\), side->map, sd\(\)->icongc, sx, sy, buf, len\);)show
+39 118 mv (#ifdef STUPIDFLUSH)show
+39 106 mv (    XFlush\(sdd\(\)\);)show
+39 94 mv (#endif /* STUPIDFLUSH */)show
+39 82 mv (})show
+39 58 mv (/* Flash a pair of lines up, slow enough to draw the eye, but not so slow */)show
+39 46 mv (/* as to get in the way. */)show
+grestore
+showpage pg restore
+%%Page: ? 7
+/pg save def
+0.46886 0.47472 scale
+/Courier findfont 12 scalefont setfont
+0 886 translate
+gsave 634 886 moveto
+634 -886 lineto
+0 0 moveto
+1268 0 lineto
+stroke grestore
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 826 mv (flash_position\(side, sx, sy, tm\))show
+39 814 mv (Side *side;)show
+39 802 mv (int sx, sy, tm;)show
+39 790 mv ({)show
+39 778 mv (    int sx1, sy1, sx2, sy2;)show
+39 754 mv (    if \(tm > 0\) {)show
+39 742 mv (        sx1 = sx - 50 + side->hw/2;  sy1 = sy + 50 + side->hch/2;)show
+39 730 mv (        sx2 = sx + 50 + side->hw/2;  sy2 = sy - 50 + side->hch/2;)show
+39 718 mv (        XDrawLine\(sdd\(\), side->map, sd\(\)->flashgc, sx1, sy1, sx2, sy2\);)show
+39 706 mv (        XDrawLine\(sdd\(\), side->map, sd\(\)->flashgc, sx1, sy2, sx2, sy1\);)show
+39 694 mv (        flush_output\(side\);)show
+39 682 mv (        nap\(tm\);)show
+39 670 mv (        XDrawLine\(sdd\(\), side->map, sd\(\)->flashgc, sx1, sy1, sx2, sy2\);)show
+39 658 mv (        XDrawLine\(sdd\(\), side->map, sd\(\)->flashgc, sx1, sy2, sx2, sy1\);)show
+39 646 mv (    })show
+39 634 mv (})show
+39 610 mv (/* Napping is like sleeping, but maybe shorter.  Arg is milliseconds. */)show
+39 586 mv (nap\(t\))show
+39 574 mv (long t;)show
+39 562 mv ({)show
+39 550 mv (#ifdef UNIX)show
+39 538 mv (#ifdef SELECT2)show
+39 526 mv (    struct timeval naptime;)show
+39 502 mv (    naptime.tv_usec = \(t % 1000\) * 1000;)show
+39 490 mv (    naptime.tv_sec = t / 1000;)show
+39 478 mv (    select\(0, NULL, NULL, NULL, &naptime\);)show
+39 466 mv (#else)show
+39 454 mv (    if \(t >= 1000\) sleep\(t/1000\);)show
+39 442 mv (#endif)show
+39 430 mv (#endif /* UNIX */)show
+39 418 mv (})show
+39 394 mv (/* The "cursor icon" is just a pair of special chars - nothing to do with */)show
+39 382 mv (/* X's notion of cursors. */)show
+39 358 mv (draw_cursor_icon\(side, sx, sy\))show
+39 346 mv (Side *side;)show
+39 334 mv (int sx, sy;)show
+39 322 mv ({)show
+39 310 mv (    sy += sd\(\)->iconfont->max_bounds.ascent;)show
+39 298 mv (    XDrawString\(sdd\(\), side->map, sd\(\)->invicongc, sx, sy, "[", 1\);)show
+39 286 mv (    XSetForeground\(sdd\(\), sd\(\)->icongc, side->fgcolor\);)show
+39 274 mv (    XDrawString\(sdd\(\), side->map, sd\(\)->icongc, sx, sy, "]", 1\);)show
+39 262 mv (})show
+39 238 mv (/* Draw the icon for a hex \(given as a char\). */)show
+39 214 mv (draw_hex_icon\(side, win, sx, sy, color, ch\))show
+39 202 mv (Side *side;)show
+39 190 mv (Window win;)show
+39 178 mv (int sx, sy, color;)show
+39 166 mv (char ch;)show
+39 154 mv ({)show
+39 142 mv (    XSetForeground\(sdd\(\), sd\(\)->varicongc, color\);)show
+39 130 mv (    sy += sd\(\)->iconfont->max_bounds.ascent;)show
+39 118 mv (    XDrawString\(sdd\(\), win, sd\(\)->varicongc, sx, sy, &ch, 1\);)show
+39 106 mv (})show
+39 82 mv (/* Draw the number of an unfriendly side \(never called for own units\). */)show
+39 58 mv (draw_side_number\(side, win, sx, sy, n, color\))show
+39 46 mv (Side *side;)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (Window win;)show
+39 826 mv (int sx, sy, n, color;)show
+39 814 mv ({)show
+39 802 mv (    char ch = n%22;)show
+39 778 mv (    ch += \(ch<10\)?'0':\('A' - 10\);)show
+39 754 mv (    if \(n >= 0 && n!=MAXSIDES\) {)show
+39 742 mv (        XSetForeground\(sdd\(\), sd\(\)->varicongc, color\);)show
+39 730 mv (        sy += sd\(\)->iconfont->max_bounds.ascent;)show
+39 718 mv (        XDrawString\(sdd\(\), win, sd\(\)->varicongc, sx, sy, &ch, 1\);)show
+39 706 mv (    })show
+39 694 mv (})show
+39 670 mv (draw_blast_icon\(side, win, sx, sy, type, color\))show
+39 658 mv (Side *side;)show
+39 646 mv (Window win;)show
+39 634 mv (int sx, sy, color;)show
+39 622 mv (char type;)show
+39 610 mv ({)show
+39 598 mv (    char buf[1];)show
+39 574 mv (    XSetForeground\(sdd\(\), sd\(\)->varicongc, color\);)show
+39 562 mv (    buf[0] = type;)show
+39 550 mv (    sy += sd\(\)->iconfont->max_bounds.ascent;)show
+39 538 mv (    XDrawString\(sdd\(\), win, sd\(\)->varicongc, sx, sy, buf, 1\);)show
+39 526 mv (    flush_output\(side\);)show
+39 514 mv (})show
+39 490 mv (/* Flash the player's screen in an unmistakable way. */)show
+39 466 mv (invert_whole_map\(side\))show
+39 454 mv (Side *side;)show
+39 442 mv ({)show
+39 430 mv (    int sw = side->vw * side->hw, sh = side->vh * side->hh;)show
+39 406 mv (    /* GC needs to be set for inverted drawing */)show
+39 394 mv (    XDrawRectangle\(sdd\(\), side->map, sd\(\)->gc, 0, 0, sw, sh\);)show
+39 382 mv (    flush_output\(side\);)show
+39 370 mv (})show
+39 346 mv (/* Draw just one of the mushroom cloud shapes. */)show
+39 322 mv (draw_mushroom\(side, x, y, i\))show
+39 310 mv (Side *side;)show
+39 298 mv (int x, y, i;)show
+39 286 mv ({)show
+39 274 mv (    int sx, sy;)show
+39 262 mv (    int color;)show
+39 238 mv (    color = \(\(side->monochrome || i == 3\) ? side->fgcolor : side->bgcolor\);)show
+39 226 mv (    xform\(side, unwrap\(side, x, y\), y, &sx, &sy\);)show
+39 214 mv (    XSetForeground\(sdd\(\), sd\(\)->unitgc, color\);)show
+39 202 mv (    XSetClipMask\(sdd\(\), sd\(\)->unitgc, sd\(\)->bombpics[i]\);)show
+39 190 mv (    XSetClipOrigin\(sdd\(\), sd\(\)->unitgc, sx-BH/4, sy-BH/2\);)show
+39 178 mv (    XFillRectangle\(sdd\(\), side->map, sd\(\)->unitgc, sx-BH/4, sy-BH/2, BH, BH\);)show
+39 166 mv (    flush_output\(side\);)show
+39 154 mv (})show
+39 130 mv (/* Confirm that we can indeed do bar graph displays. */)show
+39 106 mv (bar_graphs\(side\) Side *side;  {  return TRUE;  })show
+39 82 mv (/* Do yet another X-toolkit-type function.  This draws a bar graph. */)show
+39 58 mv (draw_graph\(side, number, amount, total, critical, title\))show
+39 46 mv (Side *side;)show
+grestore
+-634 -886 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (int number, amount, total, critical;)show
+39 826 mv ({)show
+39 814 mv (    int boxwidth, boxheight, boxoffset, boxleft, barwidth, barheight;)show
+39 790 mv (    if \(total > 0\) {)show
+39 778 mv (        boxwidth = 5*side->fw;)show
+39 766 mv (        boxheight = \(INFOLINES-1\)*side->fh - 2*side->margin;)show
+39 754 mv (        boxoffset = side->margin;)show
+39 742 mv (        boxleft = 30*side->fw + number * boxwidth;)show
+39 730 mv (        barwidth = boxwidth / 3;)show
+39 718 mv (        barheight = \(boxheight * amount\) / total;)show
+39 706 mv (        XSetForeground\(sdd\(\), sd\(\)->gc, side->fgcolor\);)show
+39 694 mv (        XFillRectangle\(sdd\(\), side->info, sd\(\)->gc,)show
+39 682 mv (                       boxleft + boxwidth/3 - 1, boxoffset - 1,)show
+39 670 mv (                       barwidth + 2, boxheight + 2\);)show
+39 658 mv (        XSetForeground\(sdd\(\), sd\(\)->gc, side->bgcolor\);)show
+39 646 mv (        XFillRectangle\(sdd\(\), side->info, sd\(\)->gc,)show
+39 634 mv (                       boxleft + boxwidth/3, boxoffset,)show
+39 622 mv (                       barwidth, boxheight\);)show
+39 610 mv (        if \( amount > critical\))show
+39 598 mv (          XSetForeground\(sdd\(\), sd\(\)->gc, side->goodcolor\);)show
+39 586 mv (        else)show
+39 574 mv (          XSetForeground\(sdd\(\), sd\(\)->gc, side->badcolor\);)show
+39 562 mv (        XFillRectangle\(sdd\(\), side->info, sd\(\)->gc,)show
+39 550 mv (                       boxleft + boxwidth/3, boxoffset + boxheight - barheight,)show
+39 538 mv (                       barwidth, barheight\);)show
+39 526 mv (        draw_text\(side, side->info,)show
+39 514 mv (                  boxleft+\(boxwidth-strlen\(title\)*side->fw\)/2,)show
+39 502 mv (                  \(INFOLINES-1\)*side->fh, title, side->fgcolor\);)show
+39 490 mv (    })show
+39 478 mv (})show
+39 454 mv (/* Splash a unit image \(either bitmap or font char\) onto some window. */)show
+39 430 mv (draw_unit_icon\(side, win, x, y, u, color\))show
+39 418 mv (Side *side;)show
+39 406 mv (Window win;)show
+39 394 mv (int x, y, u, color;)show
+39 382 mv ({)show
+39 370 mv (    char buf[1];)show
+39 346 mv (    y += 3;                     /* fudge factor to make x11 look */)show
+39 334 mv (    x += 2;                     /*  like X10 \(ugh\). */)show
+39 322 mv (    if \(utypes[u].bitmapname != NULL \) {)show
+39 310 mv (      XSetForeground\(sdd\(\), sd\(\)->unitgc, color\);)show
+39 298 mv (      XSetClipMask\(sdd\(\), sd\(\)->unitgc, sd\(\)->unitpics[u]\);)show
+39 286 mv (      XSetClipOrigin\(sdd\(\), sd\(\)->unitgc, x, y\);)show
+39 274 mv (      XFillRectangle\(sdd\(\), win, sd\(\)->unitgc, x, y, side->uw, side->uh\);)show
+39 262 mv (    } else {)show
+39 250 mv (        XSetForeground\(sdd\(\), sd\(\)->unittextgc, color\);)show
+39 238 mv (        buf[0] = utypes[u].uchar;)show
+39 226 mv (        y += sd\(\)->unitfont->max_bounds.ascent;)show
+39 214 mv (        XDrawString\(sdd\(\), win, sd\(\)->unittextgc, x, y, buf, 1\);)show
+39 202 mv (    })show
+39 190 mv (})show
+39 166 mv (/* General text drawer. */)show
+39 142 mv (draw_text\(side, win, x, y, str, color\))show
+39 130 mv (Side *side;)show
+39 118 mv (Window win;)show
+39 106 mv (int x, y, color;)show
+39 94 mv (char *str;)show
+39 82 mv ({)show
+39 70 mv (  if \(win == side->help\) draw_help_text\(side, win, x, y, str, color\);)show
+39 58 mv (  else {)show
+39 46 mv (    y += sd\(\)->textfont->max_bounds.ascent;)show
+grestore
+634 0 translate
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    if \(color != side->bgcolor\) {)show
+39 826 mv (        XSetForeground\(sdd\(\), sd\(\)->textgc, color\);)show
+39 814 mv (        XDrawImageString\(sdd\(\), win, sd\(\)->textgc, x, y, str, strlen\(str\)\);)show
+39 802 mv (    } else {)show
+39 790 mv (        XSetForeground\(sdd\(\), sd\(\)->textgc, side->bgcolor\);)show
+39 778 mv (        XSetBackground\(sdd\(\), sd\(\)->textgc, side->fgcolor\);)show
+39 766 mv (        XDrawImageString\(sdd\(\), win, sd\(\)->textgc, x, y, str, strlen\(str\)\);)show
+39 754 mv (        XSetBackground\(sdd\(\), sd\(\)->textgc, side->bgcolor\);)show
+39 742 mv (    }})show
+39 730 mv (#ifdef STUPIDFLUSH)show
+39 718 mv (    XFlush\(sdd\(\)\);)show
+39 706 mv (#endif /* STUPIDFLUSH */)show
+39 694 mv (})show
+39 670 mv (/* General text drawer. */)show
+39 646 mv (draw_help_text\(side, win, x, y, str, color\))show
+39 634 mv (Side *side;)show
+39 622 mv (Window win;)show
+39 610 mv (int x, y, color;)show
+39 598 mv (char *str;)show
+39 586 mv ({)show
+39 574 mv (    y += sd\(\)->helpfont->max_bounds.ascent;)show
+39 562 mv (    if \(color != side->bgcolor\) {)show
+39 550 mv (        XSetForeground\(sdd\(\), sd\(\)->helpgc, color\);)show
+39 538 mv (        XDrawString\(sdd\(\), win, sd\(\)->helpgc, x, y, str, strlen\(str\)\);)show
+39 526 mv (    } else {)show
+39 514 mv (        XSetForeground\(sdd\(\), sd\(\)->helpgc, side->bgcolor\);)show
+39 502 mv (        XSetBackground\(sdd\(\), sd\(\)->helpgc, side->fgcolor\);)show
+39 490 mv (        XDrawString\(sdd\(\), win, sd\(\)->helpgc, x, y, str, strlen\(str\)\);)show
+39 478 mv (        XSetBackground\(sdd\(\), sd\(\)->helpgc, side->bgcolor\);)show
+39 466 mv (    })show
+39 454 mv (})show
+39 430 mv (/* Draw a line through some side's title. */)show
+39 406 mv (draw_scratchout\(side, pos\))show
+39 394 mv (Side *side;)show
+39 382 mv (int pos;)show
+39 370 mv ({)show
+39 358 mv (    XSetForeground\(sdd\(\), sd\(\)->textgc, side->fgcolor\);)show
+39 346 mv (    XDrawLine\(sdd\(\), side->sides, sd\(\)->textgc, 0, pos, 30*side->fw, pos\);)show
+39 334 mv (})show
+39 310 mv (/* Beep the beeper! */)show
+39 286 mv (beep\(side\))show
+39 274 mv (Side *side;)show
+39 262 mv ({)show
+39 250 mv (    XBell\(sdd\(\), sdds\(\)\);)show
+39 238 mv (})show
+39 214 mv (/* Little routines to pop up the help window and make it go away again */)show
+39 202 mv (/* They only get called when display is in use. */)show
+39 178 mv (reveal_help\(side\))show
+39 166 mv (Side *side;)show
+39 154 mv ({)show
+39 142 mv (    XEvent evt;)show
+39 130 mv (    XWindowAttributes   xwa;)show
+39 106 mv (    XMapWindow\(sdd\(\), side->help\);)show
+39 94 mv (    XGetWindowAttributes\(sdd\(\), side->help, &xwa\);)show
+39 82 mv (    printf\("window state: %d\\n",xwa.map_state\);)show
+39 70 mv (    if \(xwa.map_state == IsUnmapped\) {)show
+39 58 mv (      /* wait until this window is exposed to return. */)show
+39 46 mv (      XWindowEvent\(sdd\(\), side->help, ExposureMask, &evt\);)show
+grestore
+showpage pg restore
+%%Page: ? 8
+/pg save def
+0.46886 0.47472 scale
+/Courier findfont 12 scalefont setfont
+0 886 translate
+gsave 634 886 moveto
+634 -886 lineto
+0 0 moveto
+1268 0 lineto
+stroke grestore
+gsave
+newpath
+-1 -1 moveto
+-1 887 lineto
+635 887 lineto
+635 -1 lineto
+closepath clip
+39 838 mv (    })show
+39 826 mv (    return TRUE;)show
+39 814 mv (})show
+39 790 mv (conceal_help\(side\))show
+39 778 mv (Side *side;)show
+39 766 mv ({)show
+39 754 mv (    XUnmapWindow\(sdd\(\), side->help\);)show
+39 742 mv (    flush_output\(side\);)show
+39 730 mv (})show
+39 706 mv (dump_view\(side\))show
+39 694 mv (Side *side;)show
+39 682 mv ({)show
+39 670 mv (  /* Implement when we figure out how to do full map dumps. */)show
+39 658 mv (})show
+39 634 mv (/* Shut a single display down, but only if there's one to operate on. */)show
+39 622 mv (/* Hit the display slot, for safety. */)show
+39 598 mv (close_display\(side\))show
+39 586 mv (Side *side;)show
+39 574 mv ({)show
+39 562 mv (    XrmDestroyDatabase\(\(XrmDatabase\) side->rmdatabase\);)show
+39 550 mv (    XCloseDisplay\(sdd\(\)\);)show
+39 538 mv (    side->display = \(long\) NULL;)show
+39 526 mv (})show
+grestore
+showpage pg restore
+%%Trailer
+%%DocumentFonts: Courier
+%%Pages: 8

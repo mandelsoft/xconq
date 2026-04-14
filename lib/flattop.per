@@ -1,0 +1,155 @@
+Xconq 0 -+---- Carrier operations in the Pacific
+Period 0
+
+"WW II, in the Pacific, aboard a carrier" period-name
+
+"f" "fighter" "Great at nailing other aircraft" utype
+"d" "dive bomber" "" utype
+"t" "torpedo bomber" "Great for nailing those troublesome ships" utype
+"p" "PBY" "Air recognissance plane" utype
+"D" "destroyer" "Launches torpedos!" utype
+"S" "submarine" "Launches torpedos!" utype
+"E" "escort carrier" "Light carrier, carries 1/2 as much" utype
+"r" "light cruiser" "" utype
+"R" "heavy cruiser" "" utype
+"C" "carrier" "Keep those planes here" utype
+"B" "battleship" "the most powerful ship" utype
+"/" "base" "Too bad you can't bring it with you" utype
+
+"o" "fuel" "how to get around" rtype
+"a" "ammo" "small stuff" rtype
+"A" "shell" "8 to 16 inch" rtype
+"b" "bomb" "iron bombs" rtype
+"!" "torps" "death to ships" rtype
+
+"." "sea" "sky blue" ttype
+"," "atoll" "cyan" ttype
+"+" "island" "forest green" ttype
+
+[   0  96  98 ] t* min-alt
+[  96  98 100 ] t* max-alt
+
+95 alt-roughness
+
+sea default-terrain
+sea edge-terrain
+
+"1e" f icon-name
+"1e" d icon-name
+"torpbombr" t icon-name
+"pby" p icon-name
+"dd" D icon-name
+"ca" r icon-name
+"sub" S icon-name
+"cv" E icon-name
+"cv" C icon-name
+"ca" R icon-name
+"bb" B icon-name
+"airbase" / icon-name
+
+[ f d t p ] "air" define
+[ r R B ] "heavy" define
+[ E C ] "carriers" define
+[ D S E r R C B ] "ships" define
+[ o a A b ! ] "stuff" define
+
+100 sea ships favored
+100 [ atoll island ] / favored
+
+4 country-size
+30 country-min-distance
+32 country-max-distance
+; f d t p D S E r R C B /
+[ 8 8 8 4 6 2 4 2 2 2 2 1 ] u* in-country
+
+true / always-seen
+
+500 [ fuel ammo ] ships storage
+20 fuel air storage
+40 fuel p storage
+2 a air storage
+0 a p storage
+2 b d storage
+2 ! t storage
+10 ! [ D S ] storage
+50 [ b ! ] C storage
+25 [ b ! ] E storage
+50 A heavy storage
+1000 r* / storage
+
+3 fuel air consume
+
+9 air speed
+6 p speed
+3 ships speed  ; gross simplification
+
+0 t* air moves
+0 t* p moves
+0 sea ships moves
+2 atoll ships moves
+
+1 fuel u* to-move
+
+4 air E capacity
+8 air C capacity
+100 u* / capacity
+100 u* u* enter-time
+1 air volume
+4 E hold-volume
+8 C hold-volume
+100 / hold-volume
+
+10 S visibility
+
+; D S E r R   C  B ] "ships" define
+[ 5 3 7 7 10 15 15 ] ships hp
+100 / hp
+
+50 u* u* hit
+80 air f hit
+60 f f hit
+0 u* p hit
+20 carriers f hit
+20 air S hit
+70 S D hit
+100 / u* hit
+0 / [ S E C ] hit
+10 u* carriers hit
+
+1 u* u* damage
+3 u* heavy damage
+4 ships [ t D S ] damage
+10 / B damage
+
+1 a air hits-with
+1 a [ E C ] hits-with
+1 b d hits-with
+1 ! [ t D S ] hits-with
+1 A heavy hits-with
+
+1 [ b ! ] ships hit-by
+1 a air hit-by
+1 A u* hit-by
+
+50 air carriers protect
+
+"sinks" ships destroy-message
+"shoots down" air destroy-message
+
+; 0 air control
+
+begin{notes}
+This is a somewhat expanded version of the navy in the standard period.
+Each side commands a large fleet, and the sole objective is to wipe out
+the enemy's fleet.  There are different kinds of planes and ships, but
+nothing else.
+
+Speeds of ships are uniform, so that formations work better (don't want
+the carriers outstripping their escorts).
+
+You do *not* get complete control over the aircraft!  Those undisciplined
+pilots just do what they feel like doing, and only take about half their
+orders.
+end{notes}
+
+end

@@ -1,0 +1,21 @@
+Xconq 1 -+---- Modified standard period
+standard.per
+Period 1
+
+2 fuel ground produce
+4 fuel a produce ; this is less realistic, but problems otherwise
+[ 20 40 100 ] fuel cities produce
+
+[ 10 20 36 72 200 200 400 480 400 1 400 1000 1800 ] fuel u* storage
+
+6 fuel f consume   ; this causes problems for carriers
+4 fuel b consume
+
+[ 2 4 18 12 6 6 4 8 8 1 ] movers speed
+
+1 ship t capacity
+
+18 u* f enter-time  ; aircraft can't sortie again until next turn
+12 u* b enter-time
+
+end

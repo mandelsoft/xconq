@@ -1,0 +1,83 @@
+Xconq 1 ---+++   towns etc. for Western Lands in Middle Earth;
+a side is defeated if it doesn't hold a town or two villages
+.
+hobbit.map
+Globals 0 1000 1 0 6 0 
+0 0 1 1000 0
+20
+0 0 1 1000 1
+20
+0 0 1 1000 2
+20
+0 0 1 1000 3
+20
+0 0 1 1000 4
+20
+0 0 1 1000 5
+20
+Sides 6 1 0
+Sauron's*slave
+Shire*folk
+Lake*people
+Rohirrim
+Gondorian
+Pirate
+Units 58 1 0
+@ Barad-dur 44,28 0
+@ Michel*Delving 75,51 1
+@ Esgaroth 25,57 2
+@ Edoras 24,30 3
+@ Minas*Tirith 37,24 4
+@ Umbar 39,2 5
+@ Bree 3,52 -1
+@ Caras*Galadhon 20,42 -1
+@ Dol*Amroth 27,20 -1
+@ Minas*Morgul 40,24 -1
+@ Mithlond 70,53 -1
+@ Nurnen 53,21 -1
+@ Pelargir 38,19 -1
+@ Rhun 46,46 -1
+@ Rivendell 13,53 -1
+@ Tharbad 7,45 -1
+* Arnach 10,29 -1
+* Brandy*Hall 0,52 -1
+* Calembel 28,23 -1
+* Carn*Dum 1,66 -1
+* Dale 24,59 -1
+* Dol*Guldur 25,43 -1
+* Dunharrow 25,27 -1
+* Durthang 39,28 -1
+* Egladil 19,44 -1
+* Elvenking's*Halls 22,58 -1
+* Fornost 79,57 -1
+* Grimslade 11,37 -1
+* Harad*Outpost 59,2 -1
+* Helm's*Deep 21,31 -1
+* Hobbiton 77,52 -1
+* Imloth*Melui 37,12 -1
+* Isengard 19,34 -1
+* Khand 61,14 -1
+* Lamedon 14,19 -1
+* Langstrand 22,21 -1
+* Linhir 33,19 -1
+* Morthond 24,25 -1
+* Rhosgobel 27,49 -1
+* Staddle 3,54 -1
+* Tuckborough 77,50 -1
+* Undertowers 74,53 -1
+* Woodmen's*Village 21,52 -1
+/ Erebor 23,59 -1
+/ Ered*Luin 71,50 -1
+/ Ered*Mithrin 19,61 -1
+/ Iron*Hills 35,58 -1
+/ Moria 16,44 -1
+/ Moria*West*Gate 15,45 -1
+/ Orodruin 42,27 -1
+b Brandywine*Bridge 79,53 -1
+b Carrock*Ford 17,54 -1
+b Ford*of*Bruinen 12,52 -1
+b Harad*Bridge 49,9 -1
+b Osgiliath 38,24 -1
+b Sarn*Ford 2,48 -1
+b Tharbad*Bridge 8,44 -1
+b The*Last*Bridge 9,52 -1

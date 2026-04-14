@@ -1,0 +1,215 @@
+## Copyright (c) 1986, 1991  Stanley T. Shebs.
+## This program may be used, copied, modified, and redistributed freely
+## for noncommercial purposes, so long as this notice remains intact.
+
+## Imakefile created 3/18/92  Eric Ziegast
+
+## Lint may need option to increase working space.
+## LINTFLAGS=-ahqv
+
+## ******* USER-DEFINABLE OPTIONS ************************
+
+## This name sets the default period for xconq.  The standard period is
+## based on WWII and thus most familiar, although it lacks some realism.
+## The library includes many other periods, some variations on the stan-
+## dard period, and others that are for completely different games.
+## 
+## To use another period from the lib directory, define PERIOD with its
+## name (without the ".per").  That file will be linked into the source
+## directory as "standard.c".
+
+PERIOD=standard
+
+
+## Games usually have their manuals put in section 6 of the
+## manual pages.  Edit the suffix if necessary.
+
+MANSUFFIX=6
+MANDIR=$(MANSOURCEPATH)$(MANSUFFIX)
+
+
+## The {n,t,g,sq}roff command you use to generate ASCII docs
+## from manuscript (ms) format.
+
+NROFF=nroff -ms
+
+
+## If you want to change any of the names, do so here
+
+PROGRAM1=xconq
+PROGRAM2=cconq
+PROGRAMS=$(PROGRAM1) $(PROGRAM2)
+
+
+## XCONQLIB is where the period/map/scenario files will be installed.
+## The default is amongst other X applications libraries.
+
+XCONQLIB=LibDir/xconq
+
+
+## XAPPLRESDIR is where the application resource defaults are installed.
+## Normally this is in the app-defaults directory of the standard library
+## directory.  As an alternative, you may install the defaults (from
+## Xconq.ad) in your .Xdefaults file or use xrdb(1) to load them.
+
+XAPPLRESDIR=XAppLoadDir
+## XAPPLRESDIR=$(XCONQLIB)   # as an alternative
+
+
+## XCONQBIN is where the XConq/Cconq/Per2C programs will be installed.
+## Normally this is (should be) the standard X bin directory.  Modify
+## if necessary.
+
+XCONQBIN=BinDir
+
+
+## If your system uses different curses libs, change them here
+
+CURSESLIB=-lcurses -ltermlib
+
+
+## If your system needs strcasecmp, uncomment the definitions below.
+
+BSD_C= # bsd.c
+BSD_O= # bsd.o
+
+
+## Uncomment CRMODE if crmode() is how curses goes into raw mode.
+## (Most BSD-derived systems use cbreak() instead, as does xconq.)
+
+CRMODE= #-DUSECRMODE
+
+
+## If your system does not have bcopy(), comment out the next line (memcpy
+## will be used instead.
+
+BCOPY= -DBCOPY
+
+
+## If your system does not have the select() system call, comment out the
+## next line.
+
+SELECT= -DSELECT2
+
+## If you're not running on a UNIX machine which can handle argc/argv
+## in the main() routing, comment out the next line
+
+IS_UNIX=-DUNIX
+
+
+## If you want to force imake to configure for SNF fonts, uncomment
+## the line below.
+
+USESNF= #-DSnfFonts 
+
+
+## ******* STOP EDITING HERE UNLESS YOU KNOW WHAT YOU'RE DOING *******
+
+INCLUDES = -I.
+EXTRA_DEFINES = -DXCONQLIB=\"$(XCONQLIB)\" -DXAPPLRESDIR=\"$(XAPPLRESDIR)\" \
+	$(CRMODE) $(BCOPY) $(SELECT) $(IS_UNIX) $(USESNF)
+
+## Additional make suffixes supported by this file
+.SUFFIXES: $(SUFFIXES) .ms .doc .per
+
+
+## ******* THE MAIN PROGRAM ***********************
+
+MAINOBJS = xconq.o init.o command.o mplay.o mutil.o mproduce.o mvars.o \
+	sergeant.o move.o minit.o attack.o phases.o map.o mkmap.o \
+	side.o unit.o order.o util.o input.o help.o period.o \
+	ginit.o draw.o output.o standard.o $(BSD_O)
+
+MAINSRCS = xconq.c init.c command.c mplay.c mutil.c mproduce.c mvars.c \
+	sergeant.c move.c minit.c attack.c phases.c map.c mkmap.c \
+	side.c unit.c order.c util.c input.c help.c period.c \
+	ginit.c draw.c output.c standard.c $(BSD_C)
+	 
+
+## Xconq objects
+OBJS1=$(MAINOBJS) X11.o
+SRCS1=$(MAINSRCS) X11.c
+
+## Cconq objects
+OBJS2=$(MAINOBJS) curses.o
+SRCS2=$(MAINSRCS) curses.c
+
+BINDIR=$(XCONQBIN)
+
+ComplexProgramTarget_1($(PROGRAM1), $(XLIB), $(DEPXLIB))
+ComplexProgramTarget_2($(PROGRAM2),$(CURSESLIB),NullParameter)
+
+XAPPLOADDIR=$(XAPPLRESDIR)
+InstallAppDefaults(XConq)
+
+
+## ******* DOCS ***********************
+
+
+.ms.doc:
+	$(NROFF) $< > $@
+
+docs: xconq.doc xconq2.doc custom.doc period.doc
+
+clean::
+	$(RM) *.doc
+
+
+## ******* PERIODS ***********************
+
+## Per2C objects
+POBJS = per2c.o period.o
+SingleProgramTarget(per2c, $(POBJS), NullParameter, NullParameter)
+
+.per.c:
+	$(RM) $@
+	per2c < $< > $@
+
+standard.c: per2c lib/$(PERIOD).c
+	$(RM) $@
+	$(LN) lib/$(PERIOD).c $@
+
+clean::
+	$(RM) standard.c lib/$(PERIOD).c
+
+
+## ******* THE LIBRARY ***********************
+
+install:: ./lib
+	MakeDir($(XCONQLIB))
+	for i in `ls lib`; do (set -x; \	
+		$(INSTALL) -c $(INSTDATFLAGS) ./lib/$$i $(XCONQLIB)); done
+
+
+## ******* FONTS ***********************
+## The following definitions will install the fonts into a
+## subdirectory of the main font path.  As is, you will need
+## to use "xset +fp [installed path]" before starting xconq
+## or make a shell script to do this automatically.
+##
+## It is perhaps wiser to install the fonts manually into
+## a directory within the standard search path (for example,
+## $(FONTDIR)/misc ).  Take your pick.
+##
+## Macintosh(tm) MacX(tm) users(tm?) must copy the bdf(tm?) files to
+## their machines(tm whatever) and run the font installer(no tm, it's
+## just a dialog box(tm)) that is built into MacX(tm).
+
+
+##ifdef SnfFonts
+OBJS=xconq.snf standard.snf
+##else
+OBJS=xconq.pcf standard.pcf
+##endif
+
+FontTarget(xconq)
+FontTarget(standard)
+MakeFonts()
+InstallFonts($(FONTDIR)/misc/xconq)
+
+
+## ******** MISCELLANEOUS ***********************
+
+spotless:	clean
+	$(RM) -f Makefile.* Imakefile.orig save.xconq* xconq.save *~  
+	(cd lib;  rm -f *.pcf *.snf fonts.dir)
