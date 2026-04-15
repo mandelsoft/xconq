@@ -1712,7 +1712,7 @@ char opt;
 	if (reinfo) show_info(side);
 	if (reconfig) {
 	  if (active_display(side))
-	    set_sizes(side);
+	    resize_display(side, side->mw, side->mh);
 	  reconfigure_display(side,TRUE);
 /*** (UK) insert -> ***/
           redraw(side);

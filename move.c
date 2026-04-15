@@ -1653,7 +1653,7 @@ UpdateMoveLineRedraw(side,unit)
 Side *side;
 Unit *unit;
 {
-  if (side->show_orders && unit->orders.type == MOVETO) {
+  if (side && side->show_orders && & unit->orders.type == MOVETO) {
     RedrawHexArray(side,unit->x,unit->y,
 		   unit->orders.p.pt[0].x,unit->orders.p.pt[0].y);
     side->redraw = TRUE;

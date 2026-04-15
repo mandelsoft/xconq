@@ -697,14 +697,19 @@ Unit *unit;
     } else if (!(can_carry(unit_at(x, y), unit) ||
 		 can_carry(unit, unit_at(x, y)))) {
       /* An allied unit is in our way. */
-    notify(mside, "Can plan of %s, path blocked by ally %s at (%d,%d).",
-	   utypes[unit->type].name,
-	   utypes[unit_at(x, y)->type].name,
-	   x, y);
+    Unit *other=unit_at(x,y);
+    if (other == NULL) {
+        printf("no unit at (%d,%d)\n", x,y);
+    } else {
+      notify(mside, "Can plan of %s, path blocked by ally %s at (%d,%d).",
+             utypes[unit->type].name,
+             utypes[unit_at(x, y)->type].name,
+             x, y);
+      }
       free_plan(plan);
       unit->plan = NULL;
 /*    if (active_display(mside)) get_input(); */
-    munit->move_tries++;
+      munit->move_tries++;
       return FALSE;
     }
   }

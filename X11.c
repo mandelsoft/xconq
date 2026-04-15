@@ -170,7 +170,7 @@ static char bomb4_bits[] = {
 /* Don't use all of really big displays. */
 
 /*** (UK) change -> ***/
-#define MAXDISPLAYWIDTH 950
+#define MAXDISPLAYWIDTH 1500
 #define MAXDISPLAYHEIGHT 850
 /*** was:
 #define MAXDISPLAYWIDTH 900
@@ -571,14 +571,14 @@ display_width(side)
 Side *side;
 {
     return min(MAXDISPLAYWIDTH,
-	       ((19 * XDisplayWidth(sdd(), sdds())) / 20));
+	       ((18 * XDisplayWidth(sdd(), sdds())) / 20));
 }
 
 display_height(side)
 Side *side;
 {
     return min(MAXDISPLAYHEIGHT,
-	       ((19 * XDisplayHeight(sdd(), sdds())) / 20));
+	       ((18 * XDisplayHeight(sdd(), sdds())) / 20));
 }
 
 /* Most X displays have enough screen to do a world map. */
@@ -1259,6 +1259,10 @@ Side *side;
     XChangeGC(sdd(), sd()->invicongc, gcmask, &values);
 }
 
+
+int win_w = 0;
+int win_h = 0;
+
 /* Alter the size and position of a window. */
 
 change_window(side, win, x, y, w, h)
@@ -1283,8 +1287,11 @@ int x, y, w, h;
 	    mask = CWWidth | CWHeight;
 	    changes.width = w;  changes.height = h;
 	}
+        printf("x=%4d y=%4d w=%4d h=%4d\n", x,y,w,h);
+        if (x+w>win_w) win_w=x+w;
+        if (y+w>win_h) win_h=y+h;
+        XConfigureWindow(sdd(), win, mask, &changes);
     }
-    XConfigureWindow(sdd(), win, mask, &changes);
 }
 
 /* Return the number of colors - this is used to guess about monochromeness. */
@@ -1553,6 +1560,8 @@ get_input()
 
 /* Look at a single event and fill the request structure appropriately. */
 
+short count = 0;
+
 process_events(side)
 Side *side;
 {
@@ -1710,11 +1719,30 @@ Side *side;
 	  printf("Want a %dx%d window\n", evt.xconfigure.width,
 		 evt.xconfigure.height);
 	}
+        if (evt.xconfigure.window != side->main || evt.xconfigure.send_event) {
+           break;
+        }
+
+        if (count >0) {
+           count++;
+           if (count < 3) {
+              printf("SKIP resize event to %d x %d (have %d x %d)\n",
+                evt.xconfigure.width, evt.xconfigure.height,
+                side->mw, side->mh);
+              break;
+           }
+        }
+
+        count=1;
 	if (evt.xconfigure.width != side->mw ||
 	    evt.xconfigure.height != side->mh) {
+          printf("resize event to %d x %d\n", evt.xconfigure.width, evt.xconfigure.height);
 	  resize_display(side, evt.xconfigure.width, evt.xconfigure.height);
 	  /* set_sizes has been called already */
+          win_w=0;
+          win_h=0;
 	  reconfigure_display(side,False);
+          printf("max (%d x%d)\n", win_w, win_h);
 	} else if (Debug) {
 	  printf(" already got one. (must be stacking or relocation event)\n");
 	}
@@ -2529,5 +2557,17 @@ handle_connection()
   }
   close(g);
   printf("request handled\n"); fflush(stdout);
+}
+
+void get_netto_size(Side *side, Window win) {
+    XWindowAttributes gwa;
+
+    // This fetches the attributes of the window specifically.
+    // If 'win' is your client window, width and height will NOT include 
+    // the window manager's decorations (borders/title bar).
+    if (XGetWindowAttributes(sdd(), win, &gwa)) {
+        printf("Netto Width:  %d\n", gwa.width);
+        printf("Netto Height: %d\n", gwa.height);
+    }
 }
 /*** <- insert ***/ 

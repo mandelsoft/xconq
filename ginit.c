@@ -18,13 +18,13 @@
 #define W_SIDES_WIN (side->sw * side->fw)
 #define H_SIDES_WIN (numsides * side->fh)
 
-#define X_SIDES_WIN (side->lw + side->bd + (side->info_right?W_STATE_WIN+side->bd:0))
+#define X_SIDES_WIN (side->lw + (side->info_right?W_STATE_WIN+side->bd:0))
 #define Y_SIDES_WIN (0)
 
 #define W_MODE_WIN  (2 * side->margin + 14 * side->fw)
 #define H_MODE_WIN  (4 * side->fh)
 
-#define X_MODE_WIN  (side->lw + side->fw + (side->info_right?W_STATE_WIN+side->bd:0))
+#define X_MODE_WIN  (side->lw + (side->info_right?W_STATE_WIN+side->bd:0))
 #define Y_MODE_WIN  (side->trh - H_MODE_WIN - side->fh)
 
 
@@ -34,22 +34,23 @@
 #define X_CLOCK_WIN (side->lw + 20 * side->fw + (side->info_right?W_STATE_WIN+side->bd:0))
 #define Y_CLOCK_WIN (side->trh - 2 * side->fh)
 
+#define X_MAP_WIN (0)
+#define Y_MAP_WIN (side->mh - side->blh)
+
+#define W_MAP_WIN  (side->vw * side->hw)
+#define H_MAP_WIN  (side->vh * side->hch + (side->hh - side->hch))
 
 #define W_STATE_WIN (29 * side->fw)
 #define H_STATE_WIN (period.numutypes*max(side->hh, side->fh))
 
-#define X_STATE_WIN (side->lw + side->bd)
+#define X_STATE_WIN (side->lw)
 #define Y_STATE_WIN (side->world_right?side->mh-H_STATE_WIN-2*side->bd:(side->info_right?0:side->trh))
 
 #define W_WORLD_WIN (world.width * side->mm)
 #define H_WORLD_WIN (world.height * side->mm)
 
 #define Y_WORLD_WIN (side->mh-H_WORLD_WIN-2*side->bd)
-#define X_WORLD_WIN (side->lw + side->bd + (side->world_right?W_STATE_WIN+side->bd:0))
-
-/*
-#define X_WORLD_WIN (side->lw+side->bd*2+W_STATE_WIN)
-*/
+#define X_WORLD_WIN (side->lw + (side->world_right?W_STATE_WIN+side->bd:0))
 
 /*** <- insert ***/
 
@@ -245,17 +246,15 @@ Side *side;
     create_main_window(side);
     side->msg =
 	create_window(side, 0, 0,
-		      side->lw, side->nh * side->fh);
+		      side->lw-side->bd, side->nh * side->fh);
     side->info =
 	create_window(side, 0, side->nh * side->fh + side->bd,
-		      side->lw, INFOLINES * side->fh);
+		      side->lw-side->bd, INFOLINES * side->fh);
     side->prompt =
 	create_window(side, 0, (side->nh + INFOLINES) * side->fh + 2*side->bd,
-		      side->lw, side->fh);
+		      side->lw-side->bd, side->fh);
     side->map =
-	create_window(side, 0, side->tlh,
-		      side->vw * side->hw,
-		      side->vh * side->hch + (side->hh - side->hch));
+	create_window(side, X_MAP_WIN, Y_MAP_WIN, W_MAP_WIN, H_MAP_WIN);
     set_retain(side, side->map);
     side->sides =
 /*** (UK) change -> ***/
@@ -350,59 +349,76 @@ sides_width()
 config_rpart(side)
 Side *side;
 {
+    // rẃ:  width of right with borders
+    // trh: height of top part with borders
+    // brh: height of bottom part with borders
+
     if (side->mhe<=0) side->mhe=display_height(side);
-    if (H_SIDES_WIN+H_MODE_WIN+H_STATE_WIN+H_WORLD_WIN+2*side->fh+6*side->bd
+    if (H_SIDES_WIN+H_MODE_WIN+H_STATE_WIN+H_WORLD_WIN+2*side->fh+5*side->bd
 	>side->mhe) { /* not all in one column */
       if (H_STATE_WIN+H_WORLD_WIN+3*side->bd>side->mhe) {
+	if (H_SIDES_WIN+H_MODE_WIN+H_STATE_WIN+2*side->fh+4*side->bd>side->mhe)  {
+	  return FALSE;
+        }
 	/* world right */
-	/*
 	printf("world right\n");
-	*/
-	side->rw=W_STATE_WIN+W_WORLD_WIN+3*side->bd;
-	side->brh=H_STATE_WIN+2*side->bd;
+	side->rw=max(W_STATE_WIN,H_SIDES_WIN)+W_WORLD_WIN+3*side->bd;
+	side->brh=0;
+        side->trh=H_SIDES_WIN+H_MODE_WIN+H_STATE_WIN+4*side->bd;
 	side->world_right=TRUE;
 	side->info_right=FALSE;
-	if (H_SIDES_WIN+H_MODE_WIN+H_STATE_WIN+2*side->fh+4*side->bd>side->mhe) 
-	  return FALSE;
       }
-      else { /* info right */
-	/*
+      else {
+        /* info right */
 	printf("info right\n");
-	*/
-	side->rw=max(W_SIDES_WIN+W_STATE_WIN+3*side->bd,
+	side->rw=max(max(W_SIDES_WIN, 21*side->fw)+W_STATE_WIN+3*side->bd,
 		     W_WORLD_WIN+2*side->bd);
-	side->brh=H_STATE_WIN+H_WORLD_WIN+3*side->bd;
+	side->brh=H_WORLD_WIN;
+	side->trh=max(H_STATE_WIN, H_SIDES_WIN + H_MODE_WIN)+2*side->bd;
 	side->world_right=FALSE;
 	side->info_right=TRUE;
       }
     }
     else {
-      side->rw=max(W_SIDES_WIN,W_WORLD_WIN);
-      side->rw=max(side->rw,W_STATE_WIN)+2*side->bd;
-      side->brh=H_STATE_WIN+H_WORLD_WIN+3*side->bd;
+      /* one column */
+      printf("one column\n");
+      side->rw=max(max(max(W_SIDES_WIN,W_WORLD_WIN),21*side->fw), W_STATE_WIN)+2*side->bd;
+      side->trh=H_STATE_WIN+H_SIDES_WIN+H_MODE_WIN+4*side->bd;
+      side->brh=H_WORLD_WIN+2*side->bd;
       side->world_right=FALSE;
       side->info_right=FALSE;
     }
     side->trh=H_SIDES_WIN+H_MODE_WIN+2*side->fh+3*side->bd;
-    /*
-    printf("H_STATE_WIN=%d H_WORLD_WIN=%d\n",H_STATE_WIN,W_WORLD_WIN);
-    printf("rw=%d trh=%d brh=%d\n",side->rw, side->trh, side->brh);
-    */
+    printf("H_STATE_WIN=%4d H_SIDES_WIN=%4d H_WORLD_WIN=%4d\n",H_STATE_WIN,H_SIDES_WIN, H_WORLD_WIN);
+    printf("W_STATE_WIN=%4d W_SIDES_WIN=%4d W_WORLD_WIN=%4d\n",W_STATE_WIN,W_SIDES_WIN, W_WORLD_WIN);
+    printf("rw=%d trh=%d brh=%d (h=%d)\n",side->rw, side->trh, side->brh, side->trh + side->tlh);
     return TRUE;
 }
 
 config_lpart(side)
 Side *side;
 {   short abh;
-    short alw=side->mwe-side->rw-2*side->bd;
+    // available netto width
+    short netto = side->mwe-side->rw-side->bd;
+    short alw=netto;
 
     side->vw = min(world.width, alw / side->hw);
     side->nw = min(BUFSIZE, alw / side->fw);
 
-    abh = side->mhe / 3;
+    // available netto height
+    abh = (side->mhe - 3 * side->bd) / 3;
     side->nh = max(1, min((abh/side->fh) - INFOLINES - 1, MAXNOTES));
-    abh = side->mhe - ((side->nh+INFOLINES+1)*side->fh+3*side->bd);
+    // height of top part without with all borders
+    side->tlh=(side->nh+INFOLINES+1)*side->fh+4*side->bd;
+
+    abh = side->mhe - side->tlh-side->bd;
     side->vh = min(world.height, abh / side->hch);
+
+    // width exclusive right border 
+    side->lw= max(side->nw * side->fw, W_MAP_WIN) + 1*side->bd;
+    // heigth of bottom part
+    side->blh=H_MAP_WIN+2*side->bd;
+    printf("lw=%d netto=%d pnw=%d tlh=%d blh=%d (h=%d)\n",side->lw, netto, side->nw * side->fw, side->tlh, side->blh, side->tlh + side->blh);
 }
 
 /*** <- insert ***/
@@ -430,20 +446,12 @@ int mw, mh;
 
     side->mm=1;
     if (!config_rpart(side)) return FALSE;
-    arh=mh-(side->world_right?2*side->bd:
-	    (side->info_right?H_STATE_WIN:side->trh+H_STATE_WIN)+3*side->bd);
-
     config_lpart(side);
 
-    alw=max(side->vw*side->hw,side->nw*side->fw)+3*side->bd;
-    if (side->world_right) alw+=W_STATE_WIN+2*side->bd;
-    alw=mw-alw;
-    side->mm = min(arh / world.height, alw / world.width);
     /*
     printf("vh=%d vw=%d\n",side->vh,side->vw);
     printf("arh=%d arw=%d\n",arh,alw);
     */
-    if (side->mm<=0) return FALSE;
 /*** was:
     alw = max(mw/4, world.width);
     side->sw = min(maxnamelen+7, alw / side->fw);
@@ -513,6 +521,8 @@ Side *side;
     int ulhgt, llhgt, urhgt, lrhgt;
 /*** (UK) insert -> ***/
     int trh;
+    get_netto_size(side, side->main);
+    printf("target size: %d x %d\n", side->mwe,side->mhe);
 /*** <- insert ***/
 
     /* Make sure map window dimensions are OK */
@@ -528,35 +538,9 @@ Side *side;
     side->vw_odd = side->vw % 2;
     /* Compute subregion sizes (left/right upper/lower width/height) */
 /*** (UK) change -> ***/
-    config_rpart(side);
-    side->mhe=-1;
-
-    side->lw = max(side->nw * side->fw, side->hw * side->vw) + 2*side->bd;
-
-    trh=side->trh;
-    if (side->info_right) trh=0;
-
-    side->tlh = side->fh * (side->nh + INFOLINES + 1) + 3 * side->bd;
-/*** (UK) change -> ***/
-    side->blh = side->hch * side->vh + (side->hh - side->hch);
-/*** was:
-    side->blh = side->hch * side->vh + (side->hh - side->hch);
-*** <- change ***/
-
-    if (side->brh+trh > side->blh+side->tlh)
-      side->blh = side->brh+trh - side->tlh;
-
-    if (trh<side->tlh) {
-	if (side->brh+trh<side->blh+side->tlh) {
-	  trh+=min(side->tlh-trh,
-		   side->blh+side->tlh-side->brh-trh);
-	  if (!side->info_right) side->trh=trh;
-	}
-    }
-    side->brh = side->tlh+side->blh - trh;
-
-    side->mw = side->lw + side->bd + side->rw;
-    side->mh = side->tlh + 2*side->bd + side->blh;
+    side->mw = side->mwe;
+    side->mh = side->mhe;
+    printf("-> rw+lw=%d(%d)  lh=%d rh=%d(%d) \n",side->rw+side->lw, side->mw, side->tlh+side->blh, side->trh + side->brh, side->mh);
 /*** was:
     side->lw = max(side->nw * side->fw, side->hw * side->vw);
     side->rw = max((world_display(side) ? world.width * side->mm : 0),
@@ -678,36 +662,34 @@ int rzmain;
       set_colors(side);
     reset_misc(side);
     sy = 0;  sdy = side->nh * side->fh;
-    change_window(side, side->msg, 0, sy, side->lw, sdy);
+    change_window(side, side->msg, 0, sy, side->lw-side->bd, sdy);
     sy += sdy + side->bd;  sdy = INFOLINES * side->fh;
-    change_window(side, side->info, 0, sy, side->lw, sdy);
+    change_window(side, side->info, 0, sy, side->lw-side->bd, sdy);
     sy += sdy + side->bd;  sdy = 1 * side->fh;
-    change_window(side, side->prompt, 0, sy, side->lw, sdy);
+    change_window(side, side->prompt, 0, sy, side->lw-side->bd, sdy);
     change_window(side, side->map,
-		  0, side->tlh,
-		  side->vw * side->hw,
-		  side->vh * side->hch + (side->hh - side->hch));
+		  X_MAP_WIN, Y_MAP_WIN, W_MAP_WIN, H_MAP_WIN);
     change_window(side, side->sides,
 /*** (UK) change -> ***/
-                  X_SIDES_WIN, Y_SIDES_WIN, -1, -1);
+                  X_SIDES_WIN, Y_SIDES_WIN, W_SIDES_WIN, H_SIDES_WIN);
 /*** was:
 		  side->lw + side->bd, 0, -1, -1);
 *** <- change ***/
     change_window(side, side->timemode,
 /*** (UK) change -> ***/
-		  X_MODE_WIN, Y_MODE_WIN, -1, -1);
+		  X_MODE_WIN, Y_MODE_WIN, W_MODE_WIN, H_MODE_WIN);
 /*** was:
 		  side->lw + side->fw, side->trh - 4 * side->fh, -1, -1);
 *** <- change ***/
     change_window(side, side->clock,
 /*** (UK) change -> ***/
-		  X_CLOCK_WIN, Y_CLOCK_WIN, -1, -1);
+		  X_CLOCK_WIN, Y_CLOCK_WIN, W_CLOCK_WIN, H_CLOCK_WIN);
 /*** was:
 		  side->lw + 13 * side->fw, side->trh - side->fh, -1, -1);
 *** <- change ***/
 /*** (UK) change -> ***/
     change_window(side, side->state,
-		  X_STATE_WIN, Y_STATE_WIN, -1, -1);
+		  X_STATE_WIN, Y_STATE_WIN, W_STATE_WIN, H_STATE_WIN);
 /*** was:
     change_window(side, side->state,
 		  side->lw + side->bd, side->trh + side->bd, -1, -1);
