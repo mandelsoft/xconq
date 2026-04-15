@@ -1560,8 +1560,6 @@ get_input()
 
 /* Look at a single event and fill the request structure appropriately. */
 
-short count = 0;
-
 process_events(side)
 Side *side;
 {
@@ -1605,6 +1603,7 @@ Side *side;
 			      side->host, side->reqx, side->reqy);
 	} else if (evt.xbutton.window == side->world) {
 	    rawx = evt.xbutton.x;  rawy = evt.xbutton.y; 
+            rawx *= WORLD_SCALE;   rawy *= WORLD_SCALE;
 	    side->reqtype = MAPPOS;
 	    w_deform(side, rawx, rawy, &(side->reqx), &(side->reqy));
 	    if (Debug) printf("Host %s returns world %d %d\n",
@@ -1720,22 +1719,21 @@ Side *side;
 		 evt.xconfigure.height);
 	}
         if (evt.xconfigure.window != side->main || evt.xconfigure.send_event) {
+                printf("SKIP resize non-main window %d x %d (have %d x %d)\n",
+                  evt.xconfigure.width, evt.xconfigure.height,
+                  side->mw, side->mh);
            break;
         }
 
-        if (count >0) {
-           count++;
-           if (count < 3) {
-              printf("SKIP resize event to %d x %d (have %d x %d)\n",
-                evt.xconfigure.width, evt.xconfigure.height,
-                side->mw, side->mh);
-              break;
-           }
-        }
 
-        count=1;
 	if (evt.xconfigure.width != side->mw ||
 	    evt.xconfigure.height != side->mh) {
+          if (check_netto_size(side)) {
+                printf("SKIP resize event to %d x %d mismatch for win size have %d x %d)\n",
+                  evt.xconfigure.width, evt.xconfigure.height,
+                  side->mw, side->mh);
+                break;
+          }
           printf("resize event to %d x %d\n", evt.xconfigure.width, evt.xconfigure.height);
 	  resize_display(side, evt.xconfigure.width, evt.xconfigure.height);
 	  /* set_sizes has been called already */
@@ -1870,19 +1868,19 @@ int x, y, len, color;
 
     w_xform(side, x, y, &sx1, &sy);
     w_xform(side, x + len, y, &sx2, &sy);
-    sww = side->mm * world.width;
+    sww = w_lenform(side, world.width);
     XSetFillStyle(sdd(), sd()->gc, FillSolid);
     XSetForeground(sdd(), sd()->gc, color);
     if (sx1 < sww && sx2 >= sww) {
 	XFillRectangle(sdd(), side->world, sd()->gc,
-		       sx1, sy, (unint) sww - sx1, (unint) side->mm);
+		       sx1, sy, (unint) (sww - sx1), (unint) w_lenform(side, 1));
 	XFillRectangle(sdd(), side->world, sd()->gc,
-		       0, sy, (unint) sx2 - sww, (unint) side->mm);
+		       0, sy, (unint) (sx2 - sww), (unint) w_lenform(side, 1));
     } else {
 	sx1 %= sww;
 	sx2 %= sww;
 	XFillRectangle(sdd(), side->world, sd()->gc,
-		       sx1, sy, (unint) sx2 - sx1, (unint) side->mm);
+		       sx1, sy, (unint) (sx2 - sx1), (unint) w_lenform(side, 1));
     }
 #ifdef STUPIDFLUSH
     XFlush(sdd());
@@ -1898,7 +1896,7 @@ invert_box(side, vcx, vcy)
 Side *side;
 int vcx, vcy;
 {
-    int x1, y1, x2, y2, sx1, sy1, sx2, sy2, mm2 = side->mm/2;
+    int x1, y1, x2, y2, sx1, sy1, sx2, sy2, mm2 = side->mm/WORLD_SCALE/2;
 
     x1 = vcx - side->vw2 + side->vh2/2;  y1 = vcy - side->vh2;
     x2 = vcx + side->vw2 - side->vh2/2;  y2 = vcy + side->vh2;
@@ -1908,10 +1906,10 @@ int vcx, vcy;
     XSetFunction(sdd(), sd()->gc, GXinvert);
     /* is this next call really necessary? */
     XSetLineAttributes(sdd(), sd()->gc, 1, LineSolid, CapButt, JoinMiter);
-    XDrawLine(sdd(), side->world, sd()->gc, sx1, sy1, sx2, sy1);
-    XDrawLine(sdd(), side->world, sd()->gc, sx2, sy1-1, sx2, sy2+1);
-    XDrawLine(sdd(), side->world, sd()->gc, sx2, sy2, sx1, sy2);
-    XDrawLine(sdd(), side->world, sd()->gc, sx1, sy2+1, sx1, sy1-1);
+    XDrawLine(sdd(), side->world, sd()->gc, sx1, sy1    , sx2, sy1);
+    XDrawLine(sdd(), side->world, sd()->gc, sx2, (sy1-1), sx2, (sy2+1));
+    XDrawLine(sdd(), side->world, sd()->gc, sx2, sy2    , sx1, sy2);
+    XDrawLine(sdd(), side->world, sd()->gc, sx1, (sy2+1), sx1, (sy1-1));
     XSetFunction(sdd(), sd()->gc, GXcopy);
 }
 
@@ -2570,4 +2568,17 @@ void get_netto_size(Side *side, Window win) {
         printf("Netto Height: %d\n", gwa.height);
     }
 }
+
+int check_netto_size(Side *side) {
+    XWindowAttributes gwa;
+
+    if (XGetWindowAttributes(sdd(), side->main, &gwa)) {
+        if ( gwa.width != side->mw ||
+             gwa.height != side->mh) {
+             return False;
+        }
+    }
+    return True;
+}
+
 /*** <- insert ***/ 

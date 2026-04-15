@@ -390,3 +390,5 @@ extern bool humans[];
 
 extern short areas_wide;      /* number of areas in x direction */
 extern short areas_high;      /* number of areas in y direction */
+
+extern int WORLD_SCALE;

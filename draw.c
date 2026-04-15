@@ -183,16 +183,35 @@ int sx, sy, *xp, *yp;
 /* Transform coordinates in the world display.  Simpler, since no moving */
 /* viewport nonsense. */
 
+w_lenform(side, l)
+Side *side;
+int l;
+{
+  l*=side->mm;
+  l/=WORLD_SCALE;
+  if (l==0) {
+    l=1;
+  }
+  return l;
+}
+
+w_lendeform(side,l)
+Side *side;
+int l;
+{
+  return l*side->mm*WORLD_SCALE;
+}
+
 w_xform(side, x, y, sxp, syp)
 Side *side;
 int x, y, *sxp, *syp;
 {
 /*** (UK) change -> ***/
-    *sxp = side->mm * ( x+ wrap(y/2));
+    *sxp = side->mm * ( x+ wrap(y/2))/WORLD_SCALE;
 /*** was:
     *sxp = side->mm * x + (side->mm * y) / 2;
 *** <- change ***/
-    *syp = side->mm * (world.height - 1 - y);
+    *syp = (side->mm * (world.height - 1 - y))/WORLD_SCALE;
 }
 
 /* Translate Cartesian pixels back to map coords. */

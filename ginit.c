@@ -46,11 +46,14 @@
 #define X_STATE_WIN (side->lw)
 #define Y_STATE_WIN (side->world_right?side->mh-H_STATE_WIN-2*side->bd:(side->info_right?0:side->trh))
 
-#define W_WORLD_WIN (world.width * side->mm)
-#define H_WORLD_WIN (world.height * side->mm)
+
+#define W_WORLD_WIN (world.width * side->mm/WORLD_SCALE)
+#define H_WORLD_WIN (world.height * side->mm/WORLD_SCALE)
 
 #define Y_WORLD_WIN (side->mh-H_WORLD_WIN-2*side->bd)
 #define X_WORLD_WIN (side->lw + (side->world_right?W_STATE_WIN+side->bd:0))
+
+int WORLD_SCALE=2;
 
 /*** <- insert ***/
 
@@ -354,6 +357,9 @@ Side *side;
     // brh: height of bottom part with borders
 
     if (side->mhe<=0) side->mhe=display_height(side);
+    int m = world.width;
+    if (m < world.height) m=world.height;
+    WORLD_SCALE=max(1, 4*m/side->mhe);
     if (H_SIDES_WIN+H_MODE_WIN+H_STATE_WIN+H_WORLD_WIN+2*side->fh+5*side->bd
 	>side->mhe) { /* not all in one column */
       if (H_STATE_WIN+H_WORLD_WIN+3*side->bd>side->mhe) {
@@ -404,6 +410,7 @@ Side *side;
 
     side->vw = min(world.width, alw / side->hw);
     side->nw = min(BUFSIZE, alw / side->fw);
+    printf("fw=%d -> nw=%d\n", side->fw, side->nw);
 
     // available netto height
     abh = (side->mhe - 3 * side->bd) / 3;
@@ -412,7 +419,7 @@ Side *side;
     side->tlh=(side->nh+INFOLINES+1)*side->fh+4*side->bd;
 
     abh = side->mhe - side->tlh-side->bd;
-    side->vh = min(world.height, abh / side->hch);
+    side->vh = min(world.height, (abh-(side->hh - side->hch)) / side->hch);
 
     // width exclusive right border 
     side->lw= max(side->nw * side->fw, W_MAP_WIN) + 1*side->bd;
@@ -709,8 +716,8 @@ int rzmain;
       change_window(side, side->main, -1, -1, side->mw, side->mh);
       printf("main window configured to %dx%d\n", side->mw, side->mh);
     }
-#if 0
     redraw(side);
+#if 0
 #endif
 /*** (UK) insert -> ***/
     clear_window(side,side->main);
