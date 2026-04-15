@@ -202,10 +202,11 @@ true [ * @ ] maker
 
 0 r* u* in-length
 1 r* aircraft in-length
+1 r* e in-length
 
 0 r* u* out-length
-1 r* r out-length
--1 r* [ i e a T f h b W S G m w l I ] out-length
+1 r* [ r T ] out-length
+-1 r* [ i e a f h b W S G m w l I ] out-length
 
 100 mines survival
 
@@ -252,7 +253,10 @@ false missles consume-as-occupant
 [ 10 10 ] mines T capacity
 6 ground t capacity
 1 e t capacity
-2 movers # capacity
+1 e # capacity
+1 ground # capacity
+1 ship # capacity
+1 aircraft # capacity
 
 1 ground volume
 1 I volume
