@@ -270,6 +270,7 @@ typedef struct a_side {
     short rw, lw;             /* widths of right and left parts of display */
     short mw, mh;             /* main window width and height */
 /*** (UK) insert -> ***/
+    short wscale;             /* basic world scale */
     short mwe, mhe;
     bool  world_right;
     bool  info_right;
@@ -391,4 +392,3 @@ extern bool humans[];
 extern short areas_wide;      /* number of areas in x direction */
 extern short areas_high;      /* number of areas in y direction */
 
-extern int WORLD_SCALE;

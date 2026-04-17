@@ -188,7 +188,7 @@ Side *side;
 int l;
 {
   l*=side->mm;
-  l/=WORLD_SCALE;
+  l/=side->wscale;
   if (l==0) {
     l=1;
   }
@@ -199,7 +199,7 @@ w_lendeform(side,l)
 Side *side;
 int l;
 {
-  return l*side->mm*WORLD_SCALE;
+  return l*side->wscale/side->mm;
 }
 
 w_xform(side, x, y, sxp, syp)
@@ -207,11 +207,11 @@ Side *side;
 int x, y, *sxp, *syp;
 {
 /*** (UK) change -> ***/
-    *sxp = side->mm * ( x+ wrap(y/2))/WORLD_SCALE;
+    *sxp = side->mm * ( x+ wrap(y/2))/side->wscale;
 /*** was:
     *sxp = side->mm * x + (side->mm * y) / 2;
 *** <- change ***/
-    *syp = (side->mm * (world.height - 1 - y))/WORLD_SCALE;
+    *syp = (side->mm * (world.height - 1 - y))/side->wscale;
 }
 
 /* Translate Cartesian pixels back to map coords. */
@@ -220,8 +220,8 @@ w_deform(side, sx, sy, xp, yp)
 Side *side;
 int sx, sy, *xp, *yp;
 {
-    *yp = world.height - 1 - sy / side->mm;
-    *xp = sx / side->mm - (*yp) / 2;
+    *yp = world.height - 1 - sy *side->wscale/side->mm;
+    *xp = sx *side->wscale/side->mm - (*yp) / 2;
     *xp = wrap(*xp);
 }
 

@@ -541,6 +541,28 @@ int u;
 	wprintf(side, "Chance to see %d%% at 1 hex, to %d%% at %d hexes.",
 		utypes[u].seebest, utypes[u].seeworst, utypes[u].seerange);
     }
+/*** (UK) insert -> ***/
+    for_all_unit_types(u2) {
+      if (can_type_carry(u2,u)) {
+        printf("unit %s: %s -> %d\n", utypes[u].name, utypes[u2].name, utypes[u].transportseerange[u2]); 
+        if (utypes[u].transportseerange[u2] >=0 ) {
+          if (utypes[u].transportseerange[u2] != utypes[u].seerange) {
+            if (utypes[u].transportseerange[u2] ==0 ) {
+              wprintf(side, "See range disabled as occupant of %s", utypes[u2].name);
+            }
+            else {
+              if (utypes[u].transportseerange[u2] > utypes[u].seerange ) {
+                wprintf(side, "See range increased to %d hexes as occupant of %s", utypes[u].transportseerange[u2], utypes[u2].name);
+              }
+              else {
+                wprintf(side, "See range decreased to %d hexes as occupant of %s", utypes[u].transportseerange[u2], utypes[u2].name);
+              }
+            }
+          }
+        }
+      }
+    }
+/*** <- insert ***/
     wprintf(side, "Own visibility is %d.", utypes[u].visibility);
     if (utypes[u].volume > 0 || utypes[u].holdvolume > 0)
 	wprintf(side, "Volume is %d, volume of hold is %d.",

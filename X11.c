@@ -548,7 +548,7 @@ Side *side;
   side->main = XCreateSimpleWindow(sdd(), DefaultRootWindow(sdd()),
 				   50, 3,
 				   display_width(side), display_height(side),
-				   3, black_color(side), white_color(side));
+				   0, black_color(side), white_color(side));
 /*** was:
   side->main = XCreateSimpleWindow(sdd(), DefaultRootWindow(sdd()),
 				   50, 3,
@@ -1115,7 +1115,7 @@ Side *side;
 {
     XWMHints	wmhints;
     helpwinlines =
-	max(56, (25 + period.numrtypes + period.numttypes + period.numutypes));
+	max(56, (40 + period.numrtypes + period.numttypes + period.numutypes));
 
 /*** (HW) change -> ***/
     side->help = XCreateSimpleWindow(sdd(), DefaultRootWindow(sdd()),
@@ -1603,7 +1603,6 @@ Side *side;
 			      side->host, side->reqx, side->reqy);
 	} else if (evt.xbutton.window == side->world) {
 	    rawx = evt.xbutton.x;  rawy = evt.xbutton.y; 
-            rawx *= WORLD_SCALE;   rawy *= WORLD_SCALE;
 	    side->reqtype = MAPPOS;
 	    w_deform(side, rawx, rawy, &(side->reqx), &(side->reqy));
 	    if (Debug) printf("Host %s returns world %d %d\n",
@@ -1896,7 +1895,7 @@ invert_box(side, vcx, vcy)
 Side *side;
 int vcx, vcy;
 {
-    int x1, y1, x2, y2, sx1, sy1, sx2, sy2, mm2 = side->mm/WORLD_SCALE/2;
+    int x1, y1, x2, y2, sx1, sy1, sx2, sy2, mm2 = side->mm/side->wscale/2;
 
     x1 = vcx - side->vw2 + side->vh2/2;  y1 = vcy - side->vh2;
     x2 = vcx + side->vw2 - side->vh2/2;  y2 = vcy + side->vh2;

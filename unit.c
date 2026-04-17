@@ -245,6 +245,13 @@ int x, y;
 /* Decide whether transport has the capability to house the given unit. */
 /* Check both basic capacity and relative volumes. */
 
+can_type_carry(ttype, utype)
+int	ttype;
+int	utype;
+{
+  return utypes[ttype].capacity[utype];
+}
+
 can_carry_aux(transport, utype)
      Unit	*transport;
      int	utype;

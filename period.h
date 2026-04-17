@@ -106,6 +106,9 @@ typedef struct utype {
     short bridge[MAXUTYPES];  /* true if transport accessible across terr */
     short mobility[MAXUTYPES];  /* true if unit is useless as occupant */
     /* attributes for viewing */
+/*** (UK) insert -> ***/
+    short transportseerange[MAXUTYPES];  /* see range when in transport */
+/*** <- insert ***/
     short seealways;         /* true if unit view always up-to-date */
     short seebest;           /* chance of seeing other units */
     short seeworst;          /* see chance at max range */

@@ -47,13 +47,11 @@
 #define Y_STATE_WIN (side->world_right?side->mh-H_STATE_WIN-2*side->bd:(side->info_right?0:side->trh))
 
 
-#define W_WORLD_WIN (world.width * side->mm/WORLD_SCALE)
-#define H_WORLD_WIN (world.height * side->mm/WORLD_SCALE)
+#define W_WORLD_WIN (world.width * side->mm/side->wscale)
+#define H_WORLD_WIN (world.height * side->mm/side->wscale)
 
 #define Y_WORLD_WIN (side->mh-H_WORLD_WIN-2*side->bd)
 #define X_WORLD_WIN (side->lw + (side->world_right?W_STATE_WIN+side->bd:0))
-
-int WORLD_SCALE=2;
 
 /*** <- insert ***/
 
@@ -359,7 +357,10 @@ Side *side;
     if (side->mhe<=0) side->mhe=display_height(side);
     int m = world.width;
     if (m < world.height) m=world.height;
-    WORLD_SCALE=max(1, 4*m/side->mhe);
+    side->wscale=max(1, 4*m/side->mhe);
+
+    int clock=21*side->fw + W_CLOCK_WIN;
+
     if (H_SIDES_WIN+H_MODE_WIN+H_STATE_WIN+H_WORLD_WIN+2*side->fh+5*side->bd
 	>side->mhe) { /* not all in one column */
       if (H_STATE_WIN+H_WORLD_WIN+3*side->bd>side->mhe) {
@@ -368,7 +369,7 @@ Side *side;
         }
 	/* world right */
 	printf("world right\n");
-	side->rw=max(W_STATE_WIN,H_SIDES_WIN)+W_WORLD_WIN+3*side->bd;
+	side->rw=max(W_STATE_WIN,max(H_SIDES_WIN, clock))+W_WORLD_WIN+3*side->bd;
 	side->brh=0;
         side->trh=H_SIDES_WIN+H_MODE_WIN+H_STATE_WIN+4*side->bd;
 	side->world_right=TRUE;
@@ -377,7 +378,7 @@ Side *side;
       else {
         /* info right */
 	printf("info right\n");
-	side->rw=max(max(W_SIDES_WIN, 21*side->fw)+W_STATE_WIN+3*side->bd,
+	side->rw=max(max(W_SIDES_WIN, clock)+W_STATE_WIN+3*side->bd,
 		     W_WORLD_WIN+2*side->bd);
 	side->brh=H_WORLD_WIN;
 	side->trh=max(H_STATE_WIN, H_SIDES_WIN + H_MODE_WIN)+2*side->bd;
@@ -388,7 +389,7 @@ Side *side;
     else {
       /* one column */
       printf("one column\n");
-      side->rw=max(max(max(W_SIDES_WIN,W_WORLD_WIN),21*side->fw), W_STATE_WIN)+2*side->bd;
+      side->rw=max(max(max(max(W_SIDES_WIN, clock) ,W_WORLD_WIN),21*side->fw), W_STATE_WIN)+2*side->bd;
       side->trh=H_STATE_WIN+H_SIDES_WIN+H_MODE_WIN+4*side->bd;
       side->brh=H_WORLD_WIN+2*side->bd;
       side->world_right=FALSE;

@@ -644,7 +644,11 @@ Unit *unit;
   Mplan *plan = unit->plan;
   
   if (plan == NULL) return FALSE;
+/*** (UK) change -> ***/
+  find_worths(seerange(unit));
+/*** was:
   find_worths(utypes[unit->type].seerange);
+*** <- change ***/
   x = plan->x;
   y = plan->y;
   if (bestworth > unit->priority &&

@@ -427,6 +427,7 @@ clear_period()
 	    utypes[u].mobility[u2] = 100;
 /*** (UK) insert -> ***/
 	    utypes[u].freemove[u2] = TRUE;
+	    utypes[u].transportseerange[u2] = -1;
 /*** <- insert ***/
 	}
 	for (r = 0; r < MAXRTYPES; ++r) {
@@ -946,6 +947,7 @@ init_words()
     add_word("leave-time", U2, 3, VOFFSET(Utype, leavetime));
 /*** (UK) insert -> ***/
     add_word("free-move", U2, 3, VOFFSET(Utype, freemove));
+    add_word("see-range-in-transport", U2, 3, VOFFSET(Utype, transportseerange));
 /*** <- insert ***/
     add_word("bridge", U2, 3, VOFFSET(Utype, bridge));
     add_word("alter-mobility", U2, 3, VOFFSET(Utype, mobility));

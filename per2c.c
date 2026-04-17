@@ -165,6 +165,9 @@ print_utypes()
 	printf("  { ");
 	for_all_unit_types(u2) printf("%d, ", utypes[u].mobility[u2]);
 	printf(" },\n");
+	printf("  { ");
+	for_all_unit_types(u2) printf("%d, ", utypes[u].transportseerange[u2]);
+	printf(" },\n");
 	printf("  %d, %d, %d, %d, %d,\n",
 	       utypes[u].seealways, utypes[u].seebest, utypes[u].seeworst,
 	       utypes[u].seerange, utypes[u].visibility);

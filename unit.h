@@ -402,6 +402,7 @@ extern int numunits, orderargs[];
 extern char *ordernames[];
 
 extern void init_units();
+extern bool can_type_carry();
 extern bool can_carry();
 extern void occupy_unit(), leave_unit(), leave_hex();
 extern bool occupy_hex();

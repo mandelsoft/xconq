@@ -409,6 +409,19 @@ int x, y;
     }
 }
 
+/*** (UK) change -> ***/
+seerange(unit)
+Unit *unit;
+{
+    int u = unit->type;
+    int range = utypes[u].seerange;
+    if (unit->transport && utypes[u].transportseerange[unit->transport->type]>=0) {
+      range=utypes[u].transportseerange[unit->transport->type];
+    }
+    return range;
+}
+/*** <- insert ***/
+
 /* Unit's beady eyes are now covering the immediate area.  The iteration */
 /* covers a hex area;  since new things may be coming into view, we have */
 /* to check and maybe draw lots of hexes (but only need the one flush, */
@@ -426,10 +439,11 @@ int x0, y0, onoff;
 /*** <- insert ***/
 
     if (neutral(unit) || period.allseen || unit->x < 0 || unit->y < 0) return;
-    range = utypes[u].seerange;
 /*** (UK) change -> ***/
+    range = seerange(unit);
     if (range<0)
 /*** was:
+    range = utypes[u].seerange;
     if (range<1)
 *** <- change ***/
       return;
