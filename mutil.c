@@ -296,6 +296,19 @@ Unit *unit;
     return FALSE;
 }
 
+/*** (UK) change -> ***/
+bool can_terraform(unit)
+Unit *unit;
+{
+    int p;
+
+    for_all_terrain_types(p) {
+	if (could_terraform(unit->type, p)) return TRUE;
+    }
+    return FALSE;
+}
+/*** <- change ***/
+
 /* Test if unit can move out into adjacent hexes. */
 
 can_move(unit)

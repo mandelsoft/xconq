@@ -323,6 +323,9 @@ Side *side;
 Unit *unit;
 {
     int i, u = unit->type, r, nums[MAXUTYPES], xpos, p = unit->product;
+/*** (UK) insert -> ***/
+    int t = unit->terraform;
+/*** <- insert ***/
     Unit *occ;
     char tmp2[BUFSIZE];
 
@@ -434,6 +437,13 @@ Unit *unit;
 		utypes[unit->next_product].name);
 	draw_info_text(side, 30, 2, -1, spbuf);
       }
+/*** (UK) insert -> ***/
+      if (terraforming(unit)) {
+	sprintf(spbuf, "Terraforming %s in %d turns",
+		ttypes[t].name, unit->tschedule);
+	draw_info_text(side, 30, 1, -1, spbuf);
+      }
+/*** <- insert ***/
       sprintf(spbuf, "");
       for_all_resource_types(r) {
 	if (utypes[u].storage[r] > 0) {

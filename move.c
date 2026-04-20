@@ -1693,6 +1693,9 @@ int nx, ny;
     
     IncrementSORedrawLevel(unit->side);
 /*** <- insert ***/
+/*** (UW) insert -> ***/
+    cancel_terraform(unit); 
+/*** <- insert ***/
     cancel_build(unit);
 /*** (HW) insert -> ***/
     if (unit->orders.type == MOVETO) {

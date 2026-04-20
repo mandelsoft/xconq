@@ -435,6 +435,9 @@ clear_period()
 	}
 	for (t = 0; t < MAXTTYPES; ++t) {
 	    utypes[u].moves[t] = -1;
+/*** (UK) insert -> ***/
+	    utypes[u].terraform[r] = 0;
+/*** <- insert ***/
 	}
     }
     for (t = 0; t < MAXTTYPES; ++t) {
@@ -599,7 +602,14 @@ int offset;
 		    s2d(n.v.vec[z], i1.v.vec[z], i2.v.num);
 		}
 	    } else {
-		arg_error_2d("mismatched argument types", n, i1, i2);
+		//arg_error_2d("mismatched argument types", n, i1, i2);
+		if (n.len != i1.len)
+		    arg_error_2d("mismatched vectors", n, i1, i2);
+		for (z = 0; z < i2.len; ++z) {
+                  for (zz = 0; zz < i1.len; ++zz) {
+                      s2d(n.v.vec[zz], i1.v.vec[zz], i2.v.vec[z]);
+                  }
+                }
 	    }
 	}
     }
@@ -938,6 +948,7 @@ init_words()
     add_word("starve-message", S1, 2, OFFSET(Utype, starvemsg));
     add_word("speed", U1, 2, OFFSET(Utype, speed));
     add_word("moves", U2, 3, VOFFSET(Utype, moves));
+    add_word("terraform", U2, 3, VOFFSET(Utype, terraform));
     add_word("random-move", U2, 3, VOFFSET(Utype, randommove));
     add_word("to-move", U2, 3, VOFFSET(Utype, tomove));
     add_word("capacity", U2, 3, VOFFSET(Utype, capacity));

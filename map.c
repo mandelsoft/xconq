@@ -18,6 +18,7 @@
 /* A mapfile header has various pieces that we need to save. */
 
 typedef struct a_header {
+    int version;                /* format version */
     int numincls;               /* number of included files */
     char *includes[MAXINCLUDES];  /* raw names of included files */
     int numnotes;               /* number of lines in designer notes */
@@ -142,6 +143,8 @@ char *name;
 /* The header line tells us which sections to try to load.  For some */
 /* sections, flag them as loaded so we know not to synthesize replacements. */
 
+int format_version=0;
+
 load_sections(fp)
 FILE *fp;
 {
@@ -153,10 +156,19 @@ FILE *fp;
     head = (Header *) malloc(sizeof(Header));
     if (mainhead == NULL) mainhead = head;
 
-    if (2!=fscanf(fp, "Xconq %d %s", &numfiles, sect)) {
-      fprintf(stderr, "Error: bad format in load_sections (maybe 0 length file)");
-      exit(1);
+    format_version=0;
+    if (3!=fscanf(fp, "%d-Xconq %d %s", &format_version, &numfiles, sect)) {
+        if (2!=fscanf(fp, "Xconq %d %s", &numfiles, sect)) {
+          fprintf(stderr, "Error: bad format in load_sections (maybe 0 length file)\n");
+          exit(1);
+        }
     }
+    if (format_version < 0 || format_version > 1) {
+          fprintf(stderr, "Error: unknown format version %d\n", format_version);
+          exit(1);
+    }
+    printf("using format version %d\n", format_version);
+    head->version = format_version;
     head->numincls = numfiles;
     head->sections = copy_string(sect);
     head->sdetail = head->udetail = 0;
@@ -685,11 +697,18 @@ FILE *fp;
 	   &(unit->id), &(unit->number), &truesidenum,
 	   &(unit->hp), &(unit->quality), &garbage, &garbage,
 	   &(unit->product), &(unit->schedule), &(unit->built), &nut);
+    switch (format_version) {
+      case 1:
+        fscanf(fp, "%hd %hd %hd",
+            &(unit->terraform), &(unit->tschedule), &(unit->last_terraform));
+        break;
+    }
     unit->next_product = unit->product / 256;
     unit->product = unit->product % 256;
     for_all_resource_types(r) {
 	fscanf(fp, "%hd", &(unit->supply[r]));
     }
+
     fscanf(fp, "\n");
     unit->trueside = side_n(truesidenum);
     /* tricky way to ensure subsequent units will have unique ids */
@@ -890,6 +909,7 @@ char *fname;
     strcat(savefname, fname);
 
     head = (Header *) malloc(sizeof(Header));
+    head->version = 1;
     head->numincls = (perfilename ? 1 : 0);
     head->includes[0] = perfilename;
     head->sections = "+-++++";
@@ -946,10 +966,22 @@ Header *head;
     enter_procedure("write_mapfile");
 
     if ((fp = fopen(fname, "w")) != NULL) {
-	fprintf(fp, "Xconq %d %s %s%s\n",
-		head->numincls, head->sections,
-		(head->numnotes > 0 ? head->notes[0] : ""),
-		(head->numnotes > 1 ? ";" : ""));
+        switch (head->version) {
+           case 0:
+                fprintf(fp, "Xconq %d %s %s%s\n",
+                        head->numincls, head->sections,
+                        (head->numnotes > 0 ? head->notes[0] : ""),
+                        (head->numnotes > 1 ? ";" : ""));
+                break;
+           default:
+                fprintf(fp, "%d-Xconq %d %s %s%s\n",
+                        head->version,
+                        head->numincls, head->sections,
+                        (head->numnotes > 0 ? head->notes[0] : ""),
+                        (head->numnotes > 1 ? ";" : ""));
+                break;
+        }
+        format_version = head->version;
 	if (head->numnotes > 1) {
 	    for (i = 1; i < head->numnotes; ++i) {
 		fprintf(fp, "%s\n", head->notes[i]);
@@ -1343,6 +1375,12 @@ FILE *fp;
 	    unit->hp, unit->quality, 0, 0,
 	    unit->product+256*unit->next_product, unit->schedule, unit->built,
 	    (unit->transport ? unit->transport->id : -1));
+    switch (format_version) {
+       case 1:
+          fprintf(fp, "%hd %hd %hd  ",
+             unit->terraform, unit->tschedule, unit->last_terraform);
+          break;
+    }
     for_all_resource_types(i) {
 	fprintf(fp, "%d ", unit->supply[i]);
     }

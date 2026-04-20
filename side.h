@@ -235,6 +235,11 @@ typedef struct a_side {
     char ustr[MAXUTYPES];     /* used in composing unit type hints */
     int uvec[MAXUTYPES];      /* vector of allowed unit types to input */
     int bvec[MAXUTYPES];      /* bit vector of allowed unit types to input */
+/*** (UK) insert -> ***/
+    char tstr[MAXTTYPES];     /* used in composing terrain type hints */
+    int tvec[MAXTTYPES];      /* vector of allowed terrain types to input */
+    int tbvec[MAXTTYPES];      /* bit vector of allowed terrain types to input */
+/*** <- insert ***/
     /* Machinery for standing orders */
     bool teach;               /* true when only setting a standing order */
 /*** (UK) insert -> ***/

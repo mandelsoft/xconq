@@ -79,6 +79,9 @@ typedef struct utype {
     short make[MAXUTYPES];   /* base time to build a unit */
     short tomake[MAXRTYPES]; /* amount of resource needed to build */
     short repair[MAXUTYPES]; /* how many turns to regain a hit point */
+/*** (UK) insert -> ***/
+    short terraform[MAXTTYPES];  /* base time to terraform */
+/*** <- insert ***/
     /* attributes for supply phase */
     short survival;          /* how long unit can starve */
     char *starvemsg;         /* what to say when unit runs out of supplies */
@@ -191,6 +194,9 @@ typedef struct ttype {
 /* Macros to reduce the number of brackets and explicit structure refs. */
 
 #define could_make(u1,u2) (utypes[u1].make[u2] > 0)
+/*** (UK) insert -> ***/
+#define could_terraform(u,t) (utypes[u].terraform[t] > 0)
+/*** <- insert ***/
 
 #define could_repair(u1, u2) (utypes[u1].repair[u2] > 0)
 

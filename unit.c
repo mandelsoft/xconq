@@ -18,6 +18,7 @@
 #include "side.h"
 #include "unit.h"
 #include "map.h"
+#include "dir.h"
 #include "global.h"
 
 char *ordinal();
@@ -101,6 +102,10 @@ char *name;
 /*** (UK) insert -> ***/
     newunit->group = NULL;
     newunit->last_unit = NULL;
+
+    newunit->terraform = TNOTHING;
+    newunit->tschedule = 0;
+    newunit->last_terraform = TNOTHING;
 /*** <- insert ***/
     newunit->x = newunit->y = -1;
     newunit->prevx = newunit->prevy = -1;
@@ -838,6 +843,9 @@ Unit *unit, *transport;
 {
 
     if (!utypes[unit->type].occproduce) cancel_build(unit);
+/*** (UK) insert -> ***/
+    cancel_terraform(unit); 
+/*** <- insert ***/
     if (!midturnrestore)
       check_for_embarkies(unit, transport);
     unit->nexthere = transport->occupant;
@@ -989,6 +997,27 @@ int captured[MAXUTYPES], killed[MAXUTYPES]; /* arrays to increment */
     }
 }
 
+void set_terraform(unit, type)
+Unit *unit;
+int type;
+{
+    int oldproduct=unit->terraform;
+    if (!neutral(unit) && global.setproduct && type != unit->terraform) {
+	unit->terraform = type;
+	if (type != TNOTHING) {
+	    if (!utypes[unit->type].maker) {
+	      order_sentry(unit, terraform_time(unit, type));
+	    }
+	}
+    }
+}
+
+void set_tschedule(unit)
+Unit *unit;
+{
+    if (terraforming(unit)) unit->tschedule = terraform_time(unit, unit->terraform);
+}
+
 /* Change the product of a unit.  Displays will need appropriate mods. */
 
 void set_product(unit, type)
@@ -1038,6 +1067,29 @@ Unit *unit;
 {
     if (producing(unit)) unit->schedule = build_time(unit, unit->product);
 }
+
+/*** (UK) change -> ***/
+terraform_time(unit, type)
+Unit *unit;
+int type;
+{
+  int d, nx, ny;
+  int diff=0;
+  int research=0;
+  if (type != unit->last_terraform) {
+     research=utypes[unit->type].terraform[type]/2;
+  }
+  short cur = terrain_at(unit->x,unit->y);
+  for_all_directions(d) {
+      nx = wrap(unit->x + dirx[d]);  ny = limit(unit->y + diry[d]);
+      short t = terrain_at(nx,ny);
+      diff+t-cur;
+  }
+  printf("diff=%d\n", diff);
+  return max(1, utypes[unit->type].terraform[type]+diff/NUMDIRS);
+}
+
+/*** <- change ***/
 
 /* Basic routine to compute how long a unit will take to build something. */
 
@@ -1376,6 +1428,21 @@ Unit *unit;
       unit->schedule = 0;
     }
 }
+
+/*** (UK) insert -> ***/
+void cancel_terraform(unit)
+Unit *unit;
+{
+    Side *us = unit->side;
+
+    if (global.setproduct && terraforming(unit)) {
+      notify(us, "%s moved, cancelling its terraforming!", unit_handle(us, unit));
+      if (active_display(us) && humanside(us)) beep(us);
+      set_terraform(unit, TNOTHING);
+      unit->tschedule = 0;
+    }
+}
+/*** <- insert ***/
 
 /* Display the standing orders of the given unit. */
 

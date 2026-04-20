@@ -210,8 +210,11 @@ Side *side;
 		      side->margin, (t+3)*spacing,
 		      (side->monochrome ? side->fgcolor : side->hexcolor[t]),
 		      (side->monochrome ? ttypes[t].tchar : HEX));
+        char buf[4] = { '(', ttypes[t].tchar, ')', '\0' };
 	draw_fg_text(side, side->help,
-		     tcol, (t+3)*spacing+offset, ttypes[t].name);
+		     tcol, (t+3)*spacing+offset, buf);
+	draw_fg_text(side, side->help,
+		     tcol+5*side->hfw, (t+3)*spacing+offset, ttypes[t].name);
     }
     for_all_unit_types(u) {
 	draw_unit_icon(side, side->help,
@@ -591,9 +594,9 @@ int u;
     }
     wprintf(side, "");
     wprintf(side, "%s",
-	    "   Terrain  Slowed Rand% Hide% Defn% Prod% Attr% Acdn%");
+	    "   Terrain  Slowed Rand% Hide% Defn% Prod% Attr% Acdn% Terra");
     wprintf(side, "%s",
-	    "               (-)   (0)   (0)   (0)   (0)   (0)   (0)");
+	    "               (-)   (0)   (0)   (0)   (0)   (0)   (0)  -  ");
     for_all_terrain_types(t) {
 	sprintf(spbuf, "%10s: ", ttypes[t].name);
 	append_number(spbuf, utypes[u].moves[t], -1);
@@ -603,7 +606,8 @@ int u;
 	append_number(spbuf, utypes[u].productivity[t], 0);
 	append_number(spbuf, utypes[u].attrition[t], 0);
 	append_number(spbuf, utypes[u].accident[t], 0);
-	wprintf(side, "%s", spbuf);
+        append_number(spbuf, utypes[u].terraform[t], 0);
+        wprintf(side, "%s", spbuf);
     }
     wprintf(side, "");
     wprintf(side, "%s%s",

@@ -113,6 +113,9 @@ print_utypes()
 	printf("  { ");
 	for_all_unit_types(u2) printf("%d, ", utypes[u].repair[u2]);
 	printf(" },\n");
+	printf("  { ");
+	for_all_terrain_types(t) printf("%d, ", utypes[u].terraform[t]);
+	printf(" },\n");
 	printf("  %d, \"%s\",\n", utypes[u].survival, utypes[u].starvemsg);
 	printf("  { ");
 	for_all_resource_types(r) printf("%d, ", utypes[u].produce[r]);

@@ -303,6 +303,7 @@ build_phase()
 	for_all_occupants(unit, occ) repair_unit(unit, occ);
 	if (unit->transport != NULL) repair_unit(unit, unit->transport);
 	work_on_new_unit(unit);
+	work_on_terraform(unit);
       }
     }
 /*** (HW) insert -> ***/
@@ -354,6 +355,29 @@ repair_unit(unit, unit2)
   }
   exit_procedure();
 }
+
+/*** (UK) insert -> ***/
+work_on_terraform(unit)
+Unit *unit;
+{
+    int u = unit->type, r, mk, rmk, use;
+
+    enter_procedure("work_on_terraform");
+    if (!neutral(unit)) {
+	if (terraforming(unit)) {
+	    unit->tschedule--;
+	    if (unit->tschedule <= 0) {
+	        int  terrain = unit->terraform;
+                set_terraform(unit, TNOTHING);
+		notify(unit->side, "%s finished terraforming!", unit_handle(unit->side, unit));
+                set_terrain_at(unit->x, unit->y, terrain);
+                unit->last_terraform = terrain;
+	    }
+	}
+    }
+    exit_procedure();
+}
+/*** <- insert ***/
 
 /* Machine players need opportunities to change their production. */
 /* Neutrals never produce (what could they do with the results?). */

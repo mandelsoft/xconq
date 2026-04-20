@@ -1288,6 +1288,8 @@ cleandir::
 
 # # ******* PERIODS ***********************
 
+.SUFFIXES: .per
+
 # # Per2C objects
 POBJS = per2c.o period.o
 
@@ -1301,6 +1303,8 @@ cleandir::
 .per.c:
 	$(RM) $@
 	./per2c < $< > $@
+
+lib/$(PERIOD).c:: per2c
 
 standard.c: per2c lib/$(PERIOD).c
 	$(RM) $@

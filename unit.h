@@ -6,6 +6,7 @@
 
 #define NOTHING (MAXUTYPES+1)  /* A number guaranteed to be a non-unit. */
 /*** (UK) insert -> ***/
+#define TNOTHING (MAXTTYPES+1)  /* A number guaranteed to be a non-terrain. */
 #define ALL (MAXUTYPES+2)  /* A number guaranteed to be a non-unit. */
 /*** <- insert ***/
 
@@ -295,6 +296,11 @@ typedef struct a_unit {
     struct a_side *trueside;   /* whose side this unit is really on */
     short hp;                  /* how much more damage it can take */
     short quality;             /* "veteran-ness" */
+/*** (UK) insert -> ***/
+    short terraform;           /* type of terrain this unit is terraforming */
+    short tschedule;           /* when the unit will be done */
+    short last_terraform;      /* last complete done terraforming */
+/*** <- insert ***/
     short product;             /* type of unit this unit is producing */
     short schedule;            /* when the unit will be done */
     short built;               /* how many units of current type made so far */
@@ -366,6 +372,9 @@ typedef struct a_unit {
 #define neutral(u) ((u)->side == NULL)
 
 #define producing(u) ((u)->product != NOTHING)
+/*** (UK) insert -> ***/
+#define terraforming(u) ((u)->terraform != TNOTHING)
+/*** <- insert ***/
 
 #define busy(u) (producing(u) || (u)->schedule > 0)
 

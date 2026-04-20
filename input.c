@@ -73,7 +73,7 @@ int do_sentry(), do_delay(), do_wakeup(), do_wakemain(), do_embark(),
     do_visibility(),
 /*** <- reinsert ***/
 /*** (UK) insert -> ***/
-    do_afteroccupants(),
+    do_afteroccupants(), do_terraform(),
     do_pickup(), do_sentry_occupants(),do_take_all(),
     do_seenenemy(), do_returnenemy(), do_condition(),
     do_saveposition(), do_backposition(),
@@ -141,6 +141,7 @@ FuncTab commands[] = {
     'p', do_patrol, ITERFLAG, TRUE, "go on a patrol",
     'P', do_product, 1, TRUE, "set/change unit production",
 /*** (UK) insert -> ***/
+    '_', do_terraform, 1, TRUE, "set/change unit terraforming",
     '*', do_group, 0,FALSE, "set/change unit group",
 /** <- insert ***/
     '\020', do_next_product, 1, TRUE, "set next product",
@@ -572,6 +573,61 @@ int n;
     }
 }
 
+/*** (UK) insert -> ***/
+y_terraform_type(side,unit,t)
+Side *side;
+Unit *unit;
+int t;
+{
+      if (t != unit->terraform) {
+        if (!can_terraform(unit,t)) {
+	  cmd_error(side,"You cannot terraform to %s here!",ttypes[t].name);
+	  return;
+	}
+	set_terraform(unit, t);
+	set_tschedule(unit);
+        notify(side, "%s is terraforming %s now.",
+               unit_handle(side, unit), ttypes[unit->terraform].name);
+      }
+}
+
+request_new_terrain(unit)
+Unit *unit;
+{
+    int u;
+    int t;
+    Side *us = unit->side;
+    short types[MAXTTYPES];
+
+    if (humanside(us)) {
+        for_all_terrain_types(t) {
+            types[t]=utypes[unit->type].terraform[t];
+        }
+        int numtypes=0;
+        types[terrain_at(unit->x, unit->y)]=0;
+        for_all_terrain_types(t) {
+            if (types[t] > 0) {
+              numtypes++;
+            }
+        }
+        if (numtypes == 0) {
+            cmd_error("Useless to terraform to current terrain.");
+        }
+        else {
+          sprintf(spbuf, "%s will terraform: ", unit_handle(us, unit));
+          if (!(u=ask_terrain_type(us, unit, y_terraform_type, 
+                        spbuf, types)))
+            cmd_error("This unit cannot terraform anything!");
+        }
+    } else {
+        /* TODO
+	set_product(unit, machine_product(unit));
+	set_schedule(unit);
+        */
+    }
+}
+/*** <- insert ***/
+
 /* The handler for unit production needs to make sure valid input has */
 /* been received, will put in another request if not. */
 
@@ -793,6 +849,76 @@ short *possibles;
 	return 2;
     }
 }
+
+/*** (UK) change -> ***/
+static x_terrain_type(side)
+Side *side;
+{
+    int i, type = -2;
+
+    switch (side->reqtype) {
+      case KEYBOARD:
+	  if (side->reqch == '?') {
+	      help_unit_type(side);
+	  } else if (side->reqch == ESCAPE) {
+	      type = -1;
+	  } else if (side->reqch == DELETE) {
+	      type = TNOTHING;
+	  } else if (side->reqch == '\r') {
+	      type = TNOTHING;
+	  } else if (side->reqch == ' ') {
+	      if (side->requnit && !side->requnit->transport) {
+		type = terrain_at(side->requnit->x, side->requnit->y);
+		if (!side->tbvec[type]) type=-2;
+	      }
+	  } else if (iindex(side->reqch, side->tstr) != -1) {
+             type = find_terr(side->reqch);
+	  }
+	  break;
+      default:
+	  break;
+    }
+    if (type >= -1) {
+	clear_prompt(side);
+	for_all_terrain_types(i) side->tbvec[i] = 0;
+	if (type >= 0) finish_request2(side,type,side->reqtvalue);
+    }
+    else continue_request(side);
+}
+ask_terrain_type(side, unit, handler, prompt, possibles)
+Side *side;
+Unit *unit;
+RequestHandler handler;
+char *prompt;
+short *possibles;
+{
+    int numtypes = 0, t, type;
+
+    for_all_terrain_types(t) {
+	side->tbvec[t] = 0;
+	if (possibles == NULL || possibles[t]) {
+	    side->tbvec[t] = 1;
+	    side->tstr[numtypes] = ttypes[t].tchar;
+	    side->tvec[numtypes] = t;
+	    numtypes++;
+	}
+    }
+    if (numtypes == 0) {
+	return 0;
+    } else if (numtypes == 1) {
+	type = side->tvec[0];
+	side->tbvec[type] = 0;
+	handler(side,unit,side->tvec[0],numtypes);
+	return 1;
+    } else {
+	side->tstr[numtypes] = '\0';
+	sprintf(side->promptbuf, "%s [%s] ", prompt, side->tstr);
+	side->reqtvalue=numtypes;
+	start_request(side,unit,handler,x_terrain_type);
+	return 2;
+    }
+}
+/*** <- change ***/
 
 /* Interpret the user's input in response to a position request.  All we */
 /* have to comprehend is direction keys and mouse hits.  Space bars and */

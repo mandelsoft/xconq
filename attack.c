@@ -71,10 +71,12 @@ Unit *atker, *other;
     ahit = ohit = 0;
     for_all_unit_types(u) occhits[u] = occkills[u] = 0;
 /*** (UK) insert -> ***/
-    if (could_hit(atker->type,other->type))
+    if (could_hit(atker->type,other->type)) {
 /*** <- insert ***/
-    attack_unit(atker, other, TRUE);
+      attack_unit(atker, other, TRUE);
+      cancel_terraform(other);
 /*** (UK) change -> ***/
+    }
     if (could_counterattack(atker->type, other->type)) {
         counterattack=TRUE;
 /*** was:
@@ -82,6 +84,7 @@ Unit *atker, *other;
 *** <- change ***/
 	attack_unit(other, atker, FALSE);
 /*** (UK) insert -> ***/
+        cancel_terraform(other);
     }
 /*** <- insert ***/
     reckon_damage();

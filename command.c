@@ -2432,6 +2432,33 @@ int n;
     }
 }
 
+/*** (UK) insert -> ***/
+/* Change what a unit is terraforming. */
+
+do_terraform(side, unit, n)
+Side *side;
+Unit *unit;
+int n;
+{
+    if (!global.setproduct) {
+	cmd_error(side, "No construction changes allowed in this game!");
+    } else {
+        if (producing(unit)) {
+	    cmd_error(side, "This unit is already producing %s!", utypes[unit->product].name);
+            return;
+        }
+	if (!can_terraform(unit)) {
+	    cmd_error(side, "This unit can't terraform anything!");
+	} else if (unit->transport == NULL) {
+	    if (!utypes[unit->type].maker) 
+		wake_unit(unit, NOTHING, WAKEOWNER, (Unit *) NULL);
+	    request_new_terrain(unit);
+	} else 
+	    cmd_error(side, "This unit unable to produce inside other units.");
+    }
+}
+/*** <- insert ***/
+
 /* Change what a unit is producing. */
 
 do_product(side, unit, n)
@@ -2442,6 +2469,12 @@ int n;
     if (!global.setproduct) {
 	cmd_error(side, "No construction changes allowed in this game!");
     } else {
+/*** (UK) insert -> ***/
+        if (terraforming(unit)) {
+            cmd_error(side, "No construction when terraforming!");
+            return;
+        }
+/*** <- insert ***/
 	if (!can_produce(unit)) {
 	    cmd_error(side, "This unit can't build anything!");
 	} else if (utypes[unit->type].occproduce || utypes[unit->type].maker
@@ -2453,6 +2486,7 @@ int n;
 	    cmd_error(side, "This unit unable to produce inside other units.");
     }
 }
+
 /* Setting what a unit will produce next. */
 
 do_next_product(side, unit, n)
