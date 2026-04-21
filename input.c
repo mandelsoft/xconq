@@ -581,13 +581,21 @@ int t;
 {
       if (t != unit->terraform) {
         if (!can_terraform(unit,t)) {
-	  cmd_error(side,"You cannot terraform to %s here!",ttypes[t].name);
-	  return;
+            cmd_error(side,"You cannot terraform to %s here!",ttypes[t].name);
+            return;
 	}
+        if (t==TNOTHING) {
+            if (unit->terraform != TNOTHING) {
+                notify(side, "%s is cancelling terraforming to %s.",
+                       unit_handle(side, unit), ttypes[unit->terraform].name);
+            }
+        }
+        else {
+            notify(side, "%s is terraforming %s now.",
+                   unit_handle(side, unit), ttypes[t].name);
+        }
 	set_terraform(unit, t);
 	set_tschedule(unit);
-        notify(side, "%s is terraforming %s now.",
-               unit_handle(side, unit), ttypes[unit->terraform].name);
       }
 }
 
@@ -859,7 +867,8 @@ Side *side;
     switch (side->reqtype) {
       case KEYBOARD:
 	  if (side->reqch == '?') {
-	      help_unit_type(side);
+              printf("help terrain\n");
+	      help_terrain_type(side);
 	  } else if (side->reqch == ESCAPE) {
 	      type = -1;
 	  } else if (side->reqch == DELETE) {

@@ -1074,19 +1074,19 @@ Unit *unit;
 int type;
 {
   int d, nx, ny;
-  int diff=0;
   int research=0;
   if (type != unit->last_terraform) {
      research=utypes[unit->type].terraform[type]/2;
   }
-  short cur = terrain_at(unit->x,unit->y);
+  short sum = terrain_at(unit->x,unit->y);
   for_all_directions(d) {
       nx = wrap(unit->x + dirx[d]);  ny = limit(unit->y + diry[d]);
       short t = terrain_at(nx,ny);
-      diff+t-cur;
+      sum+=t;
   }
-  printf("diff=%d\n", diff);
-  return max(1, utypes[unit->type].terraform[type]+diff/NUMDIRS);
+  short cur=sum/(NUMDIRS+1);
+  printf("base=%d delta=%d research=%d\n", utypes[unit->type].terraform[type], abs(type-cur), research);
+  return max(1, utypes[unit->type].terraform[type]+abs(type-cur)*2)+research;
 }
 
 /*** <- change ***/

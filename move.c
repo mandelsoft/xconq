@@ -1599,9 +1599,10 @@ bool mustgo, atk, offcourse;
             }
 	    else {
 	      if (human_order(unit) && mustgo) {
-		  cmd_error(us, "%s cannot enter %s!",
+		  cmd_error(us, "%s cannot enter %s (enter time %d)!",
 		    unit_handle(us, unit),
-		    unit_handle(us, unit2));
+		    unit_handle(us, unit2),
+                    utypes[u].entertime[u2]);
 	      }
 	    }
 /*** <- insert ***/

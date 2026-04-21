@@ -698,3 +698,16 @@ Side *side;
 	}
     }
 }
+
+help_terrain_type(side)
+Side *side;
+{
+    int t;
+
+    for_all_terrain_types(t) {
+	if (side->tbvec[t]) {
+	    notify(side, " %c  %s",
+		   ttypes[t].tchar, ttypes[t].name);
+	}
+    }
+}
