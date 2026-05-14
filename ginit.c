@@ -312,6 +312,8 @@ Side *side;
     side->lastx = side->lasty = -1;
     if (Debug) printf("Successfully opened \"%s\"!\n", side->host);
 /*** (UK) insert -> ***/
+    side->defutype=NOTHING;
+    side->defttype=TNOTHING;
     update_clock(side);
     return 1;
 /*** <- insert ***/ 
@@ -717,8 +719,8 @@ int rzmain;
       change_window(side, side->main, -1, -1, side->mw, side->mh);
       printf("main window configured to %dx%d\n", side->mw, side->mh);
     }
-    redraw(side);
 #if 0
+    redraw(side);
 #endif
 /*** (UK) insert -> ***/
     clear_window(side,side->main);

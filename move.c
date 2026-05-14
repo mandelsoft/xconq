@@ -789,8 +789,10 @@ Unit *unit;
 	side->curunit = unit;
 /*** (UK) insert -> ***/
 	if (unit->x!=side->curx || unit->y!=side->cury) {
-	  side->last_x=side->curx;
-	  side->last_y=side->cury;
+          if (side->curx >= 0 && side->cury >= 0) {
+            side->last_x=side->curx;
+            side->last_y=side->cury;
+          }
 	}
 /*** <- insert ***/
 	side->curx = unit->x;  side->cury = unit->y;

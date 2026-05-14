@@ -34,7 +34,7 @@
 /* The stack doesn't have to be very deep, unless the period description is */
 /* really perverted.  Depth should be at least MAXUTYPES+5 or so... */
 
-#define STACKSIZE 50
+#define STACKSIZE 200
 
 /* An object has four possible types.  Numbers can only be integers, and */
 /* vectors may only contain integers.  Strings are unlimited, while symbols */
@@ -68,6 +68,7 @@
 typedef struct a_obj {
     int type;          /* type of the object */
     int len;           /* length if it's a vector */
+    int line;          /* line in file */
     union {
 	int num;       /* numeric value */
 	char *str;     /* string value */
@@ -109,6 +110,8 @@ int push_value();      /* predeclare to cover some forward refs */
 /* There are also a number of consistency checks, though not all possible, */
 /* and nothing is done to test play balance for the period :-). */
 
+int line;
+
 read_period(fp)
 FILE *fp;
 {
@@ -122,6 +125,7 @@ FILE *fp;
     if (extension == 0) {
 	clear_period();
     }
+    line=2;
     while (get_token(pfp)) {
 	if (Debug) {
 	    print_object(curobj, FALSE);
@@ -215,11 +219,13 @@ FILE *fp;
 
     while (state != ENDTOKEN) {
 	ch = getc(fp);
+        if (ch == '\n') line++;
 	switch (ch) {
 	case EOF:
 	    return FALSE;
 	case ';':
 	    while ((ch = getc(fp)) != '\n' && ch != EOF);
+            line++;
 	    break;
 	default:
 	    switch (state) {
@@ -280,6 +286,7 @@ FILE *fp;
 	    break;
 	}
     }
+    curobj.line=line;
     return TRUE;
 }
 
@@ -333,7 +340,12 @@ push_word()
     if (top < STACKSIZE) {
 	stack[top++] = curobj;
     } else {
-	fprintf(stderr, "Stack overflow!\n");
+        int i;
+	fprintf(stderr, "Stack overflow (%d)!\n",line);
+        for (i = 0; i < STACKSIZE; i++) {
+          fprintf(stderr, "%4d: ", stack[i].line);
+          print_object2(stack[i], TRUE);
+        }
 	exit(1);
     }
 }
@@ -545,8 +557,8 @@ char *msg;
 Obj a, b;
 {
     fprintf(stderr, "Error in array setting: %s\n", msg);
-    print_object(a, TRUE);
-    print_object(b, TRUE);
+    print_object2(a, TRUE);
+    print_object2(b, TRUE);
     exit(1);
 }
 
@@ -621,10 +633,10 @@ arg_error_2d(msg, a, b, c)
 char *msg;
 Obj a, b, c;
 {
-    fprintf(stderr, "Error in array setting: %s\n", msg);
-    print_object(a, TRUE);
-    print_object(b, TRUE);
-    print_object(c, TRUE);
+    fprintf(stderr, "Error in array setting (%d): %s\n",line,  msg);
+    print_object2(a, TRUE);
+    print_object2(b, TRUE);
+    print_object2(c, TRUE);
     exit(1);
 }
 
@@ -834,7 +846,7 @@ print_stack()
     } else {
 	printf("/* Stack ");
 	for (i = 0; i < top; ++i) {
-	    print_object(stack[i], FALSE);
+	    print_object2(stack[i], FALSE);
 	}
 	printf("*/\n");
     }
@@ -847,25 +859,40 @@ print_object(obj, newline)
 Obj obj;
 bool newline;
 {
+  _print_object2(stdout, obj, newline);
+}
+
+print_object2(obj, newline)
+Obj obj;
+bool newline;
+{
+  _print_object2(stderr, obj, newline);
+}
+
+_print_object2(fp, obj, newline)
+FILE *fp;
+Obj obj;
+bool newline;
+{
     int i;
 
     switch (obj.type) {
     case INT:
-	printf("%d ", obj.v.num);
+	fprintf(fp, "%d ", obj.v.num);
 	break;
     case STR:
-	printf("\"%s\" ", obj.v.str);
+	fprintf(fp, "\"%s\" ", obj.v.str);
 	break;
     case SYM:
-	printf("%s ", words[obj.v.sym].name);
+	fprintf(fp, "%s ", words[obj.v.sym].name);
 	break;
     case VEC:
-	printf("[");
-	for (i = 0; i < obj.len; ++i) printf("%d,", obj.v.vec[i]);
-	printf("] ");
+	fprintf(fp, "[");
+	for (i = 0; i < obj.len; ++i) fprintf(fp, "%d,", obj.v.vec[i]);
+	fprintf(fp, "] ");
 	break;
     }
-    if (newline) printf("\n");
+    if (newline) fprintf(fp, "\n");
 }
 
 /* Build the initial dictionary.  At the end of this file, to eliminate need */

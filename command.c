@@ -1163,11 +1163,14 @@ bool b;
 { 
 if (b) {
 	Side *s;
+        //period.numutypes++;
+        //printf("increaing utypes to %d\n", period.numutypes);
 	notify_all("Game will be saved to \"%s\" ...", SAVEFILE);
 	for_all_sides(s) flush_output(s);
 	if (!write_savefile(SAVEFILE)) { /* XXX */
 	    cmd_error(side, "Can't open file \"%s\"!", SAVEFILE);
 	}
+        //period.numutypes--;
     }
 }
 
@@ -2120,6 +2123,9 @@ int m;
   side->somode=m;
   sprintf(tmpbuf,"Type of occupant to get standing %s orders",
 		      sorder_types[side->somode]);
+  if (producing(unit)) {
+      side->defutype = unit->product;
+  }
   if (!ask_unit_type(side, unit, y_standing_1, tmpbuf,
 		    utypes[unit->type].capacity)) 
       cmd_error(side, "This unit never has occupants to give orders to!");
@@ -2351,6 +2357,7 @@ do_backposition(side,n)
 Side *side;
 { int x,y;
 
+  printf("back %d: %d,%d\n", n, side->last_x, side->last_y);
   if (side->last_x>=0) {
     x=side->curx; side->curx=side->last_x; 
     y=side->cury; side->cury=side->last_y; 

@@ -623,6 +623,9 @@ Unit *unit;
         }
         else {
           sprintf(spbuf, "%s will terraform: ", unit_handle(us, unit));
+          if (terraforming(unit)) {
+              us->defttype=unit->terraform;
+          }
           if (!(u=ask_terrain_type(us, unit, y_terraform_type, 
                         spbuf, types)))
             cmd_error("This unit cannot terraform anything!");
@@ -785,7 +788,7 @@ Side *side;
 	  } else if (side->reqch == DELETE) {
 	      type = NOTHING;
 	  } else if (side->reqch == '\r') {
-	      type = NOTHING;
+	      type = side->defutype;
 	  } else if (side->reqch == ' ') {
 	      if (side->requnit) {
 		type = side->requnit->type;
@@ -811,6 +814,7 @@ Side *side;
     }
     if (type >= -1) {
 	clear_prompt(side);
+        side->defutype=NOTHING;
 	for_all_unit_types(i) side->bvec[i] = 0;
 	draw_unit_list(side, side->bvec);
 	if (type >= 0) finish_request2(side,type,side->reqtvalue);
@@ -874,7 +878,7 @@ Side *side;
 	  } else if (side->reqch == DELETE) {
 	      type = TNOTHING;
 	  } else if (side->reqch == '\r') {
-	      type = TNOTHING;
+	      type = side->defttype;
 	  } else if (side->reqch == ' ') {
 	      if (side->requnit && !side->requnit->transport) {
 		type = terrain_at(side->requnit->x, side->requnit->y);

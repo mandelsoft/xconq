@@ -185,6 +185,9 @@ add_searched(unit,x,y,maxdist,pred)
   struct pathelem	*temp,**scan;
   int	dir, newx,newy;
 
+  //int hu = humanside(unit->side);
+  int hu=0;
+
   for (scan = &SPathBorder; *scan!=NULL; scan = &(*scan)->next)
     if ((*scan)->x==x && (*scan)->y==y)
       break;
@@ -208,6 +211,7 @@ add_searched(unit,x,y,maxdist,pred)
 
       newx = wrap(x + dirx[dir]);
       newy = y + diry[dir];
+      if (hu) printf("try next hex (%d,%d)\n", newx, newy);
 
       if ( (*pred)(unit, newx,newy) )
 	{
@@ -226,9 +230,13 @@ add_searched(unit,x,y,maxdist,pred)
 	  if (NULL != already_searched(newx,newy, SPath) ||
 	      NULL != already_searched(newx,newy, SPathBorder) )
 #endif
-	    continue;
+	    {
+              if (hu) printf("  already searched\n");
+              continue;
+            }
 
 	  entercost = enter_cost(unit,newx,newy);
+          if (hu) printf("  -> enter cost %d\n", entercost, newy);
 	  if (entercost<0)
 	    continue;
 	  if (SPath->dist+entercost > maxdist)

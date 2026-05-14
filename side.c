@@ -78,7 +78,6 @@ bool person;
 	    newside->enemyseen=FALSE;
 	    newside->savflag=FALSE;
             newside->mhe=newside->mwe=-1;
-	    newside->last_x=newside->last_y=-1;
             for (i=0; i<MAXSAVESTATE; i++)
 		newside->savstate[i].used=FALSE;
 /*** <- insert ***/
@@ -130,6 +129,7 @@ bool person;
 	    newside->distinctsotypes = TRUE;
 	    newside->clip_xmin = newside->clip_ymin = INT_MAX;
 	    newside->clip_xmax = newside->clip_ymax = -1;
+	    newside->last_x = newside->last_y = -1;
 	    newside->redraw = FALSE;
 /*** <- insert ***/
 	    init_requests(newside);

@@ -1155,6 +1155,7 @@ FILE *fp;
     fprintf(fp, "%d  ", side->ideology);
     for (s = 0; s < numsides; ++s) fprintf(fp, "%d ", side->attitude[s]);
     fprintf(fp, " ");
+    printf("write unit counts for %d unit types for side %s\n", period.numutypes, side->name);
     for_all_unit_types(u) fprintf(fp, "%d ", side->counts[u]);
     fprintf(fp, "\n");
 }

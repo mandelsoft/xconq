@@ -1070,9 +1070,11 @@ char *name;
     Pixmap rslt;
 
     make_pathname(NULL, name, "b", spbuf);
+    printf("try bitmap %s\n", spbuf);
     a = XReadBitmapFile(sdd(), side->main, spbuf, &w, &h, &rslt, &hotx, &hoty);
     if (a == BitmapSuccess) return rslt;
     make_pathname(xconqlib, name, "b", spbuf);
+    printf("try bitmap %s\n", spbuf);
     a = XReadBitmapFile(sdd(), side->main, spbuf, &w, &h, &rslt, &hotx, &hoty);
     if (a == BitmapSuccess) return rslt;
     fprintf(stderr, "Bitmap name \"%s\" not found here or in \"%s\"!\n",
