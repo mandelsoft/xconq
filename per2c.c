@@ -135,6 +135,9 @@ print_utypes()
 	printf("  { ");
 	for_all_resource_types(r) printf("%d, ", utypes[u].outlength[r]);
 	printf(" },\n");
+	printf("  { ");
+	for_all_unit_types(u2) printf("%d, ", utypes[u].transfer[u2]);
+	printf(" },\n");
 	printf(" %d, \n", utypes[u].consume_as_occupant);
 	printf("  %d,\n",
 	       utypes[u].speed);

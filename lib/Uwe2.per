@@ -191,7 +191,7 @@ true [ * @ ] maker
 2 fuel a produce ; this is less realistic, but problems otherwise
 [ 10 20 50 ] fuel cities produce
 [  5 10 20 ] ammo cities produce
-20 fuel P produce
+50 fuel P produce
 
 
 100 [ plains ] [ e a ]  productivity
@@ -203,7 +203,7 @@ true [ * @ ] maker
 0 swamp P productivity
 
 ;[i e  a   T  f  h  b   d   s   t   C   B   W   S   r   G  m w l  I  N R #  /   *   @  P  ] "units"
-[ 6 60 10 200 18 12 36 100 100 200 300 300  50  80 200  50 2 0 1 150 1 0 0 200 500 900 30 ] fuel u* storage
+[ 6 60 10 200 18 12 36 100 100 200 300 300  50  80 200  50 2 0 1 300 1 0 0 200 500 900 50 ] fuel u* storage
 [ 6  0  4 200  3  2  3  20  10  20  40  40   0   6   0   0 1 1 1  1  1 0 0 100 200 400  0 ] ammo u* storage
 1 fuel [ i e ] consume
 1 fuel missles consume
@@ -214,18 +214,22 @@ true [ * @ ] maker
 1 fuel aircraft in-length
 1 fuel e in-length
 1 fuel P in-length
-1 fuel bases in-length
+2 fuel bases in-length
 
 0 r* u* out-length
-1 r* [ r T P ] out-length
+1 r* [ r T ] out-length
+2 fuel P out-length
 -1 r* [ i e a f h b W S G m w l I ] out-length
+100 u* P transfer
+40 u* [ r T ] transfer
 
 100 mines survival
 
 false aircraft consume-as-occupant
 false missles consume-as-occupant
 
-[ 1 1 2 2 9 4 6 3 3 2 4 4 1 3 4 3 4 2 1 1 10 ] movers speed
+;[i e a T f h b d s t C B N W S r G m w l I ] "movers"
+[ 1 1 2 2 9 4 6 3 3 2 4 4 1 3 4 3 4 2 1 1 15 ] movers speed
 
 0 land i moves
 0 land e moves
@@ -249,14 +253,14 @@ false missles consume-as-occupant
 40 water w random-move
 
 1 [ i N ] b capacity
-4  [ m N ] S capacity
+[ 4 1 ] [ m N ] S capacity
 1 [ m l ] i capacity
 [ 2  3 ] [ m l ] f capacity
 1 m h capacity
-[ 4 6 4 2 1 1 10 10 ] [ h f i b W r m w ] C capacity
+[ 4 6 4 2 1 1 1 10 10 ] [ h f i b S W r m w ] C capacity
 6 [ m w ] B capacity
 3 [ m w ] d capacity
-4 m s capacity
+3 [ m w ] s capacity
 1 [ i e ] R capacity
 3 ground G capacity
 1 e G capacity
@@ -264,6 +268,8 @@ false missles consume-as-occupant
 [ 5 2 ] missles G capacity
 [ 10  2 ] missles T capacity
 [ 10 10 ] mines T capacity
+2 [ i a ] T capacity
+1 e T capacity
 6 ground t capacity
 1 e t capacity
 1 e # capacity

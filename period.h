@@ -91,6 +91,7 @@ typedef struct utype {
     short consume[MAXRTYPES];  /* overhead consumption in each turn */
     short inlength[MAXRTYPES];  /* length of supply line coming in */
     short outlength[MAXRTYPES];  /* length of supply line going out */
+    short transfer[MAXUTYPES];  /* transfer rate */
     short consume_as_occupant;  /* should unit eat in base */
     /* attributes for move phase */
     short speed;             /* maximum theoretical speed in hexes/turn */

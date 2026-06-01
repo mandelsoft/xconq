@@ -600,6 +600,172 @@ int n;
     }
 }
 
+/*** (UK) insert -> ***/
+do_next_sibling(side, unit, n)
+Side *side;
+Unit *unit;
+int n;
+{
+    Unit *nextup;
+
+    switch (side->mode) {
+    case MOVE:
+	cmd_error(side, "Can only look at occupants when in survey mode!");
+	break;
+    case SURVEY:
+        if (n==0 && unit->transport != NULL) {
+            nextup = unit->transport;
+        } else if (n>0 && unit->transport != NULL) {
+	    nextup = unit->transport->occupant;
+            while (--n && nextup->nexthere != NULL) {
+                nextup = nextup->nexthere;
+            }
+	    make_current(side, nextup);
+        } else if (unit->nexthere != NULL) {
+	    make_current(side, unit->nexthere);
+        } else if (unit->transport == NULL && unit->occupant != NULL) {
+	    make_current(side, unit->occupant);
+	} else {
+	    nextup = unit->transport;
+	    if (nextup != NULL) {
+		while (nextup->transport != NULL && nextup->nexthere == NULL) {
+		    nextup = nextup->transport;
+		}
+		if (nextup->nexthere != NULL)
+		    make_current(side, nextup->nexthere);
+		if (nextup->transport == NULL)
+		    make_current(side, nextup);
+	    }
+	}
+	break;
+    default:
+	case_panic("mode", side->mode);
+	break;
+    }
+}
+
+Unit* find_prev(side, unit)
+Side *side;
+Unit *unit;
+{
+  if (unit->transport == NULL) {
+    Unit *prev=unit->occupant;
+    if (prev == NULL) {
+       return unit;
+    }
+    while (prev->nexthere != NULL) {
+      prev=prev->nexthere;
+    }
+    return prev;
+  }
+  if (unit == unit->transport->occupant) {
+    // first in transport
+    return unit->transport;
+  }
+
+  Unit *prev=unit->transport->occupant;
+  while (prev != NULL && prev->nexthere != unit) {
+    printf(" skip %s\n", prev->name);
+    prev=prev->nexthere;
+  }
+  if (prev!=NULL) {
+    return prev;
+  }
+  // unit is not occupant in its transport
+  return unit;
+}
+
+do_prev_sibling(side, unit, n)
+Side *side;
+Unit *unit;
+int n;
+{
+    Unit *nextup;
+
+    switch (side->mode) {
+    case MOVE:
+	cmd_error(side, "Can only look at occupants when in survey mode!");
+	break;
+    case SURVEY:
+        if (n==0 && unit->transport != NULL) {
+            nextup = unit->transport;
+        } else if (n>0 && unit->transport != NULL) {
+            while (--n && nextup->nexthere != NULL) {
+                nextup = nextup->nexthere;
+            }
+        } else {
+            nextup=find_prev(side, unit);
+        }
+        if (nextup != unit) {
+          make_current(side, nextup);
+        }
+	break;
+    default:
+	case_panic("mode", side->mode);
+	break;
+    }
+}
+
+
+y_next_sibling_type(side,unit,u)
+Side *side;
+Unit *unit;
+int u;
+{
+    Unit *cur=unit;
+    if (unit->transport == NULL) {
+       cur=unit->occupant; 
+    }
+    Unit *start=cur;
+   
+    if (side->curunit != NULL || cur->type != u) {
+      do {
+        if (cur->nexthere != NULL) {
+          do_next_sibling(side, cur, -1);
+          cur = side->curunit;
+        }
+        else {
+          make_current(side, cur->transport->occupant);
+        }
+        cur = side->curunit;
+      } while (cur!=start && cur->type!=u);
+      if (cur==start) {
+        notify(side, "no more %s found!",utypes[u].name);
+        cur=unit;
+      }
+    }
+    make_current(side, cur);
+}
+
+do_next_sibling_type(side, unit, n)
+Side *side;
+Unit *unit;
+int n;
+{
+    Unit *trans=unit->transport;
+    if (trans == NULL) {
+       if (unit->occupant == NULL) {
+	  cmd_error("This unit has no occupants!");
+          return;
+       }
+       trans=unit;
+    }
+
+    switch (side->mode) {
+    case MOVE:
+	cmd_error(side, "Can only look at occupants when in survey mode!");
+	break;
+    case SURVEY:
+	sprintf(spbuf, "look for (RET = current): ");
+        side->defutype = unit->type;
+        if (!ask_unit_type(side, unit, y_next_sibling_type, 
+                      spbuf, utypes[trans->type].capacity))
+	  cmd_error("This unit cannot carry anything!");
+        break;
+     }
+}
+/*** <- insert ***/
+
 /* This can actually do general rearrangement, but defaults to putting the */
 /* unit on the first available transport in the hex.  */
 /* What about trying to embark a unit on itself or on its previous transp? */
@@ -1076,6 +1242,7 @@ bool b;
 	if (!write_savefile(SAVEFILE)) /* XXX */
 	    cmd_error(side, "Can't open file \"%s\"!", SAVEFILE);
 	close_displays();
+	exit(0);
 	printf("\nThe outcome remains undecided");
 	if (numhumans == 1 && side->humanp) {
 	    printf(", but you're probably the loser!\n\n", side->host);

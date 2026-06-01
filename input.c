@@ -60,6 +60,8 @@ int do_sentry(), do_delay(), do_wakeup(), do_wakemain(), do_embark(),
     do_sit(), do_product(), do_idle(), do_help(), do_version(),
     do_save(), do_standing(), do_ident(), do_moveto(), do_coast(),
     do_survey_mode(), do_unit_info(), do_printables(), do_occupant(),
+    do_next_sibling(), do_prev_sibling(),
+    do_next_sibling_type(), do_prev_sibling_type(),
     do_options(), do_name(), do_unit(), do_give_unit(), do_center(),
     do_mark_unit(), do_add_player(), do_patrol(), do_give(), do_take(),
     do_recenter(), do_look(), do_distance(), do_find_unit(), do_nothing(),
@@ -156,6 +158,9 @@ FuncTab commands[] = {
 /*** <- reinsert ***/
 /*** (HW) rechange -> ***/
     'a', do_occupant, 1, TRUE, "look at the occupants",
+    ')', do_next_sibling, -1, TRUE, "look at next siblings",
+    '(', do_prev_sibling, -1, TRUE, "look at previous siblings",
+    ']', do_next_sibling_type, -1, TRUE, "look at next siblings of given type",
 /*** was
     'i', do_occupant, 1, TRUE, "look at the occupants",
 *** <- rechange ***/

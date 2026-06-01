@@ -1060,7 +1060,7 @@ CXXPROJECT_DEFINES =
 # # name (without the ".per").  That file will be linked into the source
 # # directory as "standard.c".
 
-PERIOD=Uwe
+PERIOD=Uwe2
 
 # # Games usually have their manuals put in section 6 of the
 # # manual pages.  Edit the suffix if necessary.

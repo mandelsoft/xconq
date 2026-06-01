@@ -440,6 +440,7 @@ clear_period()
 /*** (UK) insert -> ***/
 	    utypes[u].freemove[u2] = TRUE;
 	    utypes[u].transportseerange[u2] = -1;
+	    utypes[u].transfer[u2] = 20;  // 1/5 of available resources
 /*** <- insert ***/
 	}
 	for (r = 0; r < MAXRTYPES; ++r) {
@@ -970,6 +971,7 @@ init_words()
     add_word("consume", U2, 3, VOFFSET(Utype, consume));
     add_word("in-length", U2, 3, VOFFSET(Utype, inlength));
     add_word("out-length", U2, 3, VOFFSET(Utype, outlength));
+    add_word("transfer", U2, 3, VOFFSET(Utype, transfer));
     add_word("consume-as-occupant", U1, 2, OFFSET(Utype, consume_as_occupant));
     add_word("survival", U1, 2, OFFSET(Utype, survival));
     add_word("starve-message", S1, 2, OFFSET(Utype, starvemsg));

@@ -129,7 +129,6 @@ Unit *unit, *trans, *other;
   if (utypes[unit->type].speed>=utypes[unit->type].leavetime[trans->type] ||
       utypes[unit->type].freemove[trans->type]) {
     for_all_directions(d) {
-      printf("wake %d: (%d,%d)\n", unit->type, unit->x, unit->y);
       if (could_move_in_dir(unit,d)) {
 	wake_unit(unit,wakeocc,reason,other);
 	return;

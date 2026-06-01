@@ -835,9 +835,11 @@ can_satisfy_need(unit, r, need)
 Unit *unit;
 int r, need;
 {
+    int part = unit->supply[r] * utypes[unit->type].transfer[r] / 100;
+
     return ((((2 * unit->supply[r]) > (utypes[unit->type].storage[r])) &&
-	     (((unit->supply[r] * 4) / 5) > need)) ||
-	    (need < (utypes[unit->type].storage[r] / 5)));
+	     (((unit->supply[r] - part) > need)) ||
+	    (need <= part)));
 }
 
 /* Move supply from one unit to another.  Don't move more than is possible; */
@@ -851,11 +853,11 @@ int r, amount;
     amount = min(amount, utypes[to->type].storage[r] - to->supply[r]);
     from->supply[r] -= amount;
     to->supply[r] += amount;
-    if (Debug) {
+//    if (Debug) {
       printf("%s receives %d %s ", unit_handle((Side *) NULL, to),
 	     amount, rtypes[r].name);
       printf("from %s\n", unit_handle((Side *) NULL, from));
-    }
+//    }
     return amount;
 }
 
