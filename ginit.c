@@ -40,7 +40,7 @@
 #define W_MAP_WIN  (side->vw * side->hw)
 #define H_MAP_WIN  (side->vh * side->hch + (side->hh - side->hch))
 
-#define W_STATE_WIN (29 * side->fw)
+#define W_STATE_WIN (33 * side->fw)
 #define H_STATE_WIN (period.numutypes*max(side->hh, side->fh))
 
 #define X_STATE_WIN (side->lw)

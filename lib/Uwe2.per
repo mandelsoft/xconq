@@ -215,13 +215,14 @@ true [ * @ ] maker
 1 fuel e in-length
 1 fuel P in-length
 2 fuel bases in-length
+1 fuel [ s d ] in-length
 
 0 r* u* out-length
 1 r* [ r T ] out-length
 2 fuel P out-length
 -1 r* [ i e a f h b W S G m w l I ] out-length
 100 u* P transfer
-40 u* [ r T ] transfer
+60 u* [ r T ] transfer
 
 100 mines survival
 
@@ -311,6 +312,7 @@ false missles consume-as-occupant
 0 d w enter-time
 
 20 [ G T ] missles leave-time
+20 [ G T ] ground leave-time
 2 [ G T ] mines leave-time
 
 false u* missles free-move

@@ -705,6 +705,7 @@ Side *side;
 int u;
 {
     int ypos;
+    int col=8;
 /*** (UK) insert -> ***/
     int nn;
 /*** <- insert ***/
@@ -717,7 +718,7 @@ int u;
     if (active_display(side)) {
 	sprintf(spbuf, "");
 	if (side->units[u] > 0)	
-	    sprintf(tmpbuf, "%3d", side->units[u]);
+	    sprintf(tmpbuf, "%4d", side->units[u]);
 	else
 	    sprintf(tmpbuf, "   ");
 	strcat(spbuf, tmpbuf);
@@ -731,8 +732,10 @@ int u;
 	strcat(spbuf, _15space);
 *** <- change ***/
 	if (total_gain(side, u) > 0) {
-	    sprintf(spbuf+8, "%4d", total_gain(side, u));
+	    sprintf(spbuf+col, "%5d", total_gain(side, u));
 	}
+        col+=7;
+
 /*** (HW) change -> ***/
 	strcat(spbuf, _23space);
 /*** was:
@@ -740,13 +743,15 @@ int u;
 *** <- change ***/
 	if (total_loss(side, u) > 0) {
 	    sprintf(tmpbuf, "- %d", total_loss(side, u));
-	    sprintf(spbuf+13, "%s", tmpbuf);
+	    sprintf(spbuf+col, "%s", tmpbuf);
 	}
+        col+=7;
 /*** (UK/HW) insert -> ***/
 	strcat(spbuf, _23space);
 	if ((nn=next_ready(side, u)) > 0) {
-	    sprintf(spbuf+19, "[%3d]", nn);
+	    sprintf(spbuf+col, "[%3d]", nn);
 	}
+        col+=7;
 /*** <- insert ***/
 	ypos = u * max(side->hh, side->fh) + (side->hh-side->fh) / 2;
 /*** (HW) insert -> ***/

@@ -690,11 +690,9 @@ int r;
   tprate = ttp->produce[r]*ttp->productivity[terrain_at(to->x, to->y)]/100
     - ttp->consume[r];
 
-  /*
   if (side_number(from->side)==0)
-  printf(" try transfer from %s to %s (%d,%d)\n",unit_handle(from->side,from),
+  printf(" try transfer %s from %s to %s (%d,%d)\n", rtypes[r].name, unit_handle(from->side,from),
 	    unit_handle(to->side,to), fprate, tprate);
-  */
   if (fprate>0) {
     if (tprate>0) {
       /* both are producers */
@@ -769,16 +767,18 @@ int r;
       } /* else don't transfer */
     }
   } else {
+    printf(" CASE try transfer %s from %s to %s (%d,%d)\n", rtypes[r].name, unit_handle(from->side,from),
+              unit_handle(to->side,to), fprate, tprate);
     /* source is a consumer */
     if (tprate>0) /* dest is a producer */
       return; /* sod off */
-    else if (tprate<0) { /* dest is a consumer */
-      if (ttp->storage[r]*CFACTOR < ftp->storage[r]) {
+    else if (tprate<=0) { /* dest is a consumer */
+      // if (ttp->storage[r]*CFACTOR < ftp->storage[r]) {
 	/* source is a carrier, fill up the smaller one */
 	xfr = min(from->supply[r], ttp->storage[r] - to->supply[r]);
 	if (xfr>0)
 	  transfer_supply(from, to, r, xfr); /* fill up the dest */
-      } /* else don't transfer */
+     //  } /* else don't transfer */
     } /* else dest is a transmitter, sod off */
   }
   return;
