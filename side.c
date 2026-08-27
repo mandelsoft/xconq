@@ -78,8 +78,13 @@ bool person;
 	    newside->enemyseen=FALSE;
 	    newside->savflag=FALSE;
             newside->mhe=newside->mwe=-1;
-            for (i=0; i<MAXSAVESTATE; i++)
+            for (i=0; i<MAXSAVESTATE; i++) {
 		newside->savstate[i].used=FALSE;
+		newside->laststate[i].used=FALSE;
+            }
+            newside->manual=FALSE;
+            newside->curlastindex=0;
+            newside->sellastindex=0;
 /*** <- insert ***/
 	    newside->humanp = person;
 	    if (host == NULL || strcmp(host, "*") == 0) {

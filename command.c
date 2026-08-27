@@ -2524,6 +2524,16 @@ do_backposition(side,n)
 Side *side;
 { int x,y;
 
+  SaveState *state=back_laststate(side);
+  if (!state) return;
+  x=side->curx; side->curx=state->x; 
+  y=side->cury; side->cury=state->y; 
+  survey_mode(side);
+  recenter(side,side->curx,side->cury);
+  side->last_x=x;
+  side->last_y=y;
+
+  /*
   printf("back %d: %d,%d\n", n, side->last_x, side->last_y);
   if (side->last_x>=0) {
     x=side->curx; side->curx=side->last_x; 
@@ -2533,6 +2543,7 @@ Side *side;
     side->last_x=x;
     side->last_y=y;
   }
+  */
 }
 
 do_saveposition(side,n)

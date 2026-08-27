@@ -225,7 +225,7 @@ FuncTab commands[] = {
     ' ', NULL, 0, 0, "(a)rrow Mode, (t)hin/Thick Lines, (e)Distinct Sorders",
     ' ', NULL, 0, 0, "(l)ook Mode, (z) Working Mode, (?) Help",
 /*** (UK) change -> ***/
-    '\b',do_backposition,0,FALSE,"back to last position",
+    '\b',do_backposition,1,FALSE,"back to last position",
     '\030',do_saveposition,1,FALSE,"save current position",
     '\t',do_seenenemy, 0, FALSE, "jump to last seen enemy",
     '\r',do_returnenemy,0, FALSE, "return to old or saved position",

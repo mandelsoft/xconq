@@ -225,6 +225,10 @@ typedef struct a_side {
     bool enemyseen;	       /* enemy seen in current turn */
     int seenx, seeny;          /* coordinates of last seen enemy  */
     SaveState savstate[MAXSAVESTATE];        /* saved positions */
+    SaveState laststate[MAXSAVESTATE];        /* last positions */
+    bool manual;               /* was manual unit handling */
+    short curlastindex;
+    short sellastindex;
     short last_x,last_y;       /* last screen position */ 
     char *passwd;              /* password */
 /*** <- insert ***/
@@ -399,3 +403,6 @@ extern bool humans[];
 extern short areas_wide;      /* number of areas in x direction */
 extern short areas_high;      /* number of areas in y direction */
 
+/*** (UK) insert -> ***/
+extern SaveState *back_laststate();
+/*** <- insert ***/ 

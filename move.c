@@ -160,7 +160,14 @@ Unit *
 next_unit_to_move (side)
 Side *side;
 /*** (UK) insert -> ***/
-{ Unit *unit=(Unit*)next_unit_to_move2 (side);
+{ Unit *unit;
+
+  if (side->movunit && side->manual) {
+      add_last(side, side->movunit);
+  }
+
+  unit=(Unit*)next_unit_to_move2 (side);
+  side->manual=FALSE;
   if (ODebug) pui(side,"next_unit_to_move:",unit); 
   return unit;
 }
@@ -560,15 +567,18 @@ movement_phase()
 		if (humanside(side) &&
 		    (can_move_unit(side, side->movunit) ||
 		     side->reqhandler != x_command || side->more_units) 
-		    && side->reqactive)
+		    && side->reqactive) {
+                    side->manual=TRUE;
 		    human_moving = TRUE;
+                }
 		if (!side->reqactive && humanside(side) &&
 		    side->mode == SURVEY) {
 		    request_command(side);
 		}
 	    }
 	}
-	if (human_moving) handle_requests();
+	if (human_moving)
+            handle_requests();
     }
 /*** (UK) insert -> ***/
     for_all_sides(side) {
@@ -763,6 +773,9 @@ Side *side;
 
     if (Debug) printf("%s side in survey mode\n", side->name);
     side->mode = SURVEY;
+/*** (UK) insert -> ***/
+    side->manual=FALSE;
+/*** <- insert ***/
     if (side->movunit == NULL) side->movunit = side->curunit;
     make_current(side, unit_at(side->curx, side->cury));
     /* always do show info to get up to dateness info. */
@@ -1854,3 +1867,124 @@ Unit *unit;
       }
   }
 }
+
+
+/*** (UK) insert -> ***/
+short next_last_index(i)
+short i;
+{
+   if (++i >= MAXSAVESTATE) return 0;
+   return i;
+}
+
+short prev_last_index(i)
+short i;
+{
+   if (--i < 0) return MAXSAVESTATE-1;
+   return i;
+}
+
+void add_last(side, unit)
+Side *side;
+Unit *unit;
+{
+  short pi;
+  SaveState *state;
+
+  pi=prev_last_index(side->curlastindex);
+  state=&side->laststate[pi];
+
+  if (state->used) {
+    if (state->x == unit->x && state->y == unit->y) {
+      // ignore to add last position again
+      return;
+    }
+  }
+  printf("remember last position for %s at index %d\n", unit_handle(side->movunit), side->curlastindex);
+  
+  state=&side->laststate[side->curlastindex];
+  state->x=unit->x;
+  state->y=unit->y;
+  state->used=TRUE;
+  side->sellastindex=side->curlastindex;
+  side->curlastindex=next_last_index(side->curlastindex);
+  side->laststate[side->curlastindex].used=FALSE;
+}
+
+/*
+    0 returns to initial position
+    +n go back n history steps
+    -n go forward n fistory steps again
+    
+    if n is too large the operation is ignored (NULL return).
+
+    laststate array: circular buffer
+    0123.....MAX
+
+      ->   | curlastindex next index to store (always FALSE)
+    XXXXXXXXXXXX
+      <-  | sellastindex    next index for back
+*/
+SaveState *back_laststate(side, n)
+Side *side;
+{
+  SaveState *state;
+  short next=side->sellastindex;
+  short first=prev_last_index(side->curlastindex);
+
+  printf("back %d: sel=%d cur=%d\n", n, side->sellastindex, side->curlastindex);
+  if (n==0) {
+    // return to initial location
+    if (next==first) {
+       // not in back mode
+        printf("ignore back\n");
+       return NULL;
+    }
+    next=first;
+    state=&side->laststate[side->curlastindex];
+  }
+  else {
+    if (next==first) {
+      // remember starting location for first back
+      side->laststate[side->curlastindex].x=side->curx;
+      side->laststate[side->curlastindex].y=side->cury;
+    }
+
+    if (n>0) {
+      while (n-->0)  {
+        state=&side->laststate[next];
+        if (!state->used) {
+        printf("ignore back\n");
+          return NULL;
+        }
+        next=prev_last_index(next);
+      }
+    }
+    else {
+      short cur=next_last_index(next);
+      if (next==first) {
+        // not yet in back mode
+        printf("not in back mode\n");
+        return NULL;
+      }
+      while (++n<=0)  {
+        next=cur;
+        cur=next_last_index(cur);
+        state=&side->laststate[cur];
+        if (!state->used) {
+          ++n;
+          break;
+        }
+      }
+      if (n!=1) {
+        printf("ignore forward\n");
+        return NULL;
+      }
+    }
+  }
+  side->sellastindex=next;
+  printf("result: sel=%d cur=%d\n", side->sellastindex, side->curlastindex);
+  return state;
+}
+
+/*** <- insert ***/
