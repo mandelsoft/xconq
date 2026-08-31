@@ -1663,7 +1663,7 @@ char opt;
   notify(side, "Toggle (d)isplay mode, (g)raph mode , (i)nverse video, (2)-color,"); 
   notify(side, "  (a)rrow mode, (t)hin/thick lines, (e)distinct sorders");
   notify(side, "  (l)ook mode, (v)isibility mode,");
-  notify(side, "Show/Hide (p)roducts, (P)roducers, (o)rders, (s)tanding orders,");
+  notify(side, "Show/Hide (p)roducts, (P)roducers, (o)rders, (sS)tanding orders,");
   notify(side, "  (M)overs");
   notify(side, "Become (r)obot, (z)enter working mode, (R)eset display");
 /*** (UK) insert -> ***/
@@ -2048,6 +2048,10 @@ int n;
 
     if (side->teach == TRUE)
       cmd_error (side, "Teach mode active!");
+    if (unit->standing == NULL) {
+      notify(side,"no standing order defined.");
+      return;
+    }
     side->sounit = unit;
     show_standing_orders(side, unit);
 /*** (UK) change -> ***/

@@ -617,6 +617,41 @@ Side *side;
     }
 }
 
+/*** (UK) change -> ***/
+int count_pending(side)
+Side *side;
+{
+  Unit *unit=side->unithead;
+  int count=0;
+
+  for_all_side_units(side, unit) {
+    if (unit->side==side && alive(unit) && 
+      (unit->orders.type == NONE || unit->orders.type == AWAKE || unit->orders.type == DELAY) &&
+      unit->movesleft>0 && unit->product == NOTHING &&
+      unit->terraform == TNOTHING
+      ) {
+      count++;
+    }
+  }
+  return count;
+}
+
+void show_pending(side,flush)
+Side *side;
+bool flush;
+{
+    if (side->curgroup) {
+      draw_fg_text(side, side->timemode, side->margin, 3*side->fh, 
+                      side->curgroup);
+    } else {
+      sprintf(spbuf, "P %d   ", count_pending(side));
+      draw_fg_text(side, side->timemode, side->margin, 3*side->fh, 
+                      spbuf);
+    }
+    flush_output(side);
+}
+/*** <- change ***/
+
 /* Update the turn number and game mode display.  The mode is inverted */
 /* so will stand out (it governs what player input will be accepted, so */
 /* quite important). */
@@ -668,13 +703,10 @@ int clear;
 		(side->showsorderutype!=NOTHING)?"S":" ",
 		Build?"B":" ");
         }
-	else sprintf(spbuf,"Mode: <none>");
+	else sprintf(spbuf,"Mode: <none>  ");
 	draw_fg_text(side, side->timemode, side->margin, 2*side->fh, 
 			spbuf);
-        if (side->curgroup) {
-	  draw_fg_text(side, side->timemode, side->margin, 3*side->fh, 
-			  side->curgroup);
-	}
+        show_pending(side, FALSE);
 /*** <- insert ***/
 	flush_output(side);
     }

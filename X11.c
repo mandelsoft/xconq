@@ -1978,7 +1978,11 @@ int sx, sy;
 {
     sy += sd()->iconfont->max_bounds.ascent;
     XDrawString(sdd(), side->map, sd()->invicongc, sx, sy, "[", 1);
+/*** (UK) change -> ***/
+    XSetForeground(sdd(), sd()->icongc, side->mode == SURVEY && !side->workmode? side->bgcolor : side->fgcolor);
+/*** was:
     XSetForeground(sdd(), sd()->icongc, side->fgcolor);
+*** <- change ***/
     XDrawString(sdd(), side->map, sd()->icongc, sx, sy, "]", 1);
 }
 

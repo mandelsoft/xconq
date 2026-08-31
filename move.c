@@ -568,6 +568,7 @@ movement_phase()
 		    (can_move_unit(side, side->movunit) ||
 		     side->reqhandler != x_command || side->more_units) 
 		    && side->reqactive) {
+                    show_pending(side, TRUE);
                     side->manual=TRUE;
 		    human_moving = TRUE;
                 }
@@ -1937,7 +1938,7 @@ Side *side;
     // return to initial location
     if (next==first) {
        // not in back mode
-        printf("ignore back\n");
+       notify(side, "No previous position");
        return NULL;
     }
     next=first;
@@ -1954,7 +1955,7 @@ Side *side;
       while (n-->0)  {
         state=&side->laststate[next];
         if (!state->used) {
-        printf("ignore back\n");
+          notify(side, "No more previous positions");
           return NULL;
         }
         next=prev_last_index(next);
@@ -1964,7 +1965,7 @@ Side *side;
       short cur=next_last_index(next);
       if (next==first) {
         // not yet in back mode
-        printf("not in back mode\n");
+        notify(side, "Back at initial position");
         return NULL;
       }
       while (++n<=0)  {
@@ -1977,7 +1978,7 @@ Side *side;
         }
       }
       if (n!=1) {
-        printf("ignore forward\n");
+        notify(side, "No more newer positions");
         return NULL;
       }
     }
