@@ -11,6 +11,8 @@
 /* Order of movement is sequential by sides, but non-moving sides are in */
 /* survey mode and can do things. */
 
+#include <time.h>
+
 #include "config.h"
 #include "misc.h"
 #include "dir.h"
@@ -439,6 +441,14 @@ movement_phase_sequential() /* XXX */
       }
 }
 
+void sleep_ms(long milliseconds) {
+    struct timespec req;
+    req.tv_sec = milliseconds / 1000;                  // Volle Sekunden
+    req.tv_nsec = (milliseconds % 1000) * 1000000L;    // Restliche Millisekunden in Nanosekunden
+
+    nanosleep(&req, NULL);
+}
+
 movement_phase()
 {
     Unit *unit;
@@ -578,8 +588,10 @@ movement_phase()
 		}
 	    }
 	}
-	if (human_moving)
+	if (human_moving) {
+            sleep_ms(10);
             handle_requests();
+        }
     }
 /*** (UK) insert -> ***/
     for_all_sides(side) {
@@ -593,6 +605,7 @@ movement_phase()
 	   (global.timeout <= 0 ||
 	    time(0) - global.starttime < global.timeout))
       {
+        sleep_ms(10);
 	handle_requests();
       }
 
@@ -1901,7 +1914,7 @@ Unit *unit;
       return;
     }
   }
-  printf("remember last position for %s at index %d\n", unit_handle(side->movunit), side->curlastindex);
+  // printf("remember last position for %s at index %d\n", unit_handle(side->movunit), side->curlastindex);
   
   state=&side->laststate[side->curlastindex];
   state->x=unit->x;

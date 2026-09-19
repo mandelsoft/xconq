@@ -422,22 +422,22 @@ Unit *unit;
 	sprintf(spbuf, "New %s in %d turns",
 		utypes[p].name, unit->schedule);
 /*** (UK) insert -> ***/
-	/*
         if (unit->next_product && unit->next_product!=unit->product) {
 	  strcat(spbuf," (next ");
 	  strcat(spbuf,utypes[unit->next_product].name);
 	  strcat(spbuf,")");
 	}
-	*/
 /*** <- insert ***/
 	draw_info_text(side, 30, 1, -1, spbuf);
       }
+/*** (UK) insert -> ***/
+      /*
       if (producing(unit) && unit->product != unit->next_product) {
 	sprintf(spbuf, "Next product is %s",
 		utypes[unit->next_product].name);
 	draw_info_text(side, 30, 2, -1, spbuf);
       }
-/*** (UK) insert -> ***/
+	*/
       if (terraforming(unit)) {
 	sprintf(spbuf, "Terraforming %s in %d turns",
 		ttypes[t].name, unit->tschedule);
@@ -641,10 +641,11 @@ Side *side;
 bool flush;
 {
     if (side->curgroup) {
+      sprintf(spbuf, "Group: %s", side->curgroup);
       draw_fg_text(side, side->timemode, side->margin, 3*side->fh, 
-                      side->curgroup);
+                     spbuf);
     } else {
-      sprintf(spbuf, "P %d   ", count_pending(side));
+      sprintf(spbuf, "Pend: %d   ", count_pending(side));
       draw_fg_text(side, side->timemode, side->margin, 3*side->fh, 
                       spbuf);
     }
@@ -737,12 +738,12 @@ Side *side;
 int u;
 {
     int ypos;
-    int col=8;
+    int col=14;
 /*** (UK) insert -> ***/
     int nn;
 /*** <- insert ***/
 /*** (HW) change -> ***/
-    static char	_23space[] = "                       ";
+    static char	_30space[] = "                              ";
 /*** was:
     static char	_15space[] = "               ";
 *** <- change ***/
@@ -750,7 +751,7 @@ int u;
     if (active_display(side)) {
 	sprintf(spbuf, "");
 	if (side->units[u] > 0)	
-	    sprintf(tmpbuf, "%4d", side->units[u]);
+	    sprintf(tmpbuf, "%5d", side->units[u]);
 	else
 	    sprintf(tmpbuf, "   ");
 	strcat(spbuf, tmpbuf);
@@ -759,17 +760,17 @@ int u;
 	    strcat(spbuf, tmpbuf);
 	}
 /*** (HW) change -> ***/
-	strcat(spbuf, _23space);
+	strcat(spbuf, _30space);
 /*** was:
 	strcat(spbuf, _15space);
 *** <- change ***/
 	if (total_gain(side, u) > 0) {
 	    sprintf(spbuf+col, "%5d", total_gain(side, u));
 	}
-        col+=7;
+        col+=8;
 
 /*** (HW) change -> ***/
-	strcat(spbuf, _23space);
+	strcat(spbuf, _30space);
 /*** was:
 	strcat(spbuf, _15space);
 *** <- change ***/
@@ -779,7 +780,7 @@ int u;
 	}
         col+=7;
 /*** (UK/HW) insert -> ***/
-	strcat(spbuf, _23space);
+	strcat(spbuf, _30space);
 	if ((nn=next_ready(side, u)) > 0) {
 	    sprintf(spbuf+col, "[%3d]", nn);
 	}

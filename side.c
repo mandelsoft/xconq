@@ -136,6 +136,8 @@ bool person;
 	    newside->clip_xmax = newside->clip_ymax = -1;
 	    newside->last_x = newside->last_y = -1;
 	    newside->redraw = FALSE;
+
+	    newside->s_show_no_movers = TRUE;
 /*** <- insert ***/
 	    init_requests(newside);
 	    link_in_side(newside);

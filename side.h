@@ -214,6 +214,10 @@ typedef struct a_side {
     bool w_show_no_movers;
     bool w_show_orders;
     bool w_followaction;
+
+    // steady states for work mode
+    bool s_show_no_movers;   
+
     short w_showsorderutype;
     int  savmode;              /* saved info for seen enemy */
     bool savshow_product;

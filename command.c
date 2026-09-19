@@ -1822,6 +1822,8 @@ char opt;
 	    side->savflag=FALSE;
 	    tm_redraw=TRUE;
 	    if (side->workmode) {
+	      side->s_show_no_movers=side->show_no_movers;
+
 	      if (side->show_orders!=side->w_show_orders) remap=TRUE;
 	      if (side->show_product!=side->w_show_product) remap=TRUE;
 	      if (side->show_only_producers!=side->w_show_only_producers) 
@@ -1860,7 +1862,8 @@ char opt;
 	      side->followaction=FALSE;
 	      side->show_product=TRUE;
 	      side->show_only_producers=FALSE;
-	      side->show_no_movers=TRUE;
+
+	      side->show_no_movers=side->s_show_no_movers;
 
 	      side->workmode=TRUE;
 
