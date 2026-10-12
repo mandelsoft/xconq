@@ -70,6 +70,9 @@ extern bool ServerFlag;
 /* mxconq: defined in xconq.c */
 extern bool singlePlayerMode;
 
+#define O_STANDING 0x01 // handle standing orders
+#define O_SEQUENCE 0x02 // handle pending order sequence
+
 /*** (UK) insert -> ***/
 prep_string(s)
 char *s;
@@ -796,6 +799,24 @@ FILE *fp;
 
     fscanf(fp, "%hd %hd", &(unit->lastdir), &(unit->awake));
     read_one_order(fp, &(unit->orders));
+/*** (UK) insert -> ***/
+    i=0;
+    fscanf(fp, " s%n", &i);
+    if (i) {
+       printf("found sequence for unit\n");
+       ungetc('s', fp);
+       read_order_sequence(fp, &unit->sequence);
+       printf("done sequence\n");
+       if (unit->orders.type==AWAKE) {
+         /*
+         if (unit->sequence) {
+           continue_sequence(unit);
+         }
+         */
+       }
+    }
+/*** <- insert ***/
+
     fscanf(fp, "%d\n", &more);
     if (more) {
 	unit->standing = (StandingOrder *) malloc(sizeof(StandingOrder));
@@ -841,15 +862,37 @@ FILE *fp;
     fscanf(fp, "%hd %hd \n ", &(unit->movesleft), &(unit->actualmoves));
 }
 
+read_order_sequence(fp, os)
+FILE *fp;
+OrderSequence **os;
+{   int f;
+
+    printf("read sequence\n");
+    do {
+      fscanf(fp, " s%d ", &f);
+      if (f!=0) {
+        *os=(OrderSequence *) malloc(sizeof(OrderSequence));
+        read_one_order(fp, &(*os)->order);
+        printf("- %s\n", order_desig(&(*os)->order));
+        fscanf(fp, "\n");
+        os=&(*os)->next;
+      }
+    } while (f!=0); 
+    *os=NULL;
+    printf("sequence done\n");
+}
+
 /* The exact way to read an order depends on what type it is. */
 
 read_one_order(fp, order)
 FILE *fp;
 Order *order;
-{ 
+{  int f=0;
+
     fscanf(fp, "%hd %hd %hd", &(order->type), &(order->rept), &(order->flags));
     order->morder = order->type / 100;
     order->type = order->type % 100;
+    //printf("read order %d %d\n", order->type, orderargs[order->type]);
     switch (orderargs[order->type]) {
     case NOARG:
 	break;
@@ -879,6 +922,9 @@ Order *order;
     case AMOUNT:
 	fscanf(fp,"%d",&order->p.amount);
 	break;
+    case SEQUENCE:
+        read_order_sequence(fp, &order->p.seq);
+        break;
 /*** <- insert ***/
     default:
 	case_panic("order arg type", orderargs[order->type]);
@@ -1464,6 +1510,13 @@ FILE *fp;
     enter_procedure("write_unit orders");
     fprintf(fp, "%d  %d ", unit->lastdir, unit->awake);
     write_one_order(fp, &(unit->orders));
+
+/*** (UK) insert -> ***/
+    if (unit->sequence) {
+       write_order_sequence(fp, unit->sequence);
+    }
+/*** <- insert ***/
+
     fprintf(fp, " %d\n", (unit->standing != NULL));
     if (unit->standing != NULL) {
 /*** (UK) change -> ***/
@@ -1514,12 +1567,31 @@ FILE *fp;
     fprintf(fp, "%d %d \n ", unit->movesleft, unit->actualmoves);
 }
 
+write_order_sequence(fp, os)
+FILE *fp;
+OrderSequence *os;
+{
+    while (TRUE) {
+      fprintf(fp, "s%d ", os!=NULL);
+      if (os !=NULL) {
+        write_one_order(fp, &os->order);
+        fprintf(fp, "\n");
+      }
+      if (os == NULL) {
+        break;
+      }
+      os=os->next;
+    }
+}
+
 /* Write a single order object, which may be for a unit or a standing order. */
 
 write_one_order(fp, order)
 FILE *fp;
 Order *order;
-{
+{   OrderSequence *os;
+    int f=0;
+
     fprintf(fp, " %d %d %d ", (order->type + 100 * order->morder), order->rept, order->flags);
     switch (orderargs[order->type]) {
     case NOARG:
@@ -1550,6 +1622,10 @@ Order *order;
     case AMOUNT:
 	fprintf(fp,"%d",order->p.amount);
         break;
+    case SEQUENCE:
+        write_order_sequence(fp, order->p.seq);
+        break;
+        
 /*** <- insert ***/
     default:
 	case_panic("order arg type", orderargs[order->type]);

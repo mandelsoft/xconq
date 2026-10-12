@@ -109,7 +109,10 @@ int n;
 	cache_awake(side);
     } else {
         if (side->curunit != NULL)
+        {
 	  wake_unit(side->curunit, NOTHING, WAKEFULL, (Unit *) NULL);
+          delete_unit_sequence(side->curunit);
+        }
 	wakeup_area(side, n, NOTHING);
     }
   exit_procedure();
@@ -150,9 +153,18 @@ int n;
     if (side->teach) {
 	cache_sentry(side, n);
     } else {
-	order_sentry(unit, n);
-	if (n > 1 && adj_enemy(unit))
-	    unit->orders.flags &= ~(ENEMYWAKE|NEUTRALWAKE);
+/*** (UK) insert -> ***/
+        if (unit->sequence && n==1) {
+           continue_sequence(unit);
+        }
+        else {
+/*** <- insert ***/
+          order_sentry(unit, n);
+          if (n > 1 && adj_enemy(unit))
+              unit->orders.flags &= ~(ENEMYWAKE|NEUTRALWAKE);
+/*** (UK) insert -> ***/
+        }
+/*** <- insert ***/
     }
   exit_procedure();
 }
@@ -314,7 +326,7 @@ int x,y;
     int dir;
     int	curx,cury;
 
-    enter_procedure("x_coast");
+    enter_procedure("y_coast");
       curx = unit->x;
       cury = unit->y;
       if (curx != x || cury != y) {
@@ -391,7 +403,7 @@ int x,y;
 {
     Unit *leader;
 
-    enter_procedure("x_follow");
+    enter_procedure("y_follow");
 	if ((leader = unit_at(x, y)) != NULL &&
 	    leader->side == side) {
 	    if (leader != unit) {
@@ -782,6 +794,9 @@ int n;
   if (side->teach) {
     cache_embark(side, n);
   } else {
+/*** (UK) change -> ***/
+    delete_unit_sequence(unit);
+/*** <- change ***/
     if (mainunit != unit) {
       if (side->markunit == NULL ||
 	  side->markunit->x != unit->x || side->markunit->y != unit->y) {
@@ -964,6 +979,9 @@ int n;
     if (side->teach) {
 	cache_leave(side, n);
     } else {
+/*** (UK) change -> ***/
+      delete_unit_sequence(unit);
+/*** <- change ***/
       if (mainunit != unit) {
 	  if (n>1) order_leave(unit,n);
 	  else if (!try_leave(side,unit)) {
@@ -1009,6 +1027,9 @@ int n;
   if (side->teach) {
       cache_unload(side, n);
   } else {
+/*** (UK) change -> ***/
+    delete_unit_sequence(unit);
+/*** <- change ***/
     if (!try_unload(side,unit)) cmd_error(side,"Nothing found to unload!");
   }
 }
@@ -1031,6 +1052,9 @@ int n;
     cache_disembark(side, n);
   } else {
     /* find a unit to occupy. In this case, the 'mainunit' */
+/*** (UK) change -> ***/
+    delete_unit_sequence(unit);
+/*** <- change ***/
     if (mainunit != unit) {
       if(can_carry(mainunit, unit)){
 	leave_hex(unit);
@@ -1081,7 +1105,9 @@ int n;
 /*** (UK) insert -> ***/
 {
   if (side->teach) cache_give(side,n);
-  else handle_order_give(side,unit,n,TRUE);
+  else {
+    handle_order_give(side,unit,n,TRUE);
+  }
 }
 
 
@@ -2417,10 +2443,13 @@ do_cancel(side, n)
 {
   if (side->teach) {
     notify(side,"input of standing order canceled!");
-    free(side->tmporder);
+    delete_order(side->tmporder);
     side->tmporder=NULL;
+    delete_sequence(side->tmpseq);
+    side->tmpseq=NULL;
     side->teach=FALSE;
     side->somode=0;
+    clear_prompt(side);
     show_timemode(side,TRUE);
   }
   else {
@@ -2469,6 +2498,12 @@ Side *side;
 do_returnenemy(side,n)
 Side *side;
 { if (side->teach) {
+/*** (UK) insert -> ***/
+    if (side->tmpseq) {
+      finish_sequence(side);
+      return;
+    }
+/*** <- insert ***/
     cmd_error(side,"not while teaching!");
     return;
   }
@@ -2573,11 +2608,23 @@ Side *side;
    standing order */
 
 do_nothing(side, n)
-     Side	*side;
-     int	n;
+Side	*side;
+int	n;
 {
   if (side->teach) {
-    free(side->tmporder);
+    if (side->tmpseq) {
+      // delete last order in sequence
+      OrderSequence *s=side->tmpseq;
+      if (s && s->next) {
+        printf("delete last order in sequence\n");
+        side->tmpseq=s->next;
+        cleanup_order(&side->tmpseq->order);
+        free(s);
+        notify_sequence(side, "current sequence",  side->tmpseq->next, "<-");
+      }
+      return;
+    }
+    delete_order(side->tmporder);
     side->tmporder=NULL;
     finish_teach(side);
   }
@@ -2592,7 +2639,7 @@ Side *side;
 int n;
 {
 /*** (UK) insert -> ***/
-    if (side->workmode) {
+    if (side->workmode || side->teach) {
       cmd_error(side,"not in working mode!");
       return;
     }
@@ -3246,4 +3293,17 @@ int n;
   if (*spbuf) notify(side, "%s transferred.", spbuf);
   else notify(side, "nothing transferred.");
 }
+
+do_sequence(side, unit, n)
+Side *side;
+Unit *unit;
+int n;
+{
+  if (!side->teach) {
+    notify(side, "sequences are available for standing orders, only.");
+  } else {
+    cache_sequence(side, n);
+  }
+}
+
 /*** <- reinsert ***/

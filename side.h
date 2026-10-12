@@ -263,6 +263,9 @@ typedef struct a_side {
     struct a_unit *sounit;    /* unit that stores standing order for occs */
     int soutype;              /* unit type that will get standing orders */
     struct a_order *tmporder; /* holding place for orders */
+/*** (UK) insert -> ***/
+    struct a_order_sequence *tmpseq; /* holding place for order sequence */
+/*** <- insert ***/
     /* Constructed during display init */
     short monochrome;         /* obvious */
 /*** (HW) insert -> ***/

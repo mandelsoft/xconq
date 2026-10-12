@@ -953,6 +953,22 @@ Unit *unit;
 #endif
 	domove=FALSE;
 	break;
+    case EXECUTE:
+        printf("*** follow order execute\n");
+        if (unit->orders.p.seq) {
+          OrderSequence *os=unit->orders.p.seq;
+          unit->sequence=os->next;
+          copy_orders(&unit->orders, &os->order);
+          if (unit->orders.rept<=0) unit->orders.rept=1;
+          cleanup_order(&os->order);
+          free(os);
+        }
+        else {
+          unit->orders.rept=0;
+        }
+	success=TRUE;
+	domove=FALSE;
+        break;
 /*** <- insert ***/
     case AWAKE:
     case NONE:

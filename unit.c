@@ -106,6 +106,7 @@ char *name;
     newunit->terraform = TNOTHING;
     newunit->tschedule = 0;
     newunit->last_terraform = TNOTHING;
+    newunit->sequence = NULL;
 /*** <- insert ***/
     newunit->x = newunit->y = -1;
     newunit->prevx = newunit->prevy = -1;
@@ -634,7 +635,7 @@ StandingOrderEntry *oe;
   while (ce=(oe->cond)) {
     oe->cond=ce->next;
     UpdateSOMoveLineRedraw(unit->side,unit,ce->order);
-    if (ce->order) free(ce->order);
+    if (ce->order) delete_order(ce->order);
     free(ce);
   }
 }
@@ -681,7 +682,7 @@ StandingConditionEntry *ce;
     /*
     printf("deleting condition entry\n"); fflush(stdout);
     */
-    if (ce->order) free(ce->order);
+    if (ce->order) delete_order(ce->order);
     free(ce);
   }
   cleanup_order_entry(unit,oep,oe);
@@ -769,9 +770,34 @@ StandingOrderEntry **oetab;
   return NULL;
 }
 
+continue_sequence(unit)
+Unit *unit;
+{
+  if (unit->sequence) {
+      printf("continue with order sequence\n");
+      OrderSequence *os=unit->sequence;
+      unit->sequence=os->next;
+      copy_orders(&unit->orders, &os->order);
+      cleanup_order(&os->order);
+      free(os);
+  }
+}
+
+void delete_unit_sequence(unit)
+Unit *unit;
+{
+   delete_sequence(unit->sequence);
+   unit->sequence=NULL;
+}
+
 set_follow_order(unit)
 Unit *unit;
 { Order *neworders;
+
+  if (unit->sequence) {
+      continue_sequence(unit);
+      return TRUE;
+  }
 
   if (unit->transport && unit->transport->standing) {
     neworders=select_standing_orders(unit->transport,unit,
@@ -1519,7 +1545,7 @@ char *group;
 }
 
 
-static void notify_order(side,name,group,buf,follow)
+void notify_order(side,name,group,buf,follow)
 Side *side;
 char *name;
 char *group;
@@ -1573,6 +1599,7 @@ char *group;
 		sprintf(tmpbuf2, "%s to %s%0s",
 			cond_desig(&ce->cond),order_desig(ords),
 			((ords->morder) ? " and auto" : ""));
+                order_detail(side,name,group,ords);
 		found++;
 		total++;
 		flush=1;

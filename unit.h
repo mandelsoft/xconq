@@ -16,17 +16,9 @@
 /*** (UK) insert -> ***/
 #define MAXGROUP 20  /* max. length of group name */
 /*** <- insert ***/
-/*** (HW) change -> ***/
-#ifndef NO_DISEMBARK
+/*** (UK) change -> ***/
 /*** was:
 #ifdef NO_DISEMBARK
-*** <- change ***/
-/*** (UK) change -> ***/
-#define NUMORDERTYPES 21
-#else
-#define NUMORDERTYPES 20
-#endif
-/*** was:
 #define NUMORDERTYPES 19
 #else
 #define NUMORDERTYPES 18
@@ -56,17 +48,17 @@
 #define APICKUP 19
 #define RGIVE	20
 #define RTAKE	21
+#define DISEMBARK 22 
+#define EXECUTE 23 
 /*** <- insert ***/
 #ifndef NO_DISEMBARK
 /*** (UK) change ->  ***/
-#define 	DISEMBARK 22 
 /** was:
 #define 	DISEMBARK 18 
 *** <- change ***/
 #endif
 
 
-#ifndef NO_DISEMBARK
 #define ORDERNAMES \
   { "None", "Awake", "Sentry", "Dir Move", "Move to", \
     "Follow Edge", "Follow Leader", "Patrol", "Attack", \
@@ -76,19 +68,8 @@
     "Recursivly Pickup", "Leave", "Unload", "Set group to", "Pickup", \
     "Give", "Take", \
 /*** <- insert ***/ \
-    "Disembark" }
-#else
-#define ORDERNAMES \
-  { "None", "Awake", "Sentry", "Dir Move", "Move to", \
-    "Follow Edge", "Follow Leader", "Patrol", "Attack", \
-    "Embark", "Fill", "Move to transport", "Move to unit", \
-    "Return", "Delay", \
-/*** (UK) insert -> ***/ \
-    "Recursivly Pickup", "Leave", "Unload", "Set group to", "Pickup", \
-    "Give", "Take" \
-/*** <- insert ***/ \
-  }	
-#endif
+    "Disembark", \
+    "Execute" }
 
 
 /* Types of arguments that orders can have. */
@@ -102,13 +83,10 @@
 /*** (UK) insert -> ***/
 #define STRING	  6
 #define AMOUNT	  7
+#define SEQUENCE  8
 /*** <- insert ***/
 
-/*** (HW) change -> ***/
-#ifndef NO_DISEMBARK
-/*** was:
-#ifdef NO_DISEMBARK
-*** <- change ***/
+/*** (UK) change -> ***/
 #define ORDERARGS \
   { NOARG, NOARG, NOARG, DIR, POS, EDGE_A, LEADER, WAYPOINTS, \
       NOARG, NOARG, NOARG, NOARG, LEADER, NOARG, NOARG , \
@@ -116,17 +94,9 @@
       NOARG, NOARG, NOARG, STRING, AMOUNT, \
       AMOUNT, AMOUNT, \
 /*** <- insert ***/ \
-      NOARG }
-#else
-#define ORDERARGS \
-  { NOARG, NOARG, NOARG, DIR, POS, EDGE_A, LEADER, WAYPOINTS, \
-      NOARG, NOARG, NOARG, NOARG, LEADER, NOARG, NOARG, \
-/*** (UK) insert -> ***/ \
-      NOARG, NOARG, NOARG, STRING, AMOUNT, \
-      AMOUNT, AMOUNT \
-/*** <- insert ***/ \
-      }
-#endif
+      NOARG, SEQUENCE } \
+/*** <- change ***/
+
 
 #ifdef NO_DISEMBARK
 #define ORDERARGNAMES \
@@ -205,16 +175,24 @@ typedef struct a_order {
 /*** (UK) insert -> ***/
 	int  amount;	      /* amount of units */
 	char string[MAXGROUP]; /* group name */
+        struct a_order_sequence *seq;  /* order sequence */
 /*** <- insert ***/
     } p;                      /* parameters of an order */
     short morder;             /* general order for machine controlling unit */
 } Order;
 
+/*** (UK) insert -> ***/
+typedef struct a_order_sequence {
+   struct a_order_sequence *next;
+   Order order;
+} OrderSequence;
+/*** <- insert ***/
+
 /* A standing order is actually an array with an order for each unit type. */
 /* The structure is allocated only when a standing order is given. */
 
 /*** (UK) insert -> ***/
-typedef struct s_order_entry {
+typedef struct a_order_entry {
   char  *group;
   struct s_condition_entry *cond;
   struct s_order_entry *next;
@@ -233,6 +211,8 @@ typedef struct s_order_entry {
 #define C_PICKUP	50	/* something to pickup  */
 #define C_LE		60	/* no more than given amount */
 
+#define F_STANDING_MAX  5       /* possible follow up orders */
+
 typedef struct a_scondition {
   int type;
   int priority;
@@ -242,7 +222,7 @@ typedef struct a_scondition {
   } d;
 } SCondition;
 
-typedef struct s_condition_entry {
+typedef struct a_condition_entry {
   SCondition cond;
   Order *order;
   struct s_condition_entry *next;
@@ -314,6 +294,7 @@ typedef struct a_unit {
     short awake;               /* true if unit temporarily awake */
     Order orders;              /* current orders being carried out */
     StandingOrder *standing;   /* pointer to collection of standing orders */
+    OrderSequence *sequence;   /* pending order sequence */
     /* Never saved */
     short area;                /* area this unit will call home. */
     short goal;                /* personal goal of unit */
@@ -411,6 +392,9 @@ extern int numunits, orderargs[];
 extern char *ordernames[];
 
 extern void init_units();
+extern void cleanup_order();
+extern void delete_sequence();
+extern void delete_order();
 extern bool can_type_carry();
 extern bool can_carry();
 extern void occupy_unit(), leave_unit(), leave_hex();
@@ -428,6 +412,10 @@ extern void cancel_build();
 extern Unit *first_unit(), *next_unit();
 extern void insert_unit(), delete_unit();
 /*** (UK) insert -> ***/
+extern char *unit_orders_desig();
+extern void order_detail();
+extern void notify_order();
+extern void notify_sequence();
 extern StandingOrderEntry **get_current_sorder_array();
 extern StandingOrderEntry *search_order_entry();
 extern StandingConditionEntry *search_condition_entry();

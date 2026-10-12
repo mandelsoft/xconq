@@ -325,6 +325,7 @@ Unit *unit;
     int i, u = unit->type, r, nums[MAXUTYPES], xpos, p = unit->product;
 /*** (UK) insert -> ***/
     int t = unit->terraform;
+    char *o;
 /*** <- insert ***/
     Unit *occ;
     char tmp2[BUFSIZE];
@@ -375,8 +376,10 @@ Unit *unit;
 	if (unit->wakeup_reason == WAKELOST) 
 	  sprintf(tmp2, " (Lost & confused)");
     }
+
+    o=unit_orders_desig(unit, side->nw-strlen(tmp2)-10);
     sprintf(spbuf, "%s%s %s Moves %d",
-	    order_desig(&(unit->orders)), tmp2,
+	    o, tmp2,
 	    (unit->standing != NULL ? "*" : ""),
 	    unit->movesleft);
     draw_info_text(side, 0, 4, 80, spbuf);

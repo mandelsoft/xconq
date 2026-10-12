@@ -72,6 +72,7 @@ bool person;
 	    newside->curgroup= NULL;
 	    newside->sogroup= NULL;
             newside->tmporder=0;
+            newside->tmpseq=0;
 	    newside->socond=(SCondition*)malloc(sizeof(SCondition));
             newside->compactmode=FALSE;
             newside->workmode=FALSE;

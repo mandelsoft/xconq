@@ -75,6 +75,7 @@ int do_sentry(), do_delay(), do_wakeup(), do_wakemain(), do_embark(),
     do_visibility(),
 /*** <- reinsert ***/
 /*** (UK) insert -> ***/
+    do_sequence(),
     do_afteroccupants(), do_terraform(),
     do_pickup(), do_sentry_occupants(),do_take_all(),
     do_seenenemy(), do_returnenemy(), do_condition(),
@@ -108,7 +109,7 @@ FuncTab commands[] = {
     '\027', do_wakespec, 0, FALSE, "wake specific kind of unit",
     'W', do_wakeup, 0, FALSE, "wake ALL units in area, including occupants",
     'm', do_moveto, 1, TRUE, "move to given location",
-    ' ', do_sit, 1, FALSE, "(Space Bar) make unit be on sentry this turn only",
+    ' ', do_sit, 1, FALSE, "(Space Bar) make unit be on sentry this turn only or continue sequence",
     'r', do_return, ITERFLAG, TRUE, "return unit to nearest city/transport",
 /*** (HW) change -> ***/
     '$', do_movetotransport, ITERFLAG, TRUE, "move to filling transport",
@@ -145,6 +146,7 @@ FuncTab commands[] = {
 /*** (UK) insert -> ***/
     '_', do_terraform, 1, TRUE, "set/change unit terraforming",
     '*', do_group, 0,FALSE, "set/change unit group",
+    '\002', do_sequence, -1, FALSE, "configure Sequence",
 /** <- insert ***/
     '\020', do_next_product, 1, TRUE, "set next product",
     'I', do_idle, ITERFLAG, TRUE, "set unit to not produce anything",
@@ -398,7 +400,8 @@ Side *side;
 	    request_input(side, side->curunit, x_command);
 	    return;
 	} else {
-	    clear_prompt(side);
+            if (side->tmpseq && side->teach) prompt_sequence(side);
+	    else clear_prompt(side);
 	    if (Build && ((terr = find_terr(side->reqch)) >= 0)) {
 		if (side->reqvalue == DFLTFLAG) side->reqvalue = 0;
 		do_terrain(side, terr, side->reqvalue);
@@ -1252,8 +1255,8 @@ Side *side;
       case 'T' : finish_request(side, C_NEMBARK); return;
       case 'f' : finish_request(side, C_FULL); return;
       case 'F' : finish_request(side, C_NFULL); return;
-      case 'c' : finish_request(side, C_TFULL); return;
-      case 'C' : finish_request(side, C_NTFULL); return;
+      case 'c' : finish_request(side, C_NTFULL); return;
+      case 'C' : finish_request(side, C_TFULL); return;
 
       case '?' : notify(side," a   no condition (always)");
 		 notify(side," g   there are more than <n> units in transport");

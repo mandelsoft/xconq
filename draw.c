@@ -592,7 +592,29 @@ char sotype;
   int sx1,sy1,sx2,sy2, minx,miny,maxx,maxy;
   bool out1,out2, sx1_lt_sx2, transpose = FALSE;
   
-  if (!order || order->type != MOVETO) return;
+  OrderSequence *os;
+
+  if (!order) return;
+  switch (order->type) {
+    case MOVETO:
+      break;
+    case EXECUTE:
+      os=order->p.seq;
+      order=NULL;
+      while (os) {
+        if (os->order.type==MOVETO) {
+          order = &os->order;
+          break;
+        }
+        os=os->next;
+      }
+      if (order) {
+        break;
+      }
+      // fall through
+    default:
+      return;
+  }
 
   /* we want easy to handle coordinates */
   xform(side,unwrap(side,x1,y1),y1,&sx1,&sy1);

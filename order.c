@@ -23,9 +23,41 @@ char oargbuf[BUFSIZE];             /* buffer for order's arguments */
 
 int orderargs[] = ORDERARGS;       /* types of parameters for each order */
 
+/*** (UK) insert -> ***/
+
+void delete_sequence(os)
+OrderSequence *os;
+{
+  while (os!=NULL) {
+    OrderSequence *s=os;
+    cleanup_order(&os->order);
+    os=os->next;
+    free(s);
+  }
+}
+
+void cleanup_order(o)
+Order *o;
+{
+  if (o) {
+    if (orderargs[o->type]==SEQUENCE) {
+      delete_sequence(o->p.seq);
+      o->p.seq=NULL;
+    }
+  }
+}
+
+void delete_order(o)
+Order *o;
+{
+  if (o) {
+    cleanup_order(o);
+    free(o);
+  }
+}
+
 /* General routine to wake a unit up (and maybe all its cargo). */
 
-/*** (UK) insert -> ***/
 wake_unit_to_move_again(unit)
 Unit *unit;
 {
@@ -54,6 +86,41 @@ Unit *unit;
 
     if (unit->side) UpdateMoveLineRedraw(unit->side,unit);
 }
+
+extern reached_filling_transport();
+
+int
+obsolete_order(unit)
+Unit *unit;
+{
+    Unit *dest;
+
+    if (unit->orders.rept<=0) return TRUE;
+    switch (unit->orders.type) {
+    case AWAKE:
+    case NONE:
+    case SENTRY:
+      return TRUE;
+    case RETURN:
+       return unit->transport != NULL;
+    case MOVETO:
+       return unit->orders.p.pt[0].x == unit->x && unit->orders.p.pt[0].y == unit->y;
+    case MOVETOTRANSPORT:
+       if (reached_filling_transport(unit, unit->x, unit->y)) return TRUE;
+       return search_path(unit, unit->orders.rept, reached_filling_transport)<0;
+
+    case MOVETOUNIT:
+       dest = find_unit(unit->orders.p.leader_id);
+       if (dest==NULL) {
+         return TRUE;
+       }
+       return dest->x == unit->x && dest->y == unit->y;
+       break;
+    }
+
+    return FALSE;
+}
+
 /*** <- insert ***/
 
 wake_unit(unit, wakeocc, reason, other)
@@ -62,6 +129,7 @@ int reason;
 short wakeocc; /* what kind to wake NOTHING=no occ,-1=all occ (gec)*/
 {
     Unit *occ;
+    OrderSequence *os;
 
 /* make sure that a side always gets to move a unit that is woken up
 late in the turn */
@@ -72,6 +140,13 @@ late in the turn */
     */
 /*** (UK) change -> ***/
     wake_unit_to_move_again(unit);
+    if (humanside(unit->side) && !obsolete_order(unit)) {
+      // save actual order in sequence
+      os=(OrderSequence*)malloc(sizeof(OrderSequence));
+      copy_orders(&os->order, &unit->orders);
+      os->next=unit->sequence;
+      unit->sequence=os;
+    }
 /*** was:
     if (unit->side != NULL && unit->movesleft > 0 &&
 	alive(unit) && !unit->side->more_units) {
@@ -90,6 +165,7 @@ late in the turn */
       unit->side->movunit = unit;
       cancel_request(unit->side);
     }
+    
 *** <- change ***/
 
     unit->orders.type = AWAKE;
@@ -160,6 +236,7 @@ Unit *unit;
 int n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = SENTRY;
@@ -187,6 +264,7 @@ Unit *unit;
 int dir, n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = MOVEDIR;
@@ -215,6 +293,7 @@ Unit *unit;
 int x, y;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = MOVETO;
@@ -244,6 +323,7 @@ Unit	*unit, *dest;
 int	n;
 {
 /*** (HW) insert -> ***/
+  delete_unit_sequence(unit);
   UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
   unit->orders.type = MOVETOUNIT;
@@ -272,6 +352,7 @@ Unit *unit;
 int n;
 {
 /*** (HW) insert -> ***/
+  delete_unit_sequence(unit);
   UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
   unit->orders.type = RETURN;
@@ -298,6 +379,7 @@ Unit *unit;
 int d, ccw, n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = EDGE;
@@ -327,6 +409,7 @@ order_movetotransport(unit, n)
      int	n;
 {
 /*** (HW) insert -> ***/
+  delete_unit_sequence(unit);
   UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
   unit->orders.type = MOVETOTRANSPORT;
@@ -352,6 +435,7 @@ Unit *unit, *leader;
 int n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = FOLLOW;
@@ -381,6 +465,7 @@ Unit *unit;
 int x0, y0, x1, y1, n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = PATROL;
@@ -415,6 +500,7 @@ Unit *unit;
 int n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = EMBARK;
@@ -441,6 +527,7 @@ Unit *unit;
 int n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = RPICKUP;
@@ -466,6 +553,7 @@ Unit *unit;
 int a,n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = APICKUP;
@@ -493,6 +581,7 @@ Unit *unit;
 int n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = LEAVE;
@@ -518,6 +607,7 @@ Unit *unit;
 int n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = UNLOAD;
@@ -573,7 +663,6 @@ Side *side;
 
 /*** <- insert ***/
 
-#ifndef NO_DISEMBARK
 cache_disembark(side, n)
 Side *side;
 int n;
@@ -582,13 +671,13 @@ int n;
     side->tmporder->rept = n;
     finish_teach(side);
 }
-#endif
 
 order_fill(unit, n)
 Unit *unit;
 int n;
 {
 /*** (HW) insert -> ***/
+    delete_unit_sequence(unit);
     UpdateMoveLineRedraw(unit->side,unit);
 /*** <- insert ***/
     unit->orders.type = FILL;
@@ -606,6 +695,92 @@ int n;
     side->tmporder->rept = n;
     finish_teach(side);
 }
+
+/*** (UK) change -> ***/
+cache_sequence(side, n)
+Side *side;
+int n;
+{
+  if (!side->tmpseq) {
+    side->tmpseq = (OrderSequence*)malloc(sizeof(OrderSequence));
+    side->tmpseq->order.type=AWAKE;
+    side->tmpseq->next=NULL;
+    notify(side, "start order sequence (DEL to delete last step, RET to finish sequence).");
+    prompt_sequence(side);
+  }
+  else {
+    notify(side, "continue order sequence.");
+  }
+}
+
+extern char *sequence_desig();
+
+prompt_sequence(side)
+Side *side;
+{
+  char *msg="Sequence: %s (RET/DEL)";
+  sprintf(side->promptbuf, msg, sequence_desig(side->tmpseq->next, side->nw-strlen(msg)+2, "<-"));
+  show_prompt(side);
+}
+
+finish_sequence(side)
+Side *side;
+{
+    // finish sequence by preparing current order for finish
+    OrderSequence *t;
+
+    printf("finish sequence\n");
+    clear_prompt(side);
+
+    // delete prepared step
+    OrderSequence *s=side->tmpseq;
+    if (s) {
+      side->tmpseq=s->next;
+      free(s);
+    }
+    else return;
+
+    side->tmporder=(Order*)malloc(sizeof(Order));
+    side->tmporder->type=EXECUTE;
+    side->tmporder->morder = FALSE;
+    side->tmporder->flags = NORMAL;
+    side->tmporder->rept = 0;
+    side->tmporder->p.seq=NULL;
+    while (side->tmpseq) {
+      printf("- %s\n", order_desig(&side->tmpseq->order));
+      t=side->tmpseq->next;
+      side->tmpseq->next=side->tmporder->p.seq;
+      side->tmporder->p.seq=side->tmpseq;
+      side->tmpseq=t;
+    }
+    printf("---\n");
+    notify_sequence(side, "using sequence", side->tmporder->p.seq, NULL);
+    // finish sequence mode
+    finish_teach(side);
+}
+
+add_sequence(side)
+Side *side;
+{
+  // add current order to sequence
+  OrderSequence *s=side->tmpseq;
+  copy_orders(&s->order, side->tmporder);
+  //notify_sequence(side, "current sequence is", s, "<-");
+
+  delete_order(side->tmporder);
+  side->tmporder=(Order*)malloc(sizeof(Order));
+  side->tmporder->morder = FALSE;
+  side->tmporder->flags = NORMAL;
+
+  // prepare next step
+  side->tmpseq=(OrderSequence*)malloc(sizeof(OrderSequence));
+  side->tmpseq->order.type=AWAKE;
+  side->tmpseq->next=s;
+  prompt_sequence(side);
+  show_timemode(side,TRUE);
+  request_command(side);
+}
+/*** <- insert ***/
 
 /* Note that this leaves all other orders the same. */
 
@@ -651,6 +826,11 @@ Side *side;
     char buf[200];
     char sotype;
 
+    if (side->tmpseq) {
+      add_sequence(side);
+      return;
+    }
+
     oetab=get_current_sorder_array(side);
     if (!side->teach || !oetab) {
       printf("no teach mode!!!!\n");
@@ -683,7 +863,7 @@ Side *side;
     if (ce->order) {
        UpdateSOMoveLineRedraw(side,side->sounit,ce->order);
        notify(side, "Canceling old order.");
-       free (ce->order);
+       delete_order (ce->order);
     }
     ce->order = side->tmporder;
 
@@ -733,6 +913,110 @@ Side *side;
     show_timemode(side,TRUE);
 }
 
+/*** (UK) insert -> ***/
+notify_sequence(side, key, s, sep)
+Side *side;
+char *key;
+OrderSequence *s;
+char *sep;
+{
+  *spbuf='\0';
+  sprintf(tmpbuf2,"%s", key);
+  _notify_sequence(side, NULL, NULL, s, tmpbuf2, sep);
+  if (*tmpbuf2) notify_order(side, NULL, NULL, tmpbuf2, FALSE);
+  if (*spbuf) notify(side, "%s", spbuf);
+}
+
+_notify_sequence(side,name,group,s, buf, sep)
+Side *side;
+char *name;
+char *group;
+OrderSequence *s;
+char *buf;
+char *sep;
+{
+   int found=0;
+
+   if (!sep) sep=" ->";
+   while (s != NULL) {
+     if (found) strcat(buf,sep);
+     else {
+       if (*buf) strcat(buf,": ");
+     }
+     notify_order(side,name,group,buf,TRUE);
+     sprintf(buf, "%s", order_desig(&s->order));
+     s=s->next;
+     found=TRUE;
+   }
+}
+
+order_detail(side,name,group,orders)
+Side *side;
+char *name;
+char *group;
+Order *orders;
+{
+    switch (orderargs[orders->type]) {
+    case SEQUENCE:
+       _notify_sequence(side,name,group,orders->p.seq, tmpbuf2, NULL);
+    }
+}
+
+char *
+sequence_desig(os,max,sep)
+OrderSequence *os;
+int max;
+char *sep;
+{
+   static char buf[200];
+   int found=0;
+
+   if (sep==NULL) sep="->";
+   if (max>200) max=200;
+   *buf='\0';
+   while (os != NULL) {
+     char *n=order_desig(&os->order);
+
+     if (strlen(buf)+strlen(n)+(strlen(sep)+3) >=max) {
+       strcat(buf,"...");
+       break;
+     }
+
+     if (found) strcat(buf,sep);
+     strcat(buf, n);
+     os=os->next;
+     found=TRUE;
+   }
+   return buf;
+}
+
+char *
+unit_orders_desig(u,max)
+Unit *u;
+int max;
+{
+  static char buf[200];
+  char *o=NULL;
+  
+  if (u->orders.type == EXECUTE) {
+     o=sequence_desig(u->orders.p.seq, max, NULL);
+  }
+  else {
+     o=order_desig(&u->orders);
+  }
+  sprintf(buf, "%s",o);
+  if (u->sequence) {
+    o=sequence_desig(u->sequence, max-strlen(buf)-2,NULL);
+    if (strlen(o)>0) {
+      strcat(buf,"->");
+      strcat(buf, o);
+    }
+  }
+  return buf;
+}
+
+/*** <- insert ***/
+
 /* Display orders in some coherent fashion.  Use the information about the */
 /* types of order parameters to decide how to display them. */
 
@@ -742,6 +1026,7 @@ Order *orders;
 {
 /*** (UK) insert -> ***/
   Unit *u;
+  char *sep="";
 /*** <- insert ***/
     switch (orderargs[orders->type]) {
     case NOARG:
@@ -780,16 +1065,24 @@ Order *orders;
     case AMOUNT:
 	sprintf(oargbuf,"%d ",orders->p.amount);
 	break;
+    case SEQUENCE:
+	sprintf(oargbuf,"sequence");
+	break;
 /*** <- insert ***/
     default:
 	case_panic("order arg type", orderargs[orders->type]);
     }
+
+
+    if (oargbuf[0]) {
+      sep=" ";
+    }
     if (orders->rept > 1)
-	sprintf(orderbuf, "%s %s(%d)",
-		ordernames[orders->type], oargbuf, orders->rept);
+	sprintf(orderbuf, "%s%s%s(%d)",
+		ordernames[orders->type], sep, oargbuf, orders->rept);
     else
-	sprintf(orderbuf, "%s %s",
-		ordernames[orders->type], oargbuf);
+	sprintf(orderbuf, "%s%s%s",
+		ordernames[orders->type], sep, oargbuf);
     return orderbuf;
 }
 
@@ -798,6 +1091,11 @@ Order *orders;
 copy_orders(dst, src)
 Order *dst, *src;
 {
+/*** (UK) insert -> ***/
+  OrderSequence *so;
+  OrderSequence **sop;
+/*** <- insert ***/
+
   /* the first two options should work fine since the Order
      is (theoretically) contiguous with no pointers. */
 #ifdef BCOPY
@@ -845,4 +1143,23 @@ Order *dst, *src;
     }
     dst->morder = src->morder;
 #endif /* 0 */
+/*** (UK) insert -> ***/
+    switch (orderargs[src->type]) {
+      case SEQUENCE:
+          so=src->p.seq;
+          sop=&dst->p.seq;
+          while (so != NULL) {
+            *sop=(OrderSequence*)malloc(sizeof(OrderSequence));
+#ifdef BCOPY
+             bcopy(so, *sop, sizeof(*so));
+#else
+             memcpy(so, *sop, sizeof(*so));
+#endif
+             sop=&(*sop)->next;
+             so=so->next;
+          }
+          *sop=NULL;
+          break;
+    }
+/*** <- insert ***/
 }
