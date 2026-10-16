@@ -100,7 +100,7 @@ Unit *unit;
     case AWAKE:
     case NONE:
     case SENTRY:
-      return TRUE;
+      return unit->orders.rept<=0;
     case RETURN:
        return unit->transport != NULL;
     case MOVETO:
@@ -697,14 +697,41 @@ int n;
 }
 
 /*** (UK) change -> ***/
+prepare_sequence(side)
+Side *side;
+{
+    side->tmpseq = (OrderSequence*)malloc(sizeof(OrderSequence));
+    side->tmpseq->order.type=AWAKE;
+    side->tmpseq->next=NULL;
+}
+
+order_sequence(side, unit, n)
+Side *side;
+Unit *unit;
+int n;
+{
+    delete_unit_sequence(unit);
+    UpdateMoveLineRedraw(unit->side,unit);
+    unit->orders.type = EXECUTE;
+    unit->orders.rept = 1;
+    copy_sequence(&unit->orders.p.seq, side->logseqs[n]);
+    CheckRedraw(unit->side);
+}
+
 cache_sequence(side, n)
 Side *side;
 int n;
 {
+  if (n>=0) {
+    side->tmporder->type = EXECUTE;
+    side->tmporder->rept = 1;
+    copy_sequence(&side->tmporder->p.seq, side->logseqs[n]);
+    finish_teach(side);
+    return;
+  }
+
   if (!side->tmpseq) {
-    side->tmpseq = (OrderSequence*)malloc(sizeof(OrderSequence));
-    side->tmpseq->order.type=AWAKE;
-    side->tmpseq->next=NULL;
+    prepare_sequence(side);
     notify(side, "start order sequence (DEL to delete last step, RET to finish sequence).");
     prompt_sequence(side);
   }
@@ -740,23 +767,36 @@ Side *side;
     }
     else return;
 
-    side->tmporder=(Order*)malloc(sizeof(Order));
-    side->tmporder->type=EXECUTE;
-    side->tmporder->morder = FALSE;
-    side->tmporder->flags = NORMAL;
-    side->tmporder->rept = 0;
-    side->tmporder->p.seq=NULL;
-    while (side->tmpseq) {
-      printf("- %s\n", order_desig(&side->tmpseq->order));
-      t=side->tmpseq->next;
-      side->tmpseq->next=side->tmporder->p.seq;
-      side->tmporder->p.seq=side->tmpseq;
-      side->tmpseq=t;
+    if (side->tmplogseq) {
+      delete_sequence(*side->tmplogseq);
+      (*side->tmplogseq)=NULL;
+      while (side->tmpseq) {
+        printf("- %s\n", order_desig(&side->tmpseq->order));
+        t=side->tmpseq->next;
+        side->tmpseq->next=*side->tmplogseq;
+        *side->tmplogseq=side->tmpseq;
+        side->tmpseq=t;
+      }
+      notify_sequence(side, "using sequence", *side->tmplogseq, NULL);
+      side->tmplogseq=NULL;
+      side->teach = FALSE;
+      free(side->tmporder);
+      side->tmporder = NULL;
+    }
+    else {
+      prepare_order(side);
+      while (side->tmpseq) {
+        printf("- %s\n", order_desig(&side->tmpseq->order));
+        t=side->tmpseq->next;
+        side->tmpseq->next=side->tmporder->p.seq;
+        side->tmporder->p.seq=side->tmpseq;
+        side->tmpseq=t;
+      }
+      notify_sequence(side, "using sequence", side->tmporder->p.seq, NULL);
+      // finish sequence mode
+      finish_teach(side);
     }
     printf("---\n");
-    notify_sequence(side, "using sequence", side->tmporder->p.seq, NULL);
-    // finish sequence mode
-    finish_teach(side);
 }
 
 add_sequence(side)
@@ -768,9 +808,7 @@ Side *side;
   //notify_sequence(side, "current sequence is", s, "<-");
 
   delete_order(side->tmporder);
-  side->tmporder=(Order*)malloc(sizeof(Order));
-  side->tmporder->morder = FALSE;
-  side->tmporder->flags = NORMAL;
+  prepare_order(side);
 
   // prepare next step
   side->tmpseq=(OrderSequence*)malloc(sizeof(OrderSequence));
@@ -1086,6 +1124,25 @@ Order *orders;
     return orderbuf;
 }
 
+/*** (UK) insert -> ***/
+copy_sequence(dst, src)
+OrderSequence **dst;
+OrderSequence *src;
+{   
+    OrderSequence **s=dst;
+    printf("*** sequence to copy: %s\n", sequence_desig(src, 200, NULL));
+    while (src != NULL) {
+      *dst=(OrderSequence*)malloc(sizeof(OrderSequence));
+       copy_orders(&(*dst)->order,&src->order);
+       dst=&(*dst)->next;
+       src=src->next;
+    }
+    *dst=NULL;
+    printf("*** copied sequence: %s\n", sequence_desig(*dst, 200, NULL));
+}
+
+/*** <- insert ***/
+
 /* Yeah yeah, assignment statements supposedly copy structures. */
 
 copy_orders(dst, src)
@@ -1146,19 +1203,7 @@ Order *dst, *src;
 /*** (UK) insert -> ***/
     switch (orderargs[src->type]) {
       case SEQUENCE:
-          so=src->p.seq;
-          sop=&dst->p.seq;
-          while (so != NULL) {
-            *sop=(OrderSequence*)malloc(sizeof(OrderSequence));
-#ifdef BCOPY
-             bcopy(so, *sop, sizeof(*so));
-#else
-             memcpy(so, *sop, sizeof(*so));
-#endif
-             sop=&(*sop)->next;
-             so=so->next;
-          }
-          *sop=NULL;
+          copy_sequence(&dst->p.seq, src->p.seq);
           break;
     }
 /*** <- insert ***/

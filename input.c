@@ -41,13 +41,17 @@
 #define BACKSPACE '\010'       
 *** <- remove ***/
 
+/*** (UK) insert -> ***/
+#define OPTIONAL (-1)
+/*** <- insert ***/
+
 /* The following structure is used only for the dispatch table. */
 
 typedef struct func_tab {
     char fchar;                 /* character to match against */
     int (*code)();              /* pointer to command's function */
     int defaultarg;             /* default for argument */
-    bool needunit;              /* true if cmd always applies to a unit */
+    int needunit;              /* true if cmd always applies to a unit */
     char *help;                 /* short documentation string */
 } FuncTab;
 
@@ -75,7 +79,7 @@ int do_sentry(), do_delay(), do_wakeup(), do_wakemain(), do_embark(),
     do_visibility(),
 /*** <- reinsert ***/
 /*** (UK) insert -> ***/
-    do_sequence(),
+    do_define(), do_sequence(), do_show_sequences(),
     do_afteroccupants(), do_terraform(),
     do_pickup(), do_sentry_occupants(),do_take_all(),
     do_seenenemy(), do_returnenemy(), do_condition(),
@@ -146,7 +150,8 @@ FuncTab commands[] = {
 /*** (UK) insert -> ***/
     '_', do_terraform, 1, TRUE, "set/change unit terraforming",
     '*', do_group, 0,FALSE, "set/change unit group",
-    '\002', do_sequence, -1, FALSE, "configure Sequence",
+    '\025', do_sequence, 0, TRUE, "use sequence",
+    '\002', do_sequence, -1, FALSE, "configure sequence",
 /** <- insert ***/
     '\020', do_next_product, 1, TRUE, "set next product",
     'I', do_idle, ITERFLAG, TRUE, "set unit to not produce anything",
@@ -187,12 +192,12 @@ FuncTab commands[] = {
       "--------------- STANDING ORDER COMMANDS --------------------------",
 
 /*** (UK) change -> ***/
-    'O', do_standing, 0, TRUE, "set standing orders for occupants",
+    'O', do_standing, -1, OPTIONAL, "set standing orders for occupants",
 /*** was:
     'O', do_standing, 1, TRUE, "set standing orders for occupants",
 *** <- change ***/
 /*** (HW) reinsert -> ***/
-    'i', do_show_standing, 0, TRUE, "inform about standing orders",
+    'i', do_show_standing, -1, OPTIONAL, "inform about standing orders/command sequences",
     'R', do_remove_standing, 0, TRUE, "remove standing order",
 /*** (UK) change -> ***/
     DELETE, do_nothing, 1, FALSE, "delete a standing order",
@@ -510,7 +515,12 @@ int n;
 		if (side->curunit != NULL /* && unit belongs to side */ ) {
 		    (*(cmd->code))(side, side->curunit, n);
 		} else {
-		    cmd_error(side, "No unit to operate on here!");
+                    if (cmd->needunit == OPTIONAL || side->teach) {
+                        (*(cmd->code))(side, NULL, n);
+                    }
+                    else {
+                        cmd_error(side, "No unit to operate on here!");
+                    }
 		}
 	    } else {
 		(*(cmd->code))(side, n);

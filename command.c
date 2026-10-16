@@ -1939,7 +1939,8 @@ Side *side;
 Unit *unit;
 int n;
 {
-   show_standing_orders(side,unit);
+   if (unit) show_standing_orders(side,unit);
+   else do_show_sequences(side, n);
 }
 
 
@@ -2345,6 +2346,10 @@ int n;
 {
     int u;
 
+    if (unit==NULL) {
+      do_sequence(side,n);
+      return;
+    }
     if (side->teach == TRUE)
       cmd_error (side, "Teach mode already active!");
     show_standing_orders(side, unit);
@@ -2423,13 +2428,14 @@ int type;
 /*** (UK) insert -> ***/
     if (!side->tmporder)
 /*** <- insert ***/
+    
+/*** (UK) change -> ***/
+    prepare_order(side);
+    notify(side, "Next input order will become the standing order (DEL to delete, ESC to cancel).");
+/*** was:
     side->tmporder = (Order *) malloc(sizeof(Order));
     side->tmporder->morder = FALSE;
     side->tmporder->flags = NORMAL;
-    
-/*** (UK) change -> ***/
-    notify(side, "Next input order will become the standing order (DEL to delete, ESC to cancel).");
-/*** was:
     notify(side, "Next input order will become the standing order (DEL to delete).");
 *** <- change ***/
     show_timemode(side,TRUE);
@@ -2437,16 +2443,58 @@ int type;
 }
 
 /*** (UK) insert -> ***/
+prepare_order(side)
+Side *side;
+{
+    side->tmporder = (Order *) malloc(sizeof(Order));
+    side->tmporder->morder = FALSE;
+    side->tmporder->flags = NORMAL;
+    side->tmporder->rept = 0;
+}
+
+y_define(side, unit, n)
+Side *side;
+Unit *unit;
+int n;
+{
+    if (n<0 || n>=MAXLOGSEQ) {
+      cmd_error (side, "Invalid sequence slot %d!", n);
+      return;
+    }
+    side->teach=TRUE;
+    prepare_sequence(side);
+    prepare_order(side);
+    prompt_sequence(side);
+    side->tmplogseq = &side->logseqs[n];
+    notify(side, "Defining command sequence %d (ESC to cancel).", n);
+    show_timemode(side,TRUE);
+    request_command(side);
+}
+
+do_define(side, n)
+Side *side;
+int n;
+{
+    if (side->teach == TRUE) {
+      cmd_error (side, "Teach mode already active!");
+      return;
+    }
+    ask_number(side, NULL, y_define, "Slot#" );
+}
+
 do_cancel(side, n)
      Side	*side;
      int	n;
 {
   if (side->teach) {
-    notify(side,"input of standing order canceled!");
+    char *t="standing order";
+    if (side->tmplogseq) t="order sequence";
+    notify(side,"input of %s canceled!",t);
     delete_order(side->tmporder);
     side->tmporder=NULL;
     delete_sequence(side->tmpseq);
     side->tmpseq=NULL;
+    side->tmplogseq=NULL;
     side->teach=FALSE;
     side->somode=0;
     clear_prompt(side);
@@ -3294,15 +3342,58 @@ int n;
   else notify(side, "nothing transferred.");
 }
 
+do_show_sequences(side, n)
+Side *side;
+int n;
+{
+   int i;
+
+   int s=0;
+   int e=MAXLOGSEQ;
+   if (n>=0) {
+     s=n;
+     e=n+1;
+   }
+   for (i=s; i<e; i++) {
+      if (side->logseqs[i]) {
+         sprintf(tmpbuf, "%3d:", i);
+         notify_sequence(side, tmpbuf, side->logseqs[i], NULL);
+      }
+      else {
+         sprintf(tmpbuf, "%3d: <undefined>", i);
+         notify(side, tmpbuf);
+      }
+   }
+}
+
+
 do_sequence(side, unit, n)
 Side *side;
 Unit *unit;
 int n;
 {
-  if (!side->teach) {
-    notify(side, "sequences are available for standing orders, only.");
-  } else {
+  if (n>=0) {
+     if (n>MAXLOGSEQ) {
+	cmd_error(side, "Invalid slot number!");
+     }
+     else {
+       if (!side->logseqs[n]) {
+          return;
+       }
+     }
+  }
+
+  if (side->teach) {
     cache_sequence(side, n);
+  }
+  else {
+    if (n<0) do_define(side,n);
+    else {
+      if (!unit) {
+        cmd_error(side, "No unit to operate on here!");
+      }
+      else order_sequence(side, unit, n);
+    }
   }
 }
 

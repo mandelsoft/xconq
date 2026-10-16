@@ -88,6 +88,8 @@
 #define FANATICAL    3
 #define DEMOCRATIC   4
 
+#define MAXLOGSEQ 10 /* number of definable command sequences */
+
 /* An area of control is a block that is treated as a single */
 /* location. All information on the whole area is combined so that the */
 /* machine can do some planning.  */
@@ -259,6 +261,9 @@ typedef struct a_side {
     struct a_scondition *socond;/* condition for standing order */
     char *curprompt;          /* current base prompt */
     bool compactmode;	      /* compact display of standing orders */
+    struct a_order_sequence **tmplogseq;         /* logical command sequence to define */
+    struct a_order_sequence *logseqs[MAXLOGSEQ]; /* logical command sequences */
+
 /*** <- insert ***/
     struct a_unit *sounit;    /* unit that stores standing order for occs */
     int soutype;              /* unit type that will get standing orders */
@@ -366,7 +371,6 @@ typedef struct a_side {
 #define vtype(v) ((short)((v) & 0xff))
 /* #define vtype(v) ((v).utype) */
 #define vside_neutral(v) ((vside(v) == vside(buildview(MAXSIDES,0))))
-
 
 #define UNSEEN (MAXUTYPES)
 #define EMPTY  (MAXUTYPES+1)
