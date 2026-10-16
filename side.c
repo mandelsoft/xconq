@@ -79,6 +79,9 @@ bool person;
 	    newside->enemyseen=FALSE;
 	    newside->savflag=FALSE;
             newside->mhe=newside->mwe=-1;
+            for (i=0; i<MAXLOGSEQ; i++) {
+               newside->logseqs[0]=NULL;
+            }
             for (i=0; i<MAXSAVESTATE; i++) {
 		newside->savstate[i].used=FALSE;
 		newside->laststate[i].used=FALSE;

@@ -74,6 +74,8 @@ extern bool singlePlayerMode;
 #define O_SEQUENCE 0x02 // handle pending order sequence
 
 /*** (UK) insert -> ***/
+extern bool read_optional_order_sequence();
+
 prep_string(s)
 char *s;
 { 
@@ -473,6 +475,9 @@ FILE *fp;
       }
       fscanf(fp,"\n");
     }
+    if (extension&2) {
+      read_global_sequences(side,fp);
+    }
 /*** was:
     fscanf(fp, "%d %s %hd %hd ",
 	   &human, host, &(side->lost),
@@ -800,20 +805,13 @@ FILE *fp;
     fscanf(fp, "%hd %hd", &(unit->lastdir), &(unit->awake));
     read_one_order(fp, &(unit->orders));
 /*** (UK) insert -> ***/
-    i=0;
-    fscanf(fp, " s%n", &i);
-    if (i) {
-       printf("found sequence for unit\n");
-       ungetc('s', fp);
-       read_order_sequence(fp, &unit->sequence);
-       printf("done sequence\n");
-       if (unit->orders.type==AWAKE) {
-         /*
-         if (unit->sequence) {
-           continue_sequence(unit);
-         }
-         */
+    read_optional_order_sequence(fp,  &unit->sequence);
+    if (unit->orders.type==AWAKE) {
+       /*
+       if (unit->sequence) {
+         continue_sequence(unit);
        }
+       */
     }
 /*** <- insert ***/
 
@@ -860,6 +858,40 @@ Unit *unit;
 FILE *fp;
 {
     fscanf(fp, "%hd %hd \n ", &(unit->movesleft), &(unit->actualmoves));
+}
+
+read_global_sequences(side, fp)
+Side *side;
+FILE *fp;
+{
+  int i=0;
+  OrderSequence *os;
+
+  while (read_optional_order_sequence(fp, &os)) {
+       if (i<MAXLOGSEQ) {
+          side->logseqs[i++]=os;
+       }
+       else {
+         delete_sequence(os);
+       }
+  }
+}
+
+bool
+read_optional_order_sequence(fp, os)
+FILE *fp;
+OrderSequence **os;
+{
+    int i=0;
+    fscanf(fp, " s%n", &i);
+    if (i) {
+       printf("found order sequence\n");
+       ungetc('s', fp);
+       read_order_sequence(fp, os);
+       printf("done sequence\n");
+       return TRUE;
+    }
+    return FALSE;
 }
 
 read_order_sequence(fp, os)
@@ -923,7 +955,7 @@ Order *order;
 	fscanf(fp,"%d",&order->p.amount);
 	break;
     case SEQUENCE:
-        read_order_sequence(fp, &order->p.seq);
+        read_optional_order_sequence(fp, &order->p.seq);
         break;
 /*** <- insert ***/
     default:
@@ -1268,6 +1300,9 @@ FILE *fp;
     int state=1;
     int c=0;
 
+    for (i=0; i<MAXLOGSEQ; i++) if (side->logseqs[i]) c++;
+    if (c) extension|=2;
+    c=0; // keep c for later use
     for (i=0; i<MAXSAVESTATE; i++) if (side->savstate[i].used) c++;
     if (c) extension|=1;
 
@@ -1283,7 +1318,7 @@ FILE *fp;
 	    ((global.giventime > 0) ? side->timeleft : side->timetaken),
 	    extension);
 
-    if (c) {
+    if (extension&1) {
       fprintf(fp, "%d %d\n",c,state); /* number of entries*/
       for (i=0; i<MAXSAVESTATE; i++) {
 	if (side->savstate[i].used) {
@@ -1292,6 +1327,9 @@ FILE *fp;
 	  /* only x and y up to now */
 	}
       }
+    }
+    if (extension&2) {
+      write_global_sequences(side, fp);
     }
 /*** was:
     fprintf(fp, "%d %s %d %d \n",
@@ -1567,6 +1605,24 @@ FILE *fp;
     fprintf(fp, "%d %d \n ", unit->movesleft, unit->actualmoves);
 }
 
+write_global_sequences(side, fp)
+Side *side;
+FILE *fp;
+{
+  int i;
+  int empty=0;
+  for (i=0; i< MAXLOGSEQ; i++) {
+     if (!side->logseqs[i]) empty++;
+     else {
+       while (empty>0) {
+         fprintf(fp,"s0 ");
+         empty--;
+       }
+       write_order_sequence(fp, side->logseqs[i]);
+     }
+  }
+}
+
 write_order_sequence(fp, os)
 FILE *fp;
 OrderSequence *os;
@@ -1623,7 +1679,7 @@ Order *order;
 	fprintf(fp,"%d",order->p.amount);
         break;
     case SEQUENCE:
-        write_order_sequence(fp, order->p.seq);
+        if (order->p.seq) write_order_sequence(fp, order->p.seq);
         break;
         
 /*** <- insert ***/

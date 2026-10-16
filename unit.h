@@ -49,7 +49,8 @@
 #define RGIVE	20
 #define RTAKE	21
 #define DISEMBARK 22 
-#define EXECUTE 23 
+#define EXECUTE   23 
+#define RTAKEALL  24
 /*** <- insert ***/
 #ifndef NO_DISEMBARK
 /*** (UK) change ->  ***/
@@ -69,7 +70,9 @@
     "Give", "Take", \
 /*** <- insert ***/ \
     "Disembark", \
-    "Execute" }
+    "Execute", \
+    "Take all", \
+   }
 
 
 /* Types of arguments that orders can have. */
@@ -94,7 +97,7 @@
       NOARG, NOARG, NOARG, STRING, AMOUNT, \
       AMOUNT, AMOUNT, \
 /*** <- insert ***/ \
-      NOARG, SEQUENCE } \
+      NOARG, SEQUENCE, AMOUNT } \
 /*** <- change ***/
 
 

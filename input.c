@@ -41,13 +41,18 @@
 #define BACKSPACE '\010'       
 *** <- remove ***/
 
+/*** (UK) insert -> ***/
+#define OPTIONAL (-1)
+#define TEACH    (-2)
+/*** <- insert ***/
+
 /* The following structure is used only for the dispatch table. */
 
 typedef struct func_tab {
     char fchar;                 /* character to match against */
     int (*code)();              /* pointer to command's function */
     int defaultarg;             /* default for argument */
-    bool needunit;              /* true if cmd always applies to a unit */
+    int needunit;              /* true if cmd always applies to a unit */
     char *help;                 /* short documentation string */
 } FuncTab;
 
@@ -75,7 +80,7 @@ int do_sentry(), do_delay(), do_wakeup(), do_wakemain(), do_embark(),
     do_visibility(),
 /*** <- reinsert ***/
 /*** (UK) insert -> ***/
-    do_sequence(),
+    do_define(), do_sequence(), do_show_sequences(),
     do_afteroccupants(), do_terraform(),
     do_pickup(), do_sentry_occupants(),do_take_all(),
     do_seenenemy(), do_returnenemy(), do_condition(),
@@ -101,52 +106,53 @@ FuncTab commands[] = {
 /*** (UK) insert -> ***/
     'Z', do_afteroccupants, 1, TRUE, "delay unit's move until occupants have moved",
 /*** <- insert ***/
-    's', do_sentry, ITERFLAG, TRUE, "put a unit on sentry duty",
+    's', do_sentry, ITERFLAG, TEACH, "put a unit on sentry duty",
 /*** (UK) insert -> ***/
     '\023', do_sentry_occupants, 100, TRUE, "sentry occupants",
 /*** <- insert ***/
     'w', do_wakemain, 0, FALSE, "wake units up from whatever they were doing",
     '\027', do_wakespec, 0, FALSE, "wake specific kind of unit",
     'W', do_wakeup, 0, FALSE, "wake ALL units in area, including occupants",
-    'm', do_moveto, 1, TRUE, "move to given location",
+    'm', do_moveto, 1, TEACH, "move to given location",
     ' ', do_sit, 1, FALSE, "(Space Bar) make unit be on sentry this turn only or continue sequence",
-    'r', do_return, ITERFLAG, TRUE, "return unit to nearest city/transport",
+    'r', do_return, ITERFLAG, TEACH, "return unit to nearest city/transport",
 /*** (HW) change -> ***/
-    '$', do_movetotransport, ITERFLAG, TRUE, "move to filling transport",
+    '$', do_movetotransport, ITERFLAG, TEACH, "move to filling transport",
 /*** was:
     'E', do_movetotransport, ITERFLAG, TRUE, "move to filling transport",
 *** <- change ***/
-    'f', do_follow, ITERFLAG, TRUE, "follow a designated leader",
+    'f', do_follow, ITERFLAG, TEACH, "follow a designated leader",
 /*** (UK) change -> ***/
-    '\012', do_movetounit, ITERFLAG, TRUE, "move to the marked unit",
+    '\012', do_movetounit, ITERFLAG, TEACH, "move to the marked unit",
 /*** was:
     '\015', do_movetounit, ITERFLAG, TRUE, "move to the marked unit",
 *** <- change ***/
-    'e', do_embark, 0, TRUE, "embark units onto transport occupying same unit",
+    'e', do_embark, 0, TEACH, "embark units onto transport occupying same unit",
 /*** (UK) change -> ***/
-    'E', do_pickup, 1, TRUE, "recursivly pickup units onto this unit",
-    '\005', do_pickup_amount, 1, TRUE, "pickup units onto this unit",
+    'E', do_pickup, 1, TEACH, "recursivly pickup units onto this unit",
+    '\005', do_pickup_amount, 1, TEACH, "pickup units onto this unit",
 /*** was: (in 5.5.old)
     'E', do_embark_all, 1, TRUE, "embark units onto this unit",  
 *** <- change ***/
-    '\006', do_fill, ITERFLAG, TRUE, "order transport to sleep until full",
+    '\006', do_fill, ITERFLAG, TEACH, "order transport to sleep until full",
 /*** (UK) insert -> ***/
-    'j', do_leave, 1, TRUE, "leave current transport",
-    'J', do_unload, 1, TRUE, "unload units from this unit",
+    'j', do_leave, 1, TEACH, "leave current transport",
+    'J', do_unload, 1, TEACH, "unload units from this unit",
 /*** <- insert ***/
 #ifndef NO_DISEMBARK
-    '@', do_disembark, 0, TRUE, "disembark units from one transport into unit", 
+    '@', do_disembark, 0, TEACH, "disembark units from one transport into unit", 
 #endif
-    'g', do_give, -1, TRUE, "give supplies to the transport",
-    't', do_take, -1, TRUE, "take supplies from the transport",
+    'g', do_give, -1, TEACH, "give supplies to the transport",
+    't', do_take, -1, TEACH, "take supplies from the transport",
     'x', do_mark_unit, 1, TRUE, "mark unit for later reference",
     'F', do_coast, ITERFLAG, TRUE, "follow a coastline",
     'p', do_patrol, ITERFLAG, TRUE, "go on a patrol",
     'P', do_product, 1, TRUE, "set/change unit production",
 /*** (UK) insert -> ***/
     '_', do_terraform, 1, TRUE, "set/change unit terraforming",
-    '*', do_group, 0,FALSE, "set/change unit group",
-    '\002', do_sequence, -1, FALSE, "configure Sequence",
+    '*', do_group, 0, FALSE, "set/change unit group",
+    '\025', do_sequence, 0, TRUE, "use sequence",
+    '\007', do_define, -1, FALSE, "configure sequence",
 /** <- insert ***/
     '\020', do_next_product, 1, TRUE, "set next product",
     'I', do_idle, ITERFLAG, TRUE, "set unit to not produce anything",
@@ -155,7 +161,7 @@ FuncTab commands[] = {
     'D', do_disband, 1, TRUE, "disband a unit and send it home",
     'G', do_give_unit, -2, TRUE, "turn unit over to another side",
 /*** (HW) reinsert -> ***/
-    'T', do_take_all, 1, TRUE, "take supplies from the transport recursively",
+    'T', do_take_all, 1, TEACH, "take supplies from the transport recursively",
     '!', do_show_production, 1, FALSE, "show production of unit type",
 /*** <- reinsert ***/
 /*** (HW) rechange -> ***/
@@ -187,13 +193,13 @@ FuncTab commands[] = {
       "--------------- STANDING ORDER COMMANDS --------------------------",
 
 /*** (UK) change -> ***/
-    'O', do_standing, 0, TRUE, "set standing orders for occupants",
+    'O', do_standing, -1, OPTIONAL, "set standing orders for occupants",
 /*** was:
     'O', do_standing, 1, TRUE, "set standing orders for occupants",
 *** <- change ***/
 /*** (HW) reinsert -> ***/
-    'i', do_show_standing, 0, TRUE, "inform about standing orders",
-    'R', do_remove_standing, 0, TRUE, "remove standing order",
+    'i', do_show_standing, -1, OPTIONAL, "inform about standing orders/command sequences",
+    'R', do_remove_standing, -1, TRUE, "remove standing order",
 /*** (UK) change -> ***/
     DELETE, do_nothing, 1, FALSE, "delete a standing order",
 /*** was:
@@ -510,7 +516,12 @@ int n;
 		if (side->curunit != NULL /* && unit belongs to side */ ) {
 		    (*(cmd->code))(side, side->curunit, n);
 		} else {
-		    cmd_error(side, "No unit to operate on here!");
+                    if (cmd->needunit == OPTIONAL || (side->teach && cmd->needunit == TEACH)) {
+                        (*(cmd->code))(side, NULL, n);
+                    }
+                    else {
+                        cmd_error(side, "No unit to operate on here!");
+                    }
 		}
 	    } else {
 		(*(cmd->code))(side, n);
@@ -1326,9 +1337,11 @@ Side *side;
       case 'F' : if (!side->sosimple) break;
 		 side->sosimple=FALSE;
       case 'f' : finish_request(side,3); return;
+      case 'g' : finish_request(side,4); return;
       case '?' : notify(side," p  orders for units produced by current unit");
 		 notify(side," e  orders for units entering current unit");
 		 notify(side," f  orders for units inside current unit finishing an order");
+		 notify(side," g  global orders sequence");
 		 if (side->sosimple)
 		   notify(side,"use upper case to allow specification of conditions");
 		 if (side->reqtvalue) 
@@ -1347,9 +1360,9 @@ Unit *unit;
 RequestHandler handler;
 { 
   if (side->sosimple) 
-    strcpy(side->promptbuf, "What type of standing order [?pefPEF]");
+    strcpy(side->promptbuf, "What type of standing order [?pefPEFg]");
   else
-    strcpy(side->promptbuf, "What type of standing order [?pef]");
+    strcpy(side->promptbuf, "What type of standing order [?pefg]");
   side->reqtvalue=0;
   start_request(side,unit,handler,x_somode);
 }
@@ -1360,9 +1373,9 @@ Unit *unit;
 RequestHandler handler;
 { 
   if (side->sosimple) 
-    strcpy(side->promptbuf, "What type of standing order [aA?pefPEF]");
+    strcpy(side->promptbuf, "What type of standing order [aA?pefPEFg]");
   else
-    strcpy(side->promptbuf, "What type of standing order [aA?pef]");
+    strcpy(side->promptbuf, "What type of standing order [aA?pefg]");
   side->reqtvalue=1;
   start_request(side,unit,handler,x_somode);
 }

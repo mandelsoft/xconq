@@ -942,6 +942,11 @@ Unit *unit;
 	handle_order_take(us,unit,unit->orders.p.amount,FALSE);
 	success=TRUE;
 	break;
+    case RTAKEALL:
+	unit->orders.rept--;
+	handle_order_take_all(us,unit,unit->orders.p.amount);
+	success=TRUE;
+	break;
     case APICKUP:
 	success=apickup(us,unit);
 #if 0
